@@ -1,0 +1,11 @@
+Suil
+----
+
+Suil is a library for LV2 hosts intended to make using LV2 plugin UIs as
+as simple as possible, including support for hosting a UI in any supported
+toolkit in a host written in another supported toolkit.
+
+For more information, see <http://drobilla.net/software/suil>.
+
+ -- David Robillard <d@drobilla.net>
+
