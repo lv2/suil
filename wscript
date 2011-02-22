@@ -30,12 +30,14 @@ def options(opt):
 	autowaf.set_options(opt)
 
 def configure(conf):
-	conf.line_just = max(conf.line_just, 40)
+	conf.line_just = max(conf.line_just, 56)
 	autowaf.configure(conf)
 	autowaf.display_header('Suil Configuration')
 
 	conf.check_tool('compiler_cc')
 	conf.env.append_value('CFLAGS', '-std=c99')
+
+	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/extensions/ui/ui.h')
 
 	autowaf.define(conf, 'SUIL_VERSION', SUIL_VERSION)
 	conf.write_config_header('suil-config.h', remove=False)
@@ -52,7 +54,7 @@ def build(bld):
 	# Library
 	obj = bld(features = 'c cshlib')
 	obj.export_includes = ['.']
-	obj.source          = 'src/uis.c'
+	obj.source          = 'src/instance.c src/uis.c'
 	obj.includes        = ['.', './src']
 	obj.name            = 'libsuil'
 	obj.target          = 'suil'
@@ -62,9 +64,6 @@ def build(bld):
 
 	# Documentation
 	autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)
-
-	# Man page
-	bld.install_files('${MANDIR}/man1', 'doc/suili.1')
 
 	bld.add_post_fun(autowaf.run_ldconfig)
 

@@ -21,6 +21,44 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include <dlfcn.h>
+
 #include "suil/suil.h"
+
+#define SUIL_ERRORF(fmt, ...) fprintf(stderr, "error: %s: " fmt, \
+                                      __func__, __VA_ARGS__)
+
+struct _SuilUI {
+	char* uri;
+	char* type_uri;
+	char* bundle_path;
+	char* binary_path;
+};
+
+typedef struct _SuilUI* SuilUI;
+
+struct _SuilUIs {
+	char*   plugin_uri;
+	SuilUI* uis;
+	size_t  n_uis;
+};
+	
+struct _SuilInstance {
+	void*                   lib_handle;
+	const LV2UI_Descriptor* descriptor;
+	LV2UI_Handle            handle;
+	LV2UI_Widget            widget;
+};
+
+typedef void (*SuilVoidFunc)();
+
+/** dlsym wrapper to return a function pointer (without annoying warning) */
+static inline SuilVoidFunc
+suil_dlfunc(void* handle, const char* symbol)
+{
+	typedef SuilVoidFunc (*VoidFuncGetter)(void*, const char*);
+	VoidFuncGetter dlfunc = (VoidFuncGetter)dlsym;
+	return dlfunc(handle, symbol);
+}
 
 #endif  // SUIL_INTERNAL_H

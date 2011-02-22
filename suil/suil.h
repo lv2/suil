@@ -19,13 +19,13 @@
  * Public Suil API.
  */
 
-#ifndef SUIL_SUIL_H
-#define SUIL_SUIL_H
+#ifndef SUIL_SUIL_H__
+#define SUIL_SUIL_H__
 
 #include <stdbool.h>
-#include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
+
+#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 #ifdef SUIL_SHARED
 	#if defined _WIN32 || defined __CYGWIN__
@@ -53,6 +53,82 @@ extern "C" {
  * @{
  */
 
+/** A set of UIs for a particular LV2 plugin. */
+typedef struct _SuilUIs* SuilUIs;
+
+/** An instance of an LV2 plugin UI. */
+typedef struct _SuilInstance* SuilInstance;
+
+/** Return true iff UIs of the given type are supported. */
+SUIL_API
+bool
+suil_ui_type_supported(const char* uri);
+
+/** Create a new empty set of UIs for a particular LV2 plugin. */
+SUIL_API
+SuilUIs
+suil_uis_new(const char* plugin_uri);
+
+/** Free @a uis. */
+SUIL_API
+void
+suil_uis_free(SuilUIs uis);
+
+/** Add a discovered UI to @a uis. */
+SUIL_API
+void
+suil_uis_add(SuilUIs     uis,
+             const char* uri,
+             const char* type_uri,
+             const char* bundle_path,
+             const char* binary_path);
+
+/** Instantiate a UI for an LV2 plugin.
+ * @param uis Set of available UIs for the plugin.
+ * @param type_uri URI of the desired widget type.
+ * @param ui_uri URI of a specifically desired UI, or NULL to use the
+ *        best choice given @a type_uri.
+ * @param write_function Write function as defined by the LV2 UI extension.
+ * @param controller Opaque controller to be passed to @a write_function.
+ * @param features NULL-terminated array of supported features, or NULL.
+ * @return A new UI instance, or NULL if instantiation failed.
+ */
+SUIL_API
+SuilInstance
+suil_instance_new(SuilUIs                   uis,
+                  const char*               type_uri,
+                  const char*               ui_uri,
+                  LV2UI_Write_Function      write_function,
+                  LV2UI_Controller          controller,
+                  const LV2_Feature* const* features);
+
+/** Free a plugin UI instance.
+ * The caller must ensure all references to the UI have been dropped before
+ * calling this function (e.g. it has been removed from its parent).
+ */
+SUIL_API
+void
+suil_instance_free(SuilInstance instance);
+
+/** Get the widget for a UI instance.
+ * Returns an opaque pointer to a widget, the type of which is defined by the
+ * corresponding parameter to suil_instantiate. Note this may be a wrapper
+ * widget created by Suil, and not necessarily an LV2UI_Widget implemented
+ * in an LV2 bundle.
+ */
+SUIL_API
+LV2UI_Widget
+suil_instance_get_widget(SuilInstance instance);
+
+/** Notify the UI about a change in a plugin port.
+ */
+SUIL_API
+void
+suil_instance_port_event(SuilInstance instance,
+                         uint32_t     port_index,
+                         uint32_t     buffer_size,
+                         uint32_t     format,
+                         const void*  buffer);
 
 /** @} */
 
@@ -60,4 +136,4 @@ extern "C" {
 } /* extern "C" */
 #endif
 
-#endif /* SUIL_SUIL_H */
+#endif /* SUIL_SUIL_H__ */
