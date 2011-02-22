@@ -9,7 +9,7 @@ import shutil
 import subprocess
 
 # Version of this package (even if built as a child)
-SUIL_VERSION = '0.1.0'
+SUIL_VERSION = '0.0.0'
 
 # Library version (UNIX style major, minor, micro)
 # major increment <=> incompatible changes
@@ -30,7 +30,7 @@ def options(opt):
 	autowaf.set_options(opt)
 
 def configure(conf):
-	conf.line_just = max(conf.line_just, 59)
+	conf.line_just = max(conf.line_just, 40)
 	autowaf.configure(conf)
 	autowaf.display_header('Suil Configuration')
 
@@ -52,7 +52,7 @@ def build(bld):
 	# Library
 	obj = bld(features = 'c cshlib')
 	obj.export_includes = ['.']
-	obj.source          = 'src/suil.c'
+	obj.source          = 'src/uis.c'
 	obj.includes        = ['.', './src']
 	obj.name            = 'libsuil'
 	obj.target          = 'suil'
