@@ -29,9 +29,10 @@
 
 SUIL_API
 bool
-suil_ui_type_supported(const char* uri)
+suil_ui_type_supported(const char* host_type_uri,
+                       const char* ui_type_uri)
 {
-	return !strcmp(uri, "http://lv2plug.in/ns/extensions/ui#GtkUI");
+	return !strcmp(ui_type_uri, "http://lv2plug.in/ns/extensions/ui#GtkUI");
 }
 
 SUIL_API
@@ -43,16 +44,20 @@ suil_instance_new(SuilUIs                   uis,
                   LV2UI_Controller          controller,
                   const LV2_Feature* const* features)
 {
-	struct _SuilInstance* instance = NULL;
-
-	const bool local_features = (features == NULL);
-	if (local_features) {
-		features = malloc(sizeof(LV2_Feature));
-		((LV2_Feature**)features)[0] = NULL;
+	// Find the UI to use
+	SuilUI ui = NULL;
+	if (ui_uri) {
+		ui = suil_uis_get(uis, ui_uri);
+	} else {
+		ui = suil_uis_get_best(uis, type_uri);
+	}
+	if (!ui) {
+		SUIL_ERRORF("No suitable UI found for <%s>\n",
+		            suil_uis_get_plugin_uri(uis));
+		return NULL;
 	}
 
-	SuilUI ui = uis->uis[0];  // FIXME
-
+	// Open UI library
 	dlerror();
 	void* lib = dlopen(ui->binary_path, RTLD_NOW);
 	if (!lib) {
@@ -61,38 +66,51 @@ suil_instance_new(SuilUIs                   uis,
 		return NULL;
 	}
 
+	// Get discovery function
 	LV2UI_DescriptorFunction df = (LV2UI_DescriptorFunction)
 		suil_dlfunc(lib, "lv2ui_descriptor");
-
 	if (!df) {
 		SUIL_ERRORF("Broken LV2 UI %s (no lv2ui_descriptor symbol found)\n",
 		            ui->binary_path);
 		dlclose(lib);
 		return NULL;
-	} else {
-		for (uint32_t i = 0; true; ++i) {
-			const LV2UI_Descriptor* ld = df(i);
-			if (!ld) {
-				SUIL_ERRORF("No UI %s in %s\n", ui->uri, ui->binary_path);
-				dlclose(lib);
-				break;  // return NULL
-			} else if ((ui_uri && !strcmp(ld->URI, ui_uri))
-			           || !strcmp(ui->type_uri, type_uri)) {
-				instance             = malloc(sizeof(struct _SuilInstance));
-				instance->descriptor = ld;
-				instance->handle     = ld->instantiate(
-					ld,
-					uis->plugin_uri,
-					ui->bundle_path,
-					write_function,
-					controller,
-					&instance->widget,
-					features);
-				instance->lib_handle = lib;
-				break;
-			}
+	}
+
+	// Get UI descriptor
+	const LV2UI_Descriptor* descriptor = NULL;
+	for (uint32_t i = 0; true; ++i) {
+		const LV2UI_Descriptor* ld = df(i);
+		if (!strcmp(ld->URI, ui->uri)) {
+			descriptor = ld;
+			break;
 		}
 	}
+	if (!descriptor) {
+		SUIL_ERRORF("Failed to find descriptor for <%s> in %s\n",
+		            ui->uri, ui->binary_path);
+		dlclose(lib);
+		return NULL;
+	}
+
+	// Create empty local features array if necessary
+	const bool local_features = (features == NULL);
+	if (local_features) {
+		features = malloc(sizeof(LV2_Feature));
+		((LV2_Feature**)features)[0] = NULL;
+	}
+
+	// Instantiate UI
+	struct _SuilInstance* instance = malloc(sizeof(struct _SuilInstance));
+	instance->lib_handle = lib;
+	instance->descriptor = descriptor;
+	instance->handle     = descriptor->instantiate(
+		descriptor,
+		uis->plugin_uri,
+		ui->bundle_path,
+		write_function,
+		controller,
+		&instance->widget,
+		features);
 
 	if (local_features) {
 		free((LV2_Feature**)features);
@@ -100,12 +118,17 @@ suil_instance_new(SuilUIs                   uis,
 
 	// Failed to find or instantiate UI
 	if (!instance || !instance->handle) {
+		SUIL_ERRORF("Failed to instantiate UI <%s> in %s\n",
+		            ui->uri, ui->binary_path);
 		free(instance);
+		dlclose(lib);
 		return NULL;
 	}
 
-	// Failed to create a widget, but still got a handle (buggy UI)
+	// Got a handle, but failed to create a widget (buggy UI)
 	if (!instance->widget) {
+		SUIL_ERRORF("Widget creation failed for UI <%s> in %s\n",
+		            ui->uri, ui->binary_path);
 		suil_instance_free(instance);
 		return NULL;
 	}

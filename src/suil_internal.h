@@ -38,9 +38,9 @@ struct _SuilUI {
 typedef struct _SuilUI* SuilUI;
 
 struct _SuilUIs {
-	char*   plugin_uri;
-	SuilUI* uis;
-	size_t  n_uis;
+	char*    plugin_uri;
+	SuilUI*  uis;
+	unsigned n_uis;
 };
 	
 struct _SuilInstance {
@@ -49,6 +49,16 @@ struct _SuilInstance {
 	LV2UI_Handle            handle;
 	LV2UI_Widget            widget;
 };
+
+/** Get the UI with the given URI. */
+SuilUI
+suil_uis_get(SuilUIs     uis,
+             const char* ui_uri);
+
+/** Get the best UI for the given type. */
+SuilUI
+suil_uis_get_best(SuilUIs     uis,
+                  const char* type_uri);
 
 typedef void (*SuilVoidFunc)();
 

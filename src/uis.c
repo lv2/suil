@@ -42,6 +42,48 @@ suil_uis_free(SuilUIs uis)
 }
 
 SUIL_API
+const char*
+suil_uis_get_plugin_uri(SuilUIs uis)
+{
+	return uis->plugin_uri;
+}
+
+SUIL_API
+SuilUI
+suil_uis_get(SuilUIs     uis,
+             const char* ui_uri)
+{
+	for (unsigned i = 0; i < uis->n_uis; ++i) {
+		if (!strcmp(uis->uis[i]->uri, ui_uri)) {
+			return uis->uis[i];
+		}
+	}
+	return NULL;
+}
+
+SUIL_API
+SuilUI
+suil_uis_get_best(SuilUIs     uis,
+                  const char* type_uri)
+{
+	// Check for an exact type match
+	for (unsigned i = 0; i < uis->n_uis; ++i) {
+		if (!strcmp(uis->uis[i]->type_uri, type_uri)) {
+			return uis->uis[i];
+		}
+	}
+
+	// No exact match, use the first supported UI
+	for (unsigned i = 0; i < uis->n_uis; ++i) {
+		if (suil_ui_type_supported(type_uri, uis->uis[i]->type_uri)) {
+			return uis->uis[i];
+		}
+	}
+
+	return NULL;
+}
+
+SUIL_API
 void
 suil_uis_add(SuilUIs     uis,
              const char* uri,

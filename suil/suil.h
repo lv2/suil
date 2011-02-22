@@ -59,10 +59,15 @@ typedef struct _SuilUIs* SuilUIs;
 /** An instance of an LV2 plugin UI. */
 typedef struct _SuilInstance* SuilInstance;
 
-/** Return true iff UIs of the given type are supported. */
+/** Return true iff it is possible to load a UI of a given type.
+ * @param host_type_uri The URI of the desired widget type of the host,
+ *        corresponding to the @a type_uri parameter of @ref suil_instance_new.
+ * @param ui_type_uri The URI of the UI widget type.
+ */
 SUIL_API
 bool
-suil_ui_type_supported(const char* uri);
+suil_ui_type_supported(const char* host_type_uri,
+                       const char* ui_type_uri);
 
 /** Create a new empty set of UIs for a particular LV2 plugin. */
 SUIL_API
@@ -73,6 +78,11 @@ suil_uis_new(const char* plugin_uri);
 SUIL_API
 void
 suil_uis_free(SuilUIs uis);
+
+/** Return the URI of the plugin this set of UIs is for. */
+SUIL_API
+const char*
+suil_uis_get_plugin_uri(SuilUIs uis);
 
 /** Add a discovered UI to @a uis. */
 SUIL_API
