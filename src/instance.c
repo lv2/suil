@@ -1,4 +1,4 @@
-/* Suil, a lightweight RDF syntax library.
+/* Suil, an LV2 plugin UI hosting library.
  * Copyright 2011 David Robillard <d@drobilla.net>
  *
  * Suil is free software: you can redistribute it and/or modify it under
