@@ -25,14 +25,78 @@
 
 #include <dlfcn.h>
 
+#include "suil-config.h"
 #include "suil_internal.h"
+
+#define NS_UI       "http://lv2plug.in/ns/extensions/ui#"
+#define GTK2_UI_URI NS_UI "GtkUI"
+#define QT4_UI_URI  NS_UI "Qt4UI"
 
 SUIL_API
 bool
 suil_ui_type_supported(const char* host_type_uri,
                        const char* ui_type_uri)
 {
-	return !strcmp(ui_type_uri, "http://lv2plug.in/ns/extensions/ui#GtkUI");
+	return (!strcmp(host_type_uri, GTK2_UI_URI)
+	        || !strcmp(host_type_uri, QT4_UI_URI))
+		&& (!strcmp(ui_type_uri, GTK2_UI_URI)
+		    || !strcmp(ui_type_uri, QT4_UI_URI));
+}
+
+struct _SuilModule {
+	SuilWrapInitFunc init;
+	SuilWrapFunc     wrap;
+};
+
+typedef struct _SuilModule* SuilModule;
+
+static SuilModule
+get_wrap_module(const char*  host_type_uri,
+                const char*  ui_type_uri)
+{
+	if (!strcmp(host_type_uri, ui_type_uri)) {
+		return NULL;
+	}
+
+	const char* module_name = NULL;
+	if (!strcmp(host_type_uri, QT4_UI_URI)
+	    && !strcmp(ui_type_uri, GTK2_UI_URI)) {
+		module_name = "libsuil_gtk2_in_qt4";
+	} else if (!strcmp(host_type_uri, GTK2_UI_URI)
+	    && !strcmp(ui_type_uri, QT4_UI_URI)) {
+		module_name = "libsuil_qt4_in_gtk2";
+	}
+
+	if (!module_name) {
+		SUIL_ERRORF("Unable to wrap UI type <%s> as type <%s>\n",
+		            ui_type_uri, host_type_uri);
+		return NULL;
+	}
+
+	const size_t path_len = strlen(SUIL_MODULE_DIR)
+		+ strlen(module_name)
+		+ strlen(SUIL_MODULE_EXT)
+		+ 2;
+
+	char* const path = calloc(path_len, 1);
+	snprintf(path, path_len, "%s%s%s%s",
+	         SUIL_MODULE_DIR, SUIL_DIR_SEP, module_name, SUIL_MODULE_EXT);
+
+	// Open wrap module
+	dlerror();
+	void* lib = dlopen(path, RTLD_NOW);
+	if (!lib) {
+		SUIL_ERRORF("Unable to open wrap module %s\n", path);
+		return NULL;
+	}
+
+	SuilModule module = (SuilModule)malloc(sizeof(struct _SuilModule));
+	module->init = (SuilWrapInitFunc)suil_dlfunc(lib, "suil_wrap_init");
+	module->wrap = (SuilWrapFunc)suil_dlfunc(lib, "suil_wrap");
+
+	free(path);
+	
+	return module;
 }
 
 SUIL_API
@@ -92,29 +156,32 @@ suil_instance_new(SuilUIs                   uis,
 		return NULL;
 	}
 
-	// Create empty local features array if necessary
-	const bool local_features = (features == NULL);
-	if (local_features) {
-		features = malloc(sizeof(LV2_Feature));
-		((LV2_Feature**)features)[0] = NULL;
+	// Use empty local features array if necessary
+	const LV2_Feature* local_features[1];
+	local_features[0] = NULL;
+	if (!features) {
+		features = (const LV2_Feature* const*)&local_features;
+	}
+
+	SuilModule module = get_wrap_module(type_uri, ui->type_uri);
+	if (module) {
+		module->init(type_uri, ui->type_uri, features);
 	}
 
 	// Instantiate UI
 	struct _SuilInstance* instance = malloc(sizeof(struct _SuilInstance));
-	instance->lib_handle = lib;
-	instance->descriptor = descriptor;
-	instance->handle     = descriptor->instantiate(
+	instance->lib_handle  = lib;
+	instance->descriptor  = descriptor;
+	instance->host_widget = NULL;
+	instance->ui_widget   = NULL;
+	instance->handle      = descriptor->instantiate(
 		descriptor,
 		uis->plugin_uri,
 		ui->bundle_path,
 		write_function,
 		controller,
-		&instance->widget,
+		&instance->ui_widget,
 		features);
-
-	if (local_features) {
-		free((LV2_Feature**)features);
-	}
 
 	// Failed to find or instantiate UI
 	if (!instance || !instance->handle) {
@@ -126,13 +193,25 @@ suil_instance_new(SuilUIs                   uis,
 	}
 
 	// Got a handle, but failed to create a widget (buggy UI)
-	if (!instance->widget) {
+	if (!instance->ui_widget) {
 		SUIL_ERRORF("Widget creation failed for UI <%s> in %s\n",
 		            ui->uri, ui->binary_path);
 		suil_instance_free(instance);
 		return NULL;
 	}
 
+	if (module) {
+		if (module->wrap(type_uri, ui->type_uri, instance)) {
+			SUIL_ERRORF("Failed to wrap UI <%s> in type <%s>\n",
+			            ui->uri, type_uri);
+			suil_instance_free(instance);
+			return NULL;
+		}
+	} else {
+		instance->host_widget = instance->ui_widget;
+	}
+
+		
 	return instance;
 }
 
@@ -151,7 +230,7 @@ SUIL_API
 LV2UI_Widget
 suil_instance_get_widget(SuilInstance instance)
 {
-	return instance->widget;
+	return instance->host_widget;
 }
 
 SUIL_API

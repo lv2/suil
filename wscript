@@ -39,8 +39,23 @@ def configure(conf):
 
 	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/extensions/ui/ui.h')
 
+	autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
+	                  atleast_version='2.0.0', mandatory=False)
+
+	autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
+	                  atleast_version='4.0.0', mandatory=False)
+
 	autowaf.define(conf, 'SUIL_VERSION', SUIL_VERSION)
+	autowaf.define(conf, 'SUIL_MODULE_DIR', conf.env['LIBDIR'] + '/suil')
+	autowaf.define(conf, 'SUIL_DIR_SEP', '/')
+	autowaf.define(conf, 'SUIL_MODULE_EXT', '.so')
 	conf.write_config_header('suil-config.h', remove=False)
+
+	autowaf.display_msg(conf, "Gtk2 Support",
+	                    bool(conf.env['HAVE_GTK2']))
+
+	autowaf.display_msg(conf, "Qt4 Support",
+	                    bool(conf.env['HAVE_QT4']))
 
 	print
 
@@ -62,6 +77,21 @@ def build(bld):
 	obj.install_path    = '${LIBDIR}'
 	obj.cflags          = [ '-fvisibility=hidden', '-DSUIL_SHARED', '-DSUIL_INTERNAL' ]
 
+	if bld.env['HAVE_GTK2'] and bld.env['HAVE_QT4']:
+		obj = bld(features = 'cxx cxxshlib')
+		obj.source       = 'src/gtk2_in_qt4.cpp'
+		obj.target       = 'suil_gtk2_in_qt4'
+		obj.install_path = '${LIBDIR}/suil'
+		obj.cflags       = [ '-fvisibility=hidden', '-DSUIL_SHARED', '-DSUIL_INTERNAL' ]
+		autowaf.use_lib(bld, obj, 'GTK2 QT4')
+
+		obj = bld(features = 'cxx cxxshlib')
+		obj.source       = 'src/qt4_in_gtk2.cpp'
+		obj.target       = 'suil_qt4_in_gtk2'
+		obj.install_path = '${LIBDIR}/suil'
+		obj.cflags       = [ '-fvisibility=hidden', '-DSUIL_SHARED', '-DSUIL_INTERNAL' ]
+		autowaf.use_lib(bld, obj, 'GTK2 QT4')
+		
 	# Documentation
 	autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)
 

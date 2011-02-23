@@ -47,7 +47,8 @@ struct _SuilInstance {
 	void*                   lib_handle;
 	const LV2UI_Descriptor* descriptor;
 	LV2UI_Handle            handle;
-	LV2UI_Widget            widget;
+	LV2UI_Widget            ui_widget;
+	LV2UI_Widget            host_widget;
 };
 
 /** Get the UI with the given URI. */
@@ -59,6 +60,20 @@ suil_uis_get(SuilUIs     uis,
 SuilUI
 suil_uis_get_best(SuilUIs     uis,
                   const char* type_uri);
+
+/** Type of a module's suil_wrap_init function.
+ * This initialisation function must be called before instantiating any
+ * UI that will need to be wrapped by this wrapper (e.g. it will perform any
+ * initialisation required to create a widget for the given toolkit).
+ */
+typedef int (*SuilWrapInitFunc)(const char*               host_type_uri,
+                                const char*               ui_type_uri,
+                                const LV2_Feature* const* features);
+
+
+typedef int (*SuilWrapFunc)(const char*  host_type_uri,
+                            const char*  ui_type_uri,
+                            SuilInstance instance);
 
 typedef void (*SuilVoidFunc)();
 
