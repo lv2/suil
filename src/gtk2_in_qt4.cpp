@@ -31,18 +31,9 @@ suil_wrap_init(const char*               host_type_uri,
                const char*               ui_type_uri,
                const LV2_Feature* const* features)
 {
+	// TODO: What Gtk initialisation is required here?
 	return 0;
 }
-
-static void
-on_window_destroy(GtkWidget* gtk_window,
-                  gpointer*  user_data)
-{
-	//SuilInstance instance = (SuilInstance)user_data;
-	// TODO: Notify host via callback
-	printf("LV2 UI window destroyed\n");
-}
-
 
 /** Dynamic module entry point. */
 SUIL_API
@@ -51,23 +42,13 @@ suil_instance_wrap(SuilInstance instance,
                    const char*  host_type_uri,
                    const char*  ui_type_uri)
 {
-	GtkWidget* gtk_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_resizable(GTK_WINDOW(gtk_window), TRUE);
-	gtk_window_set_title(GTK_WINDOW(gtk_window), "LV2 Plugin UI");
+	GtkWidget* plug = gtk_plug_new(0);
 
-	gtk_container_add(GTK_CONTAINER(gtk_window),
+	gtk_container_add(GTK_CONTAINER(plug),
 	                  (GtkWidget*)instance->ui_widget);
 
-	g_signal_connect(G_OBJECT(gtk_window),
-	                 "destroy",
-	                 G_CALLBACK(on_window_destroy),
-	                 instance);
-
-	gtk_widget_show_all(gtk_window);
-
-	GdkWindow*          gdk_window = gtk_widget_get_window(gtk_window);
-	QX11EmbedContainer* wrapper    = new QX11EmbedContainer();
-	wrapper->embedClient(GDK_WINDOW_XID(gdk_window));
+	QX11EmbedContainer* wrapper = new QX11EmbedContainer();
+	wrapper->embedClient(gtk_plug_get_id(GTK_PLUG(plug)));
 
 	instance->host_widget = wrapper;
 
