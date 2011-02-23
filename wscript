@@ -70,9 +70,9 @@ def build(bld):
 	obj = bld(features = 'c cshlib')
 	obj.export_includes = ['.']
 	obj.source          = 'src/instance.c src/uis.c'
-	obj.includes        = ['.', './src']
-	obj.name            = 'libsuil'
 	obj.target          = 'suil'
+	obj.includes        = ['.']
+	obj.name            = 'libsuil'
 	obj.vnum            = SUIL_LIB_VERSION
 	obj.install_path    = '${LIBDIR}'
 	obj.cflags          = [ '-fvisibility=hidden', '-DSUIL_SHARED', '-DSUIL_INTERNAL' ]
@@ -81,6 +81,7 @@ def build(bld):
 		obj = bld(features = 'cxx cxxshlib')
 		obj.source       = 'src/gtk2_in_qt4.cpp'
 		obj.target       = 'suil_gtk2_in_qt4'
+		obj.includes     = ['.']
 		obj.install_path = '${LIBDIR}/suil'
 		obj.cflags       = [ '-fvisibility=hidden', '-DSUIL_SHARED', '-DSUIL_INTERNAL' ]
 		autowaf.use_lib(bld, obj, 'GTK2 QT4')
@@ -88,6 +89,7 @@ def build(bld):
 		obj = bld(features = 'cxx cxxshlib')
 		obj.source       = 'src/qt4_in_gtk2.cpp'
 		obj.target       = 'suil_qt4_in_gtk2'
+		obj.includes     = ['.']
 		obj.install_path = '${LIBDIR}/suil'
 		obj.cflags       = [ '-fvisibility=hidden', '-DSUIL_SHARED', '-DSUIL_INTERNAL' ]
 		autowaf.use_lib(bld, obj, 'GTK2 QT4')
