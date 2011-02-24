@@ -28,21 +28,6 @@
 #define SUIL_ERRORF(fmt, ...) fprintf(stderr, "error: %s: " fmt, \
                                       __func__, __VA_ARGS__)
 
-struct _SuilUI {
-	char* uri;
-	char* type_uri;
-	char* bundle_path;
-	char* binary_path;
-};
-
-typedef struct _SuilUI* SuilUI;
-
-struct _SuilUIs {
-	char*    plugin_uri;
-	SuilUI*  uis;
-	unsigned n_uis;
-};
-	
 struct _SuilInstance {
 	void*                   lib_handle;
 	const LV2UI_Descriptor* descriptor;
@@ -50,16 +35,6 @@ struct _SuilInstance {
 	LV2UI_Widget            ui_widget;
 	LV2UI_Widget            host_widget;
 };
-
-/** Get the UI with the given URI. */
-SuilUI
-suil_uis_get(SuilUIs     uis,
-             const char* ui_uri);
-
-/** Get the best UI for the given type. */
-SuilUI
-suil_uis_get_best(SuilUIs     uis,
-                  const char* type_uri);
 
 /** Type of a module's suil_wrap_init function.
  * This initialisation function must be called before instantiating any

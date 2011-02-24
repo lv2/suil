@@ -69,7 +69,7 @@ def build(bld):
 	# Library
 	obj = bld(features = 'c cshlib')
 	obj.export_includes = ['.']
-	obj.source          = 'src/instance.c src/uis.c'
+	obj.source          = 'src/instance.c'
 	obj.target          = 'suil'
 	obj.includes        = ['.']
 	obj.name            = 'libsuil'

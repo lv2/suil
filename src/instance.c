@@ -51,8 +51,8 @@ struct _SuilModule {
 typedef struct _SuilModule* SuilModule;
 
 static SuilModule
-get_wrap_module(const char*  host_type_uri,
-                const char*  ui_type_uri)
+get_wrap_module(const char* host_type_uri,
+                const char* ui_type_uri)
 {
 	if (!strcmp(host_type_uri, ui_type_uri)) {
 		return NULL;
@@ -101,32 +101,22 @@ get_wrap_module(const char*  host_type_uri,
 
 SUIL_API
 SuilInstance
-suil_instance_new(SuilUIs                   uis,
-                  const char*               type_uri,
+suil_instance_new(const char*               plugin_uri,
                   const char*               ui_uri,
+                  const char*               ui_bundle_path,
+                  const char*               ui_binary_path,
+                  const char*               ui_type_uri,
+                  const char*               host_type_uri,
                   LV2UI_Write_Function      write_function,
                   LV2UI_Controller          controller,
                   const LV2_Feature* const* features)
 {
-	// Find the UI to use
-	SuilUI ui = NULL;
-	if (ui_uri) {
-		ui = suil_uis_get(uis, ui_uri);
-	} else {
-		ui = suil_uis_get_best(uis, type_uri);
-	}
-	if (!ui) {
-		SUIL_ERRORF("No suitable UI found for <%s>\n",
-		            suil_uis_get_plugin_uri(uis));
-		return NULL;
-	}
-
 	// Open UI library
 	dlerror();
-	void* lib = dlopen(ui->binary_path, RTLD_NOW);
+	void* lib = dlopen(ui_binary_path, RTLD_NOW);
 	if (!lib) {
 		SUIL_ERRORF("Unable to open UI library %s (%s)\n",
-		            ui->binary_path, dlerror());
+		            ui_binary_path, dlerror());
 		return NULL;
 	}
 
@@ -135,7 +125,7 @@ suil_instance_new(SuilUIs                   uis,
 		suil_dlfunc(lib, "lv2ui_descriptor");
 	if (!df) {
 		SUIL_ERRORF("Broken LV2 UI %s (no lv2ui_descriptor symbol found)\n",
-		            ui->binary_path);
+		            ui_binary_path);
 		dlclose(lib);
 		return NULL;
 	}
@@ -144,14 +134,14 @@ suil_instance_new(SuilUIs                   uis,
 	const LV2UI_Descriptor* descriptor = NULL;
 	for (uint32_t i = 0; true; ++i) {
 		const LV2UI_Descriptor* ld = df(i);
-		if (!strcmp(ld->URI, ui->uri)) {
+		if (!strcmp(ld->URI, ui_uri)) {
 			descriptor = ld;
 			break;
 		}
 	}
 	if (!descriptor) {
 		SUIL_ERRORF("Failed to find descriptor for <%s> in %s\n",
-		            ui->uri, ui->binary_path);
+		            ui_uri, ui_binary_path);
 		dlclose(lib);
 		return NULL;
 	}
@@ -163,9 +153,9 @@ suil_instance_new(SuilUIs                   uis,
 		features = (const LV2_Feature* const*)&local_features;
 	}
 
-	SuilModule module = get_wrap_module(type_uri, ui->type_uri);
+	SuilModule module = get_wrap_module(host_type_uri, ui_type_uri);
 	if (module) {
-		module->init(type_uri, ui->type_uri, features);
+		module->init(host_type_uri, ui_type_uri, features);
 	}
 
 	// Instantiate UI
@@ -176,8 +166,8 @@ suil_instance_new(SuilUIs                   uis,
 	instance->ui_widget   = NULL;
 	instance->handle      = descriptor->instantiate(
 		descriptor,
-		uis->plugin_uri,
-		ui->bundle_path,
+		plugin_uri,
+		ui_bundle_path,
 		write_function,
 		controller,
 		&instance->ui_widget,
@@ -186,7 +176,7 @@ suil_instance_new(SuilUIs                   uis,
 	// Failed to find or instantiate UI
 	if (!instance || !instance->handle) {
 		SUIL_ERRORF("Failed to instantiate UI <%s> in %s\n",
-		            ui->uri, ui->binary_path);
+		            ui_uri, ui_binary_path);
 		free(instance);
 		dlclose(lib);
 		return NULL;
@@ -195,15 +185,15 @@ suil_instance_new(SuilUIs                   uis,
 	// Got a handle, but failed to create a widget (buggy UI)
 	if (!instance->ui_widget) {
 		SUIL_ERRORF("Widget creation failed for UI <%s> in %s\n",
-		            ui->uri, ui->binary_path);
+		            ui_uri, ui_binary_path);
 		suil_instance_free(instance);
 		return NULL;
 	}
 
 	if (module) {
-		if (module->wrap(type_uri, ui->type_uri, instance)) {
+		if (module->wrap(host_type_uri, ui_type_uri, instance)) {
 			SUIL_ERRORF("Failed to wrap UI <%s> in type <%s>\n",
-			            ui->uri, type_uri);
+			            ui_uri, host_type_uri);
 			suil_instance_free(instance);
 			return NULL;
 		}
@@ -227,6 +217,20 @@ suil_instance_free(SuilInstance instance)
 }
 
 SUIL_API
+const LV2UI_Descriptor*
+suil_instance_get_descriptor(SuilInstance instance)
+{
+	return instance->descriptor;
+}
+
+SUIL_API
+LV2UI_Handle
+suil_instance_get_handle(SuilInstance instance)
+{
+	return instance->handle;
+}
+
+SUIL_API
 LV2UI_Widget
 suil_instance_get_widget(SuilInstance instance)
 {
@@ -246,4 +250,12 @@ suil_instance_port_event(SuilInstance instance,
 	                                 buffer_size,
 	                                 format,
 	                                 buffer);
+}
+
+SUIL_API
+const void*
+suil_instance_extension_data(SuilInstance instance,
+                             const char*  uri)
+{
+	return instance->descriptor->extension_data(uri);
 }

@@ -53,9 +53,6 @@ extern "C" {
  * @{
  */
 
-/** A set of UIs for a particular LV2 plugin. */
-typedef struct _SuilUIs* SuilUIs;
-
 /** An instance of an LV2 plugin UI. */
 typedef struct _SuilInstance* SuilInstance;
 
@@ -69,30 +66,6 @@ bool
 suil_ui_type_supported(const char* host_type_uri,
                        const char* ui_type_uri);
 
-/** Create a new empty set of UIs for a particular LV2 plugin. */
-SUIL_API
-SuilUIs
-suil_uis_new(const char* plugin_uri);
-
-/** Free @a uis. */
-SUIL_API
-void
-suil_uis_free(SuilUIs uis);
-
-/** Return the URI of the plugin this set of UIs is for. */
-SUIL_API
-const char*
-suil_uis_get_plugin_uri(SuilUIs uis);
-
-/** Add a discovered UI to @a uis. */
-SUIL_API
-void
-suil_uis_add(SuilUIs     uis,
-             const char* uri,
-             const char* type_uri,
-             const char* bundle_path,
-             const char* binary_path);
-
 /** Instantiate a UI for an LV2 plugin.
  * @param uis Set of available UIs for the plugin.
  * @param type_uri URI of the desired widget type.
@@ -105,9 +78,12 @@ suil_uis_add(SuilUIs     uis,
  */
 SUIL_API
 SuilInstance
-suil_instance_new(SuilUIs                   uis,
-                  const char*               type_uri,
+suil_instance_new(const char*               plugin_uri,
                   const char*               ui_uri,
+                  const char*               ui_bundle_path,
+                  const char*               ui_binary_path,
+                  const char*               ui_type_uri,
+                  const char*               host_type_uri,
                   LV2UI_Write_Function      write_function,
                   LV2UI_Controller          controller,
                   const LV2_Feature* const* features);
@@ -119,6 +95,20 @@ suil_instance_new(SuilUIs                   uis,
 SUIL_API
 void
 suil_instance_free(SuilInstance instance);
+
+/** Get the LV2UI_Descriptor of a UI instance.
+ * This function should not be needed under normal circumstances.
+ */
+SUIL_API
+const LV2UI_Descriptor*
+suil_instance_get_descriptor(SuilInstance instance);
+
+/** Get the LV2UI_Handle of a UI instance.
+ * This function should not be needed under normal circumstances.
+ */
+SUIL_API
+LV2UI_Handle
+suil_instance_get_handle(SuilInstance instance);
 
 /** Get the widget for a UI instance.
  * Returns an opaque pointer to a widget, the type of which is defined by the
@@ -139,6 +129,13 @@ suil_instance_port_event(SuilInstance instance,
                          uint32_t     buffer_size,
                          uint32_t     format,
                          const void*  buffer);
+
+/** Return a data structure defined by some LV2 extension URI.
+ */
+SUIL_API
+const void*
+suil_instance_extension_data(SuilInstance instance,
+                             const char*  uri);
 
 /** @} */
 
