@@ -38,9 +38,9 @@ suil_wrap_init(const char*               host_type_uri,
 /** Dynamic module entry point. */
 SUIL_API
 int
-suil_instance_wrap(SuilInstance instance,
-                   const char*  host_type_uri,
-                   const char*  ui_type_uri)
+suil_wrap(SuilInstance instance,
+          const char*  host_type_uri,
+          const char*  ui_type_uri)
 {
 	GtkWidget* plug = gtk_plug_new(0);
 
