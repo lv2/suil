@@ -47,6 +47,8 @@ suil_wrap(const char*  host_type_uri,
 	gtk_container_add(GTK_CONTAINER(plug),
 	                  (GtkWidget*)instance->ui_widget);
 
+	gtk_widget_show_all(plug);
+
 	QX11EmbedContainer* const wrapper = new QX11EmbedContainer();
 	wrapper->embedClient(gtk_plug_get_id(GTK_PLUG(plug)));
 
