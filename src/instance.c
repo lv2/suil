@@ -94,8 +94,15 @@ get_wrap_module(const char* host_type_uri,
 	module->init = (SuilWrapInitFunc)suil_dlfunc(lib, "suil_wrap_init");
 	module->wrap = (SuilWrapFunc)suil_dlfunc(lib, "suil_wrap");
 
+	if (!module->init || !module->wrap) {
+		SUIL_ERRORF("Corrupt module %s\n", path);
+		free(path);
+		free(module);
+		return NULL;
+	}
+
 	free(path);
-	
+		
 	return module;
 }
 
