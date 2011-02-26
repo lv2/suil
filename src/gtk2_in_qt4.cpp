@@ -38,16 +38,16 @@ suil_wrap_init(const char*               host_type_uri,
 /** Dynamic module entry point. */
 SUIL_API
 int
-suil_wrap(SuilInstance instance,
-          const char*  host_type_uri,
-          const char*  ui_type_uri)
+suil_wrap(const char*  host_type_uri,
+          const char*  ui_type_uri,
+          SuilInstance instance)
 {
-	GtkWidget* plug = gtk_plug_new(0);
+	GtkWidget* const plug = gtk_plug_new(0);
 
 	gtk_container_add(GTK_CONTAINER(plug),
 	                  (GtkWidget*)instance->ui_widget);
 
-	QX11EmbedContainer* wrapper = new QX11EmbedContainer();
+	QX11EmbedContainer* const wrapper = new QX11EmbedContainer();
 	wrapper->embedClient(gtk_plug_get_id(GTK_PLUG(plug)));
 
 	instance->host_widget = wrapper;
