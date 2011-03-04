@@ -43,14 +43,18 @@ suil_wrap(const char*  host_type_uri,
           SuilInstance instance)
 {
 	GtkWidget* const plug = gtk_plug_new(0);
+	GtkWidget* const widget = (GtkWidget*)instance->ui_widget;
 
-	gtk_container_add(GTK_CONTAINER(plug),
-	                  (GtkWidget*)instance->ui_widget);
+	gtk_container_add(GTK_CONTAINER(plug), widget);
 
 	gtk_widget_show_all(plug);
 
 	QX11EmbedContainer* const wrapper = new QX11EmbedContainer();
 	wrapper->embedClient(gtk_plug_get_id(GTK_PLUG(plug)));
+
+	GtkAllocation alloc;
+	gtk_widget_get_allocation(widget, &alloc);
+	wrapper->resize(alloc.width, alloc.height);
 
 	instance->host_widget = wrapper;
 
