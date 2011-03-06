@@ -57,7 +57,7 @@ def configure(conf):
 	autowaf.display_msg(conf, "Qt4 Support",
 	                    bool(conf.env['HAVE_QT4']))
 
-	print()
+	print('')
 
 def build(bld):
 	# C Headers
