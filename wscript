@@ -1,12 +1,8 @@
 #!/usr/bin/env python
-import Logs
-import Options
-import autowaf
-import filecmp
-import glob
-import os
-import shutil
 import subprocess
+
+import waflib.Logs as Logs, waflib.Options as Options
+from waflib.extras import autowaf as autowaf
 
 # Version of this package (even if built as a child)
 SUIL_VERSION = '0.0.0'
@@ -34,7 +30,7 @@ def configure(conf):
 	autowaf.configure(conf)
 	autowaf.display_header('Suil Configuration')
 
-	conf.check_tool('compiler_cc')
+	conf.load('compiler_cc')
 	conf.env.append_value('CFLAGS', '-std=c99')
 
 	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/extensions/ui/ui.h')
@@ -51,12 +47,8 @@ def configure(conf):
 	autowaf.define(conf, 'SUIL_MODULE_EXT', '.so')
 	conf.write_config_header('suil-config.h', remove=False)
 
-	autowaf.display_msg(conf, "Gtk2 Support",
-	                    bool(conf.env['HAVE_GTK2']))
-
-	autowaf.display_msg(conf, "Qt4 Support",
-	                    bool(conf.env['HAVE_QT4']))
-
+	autowaf.display_msg(conf, "Gtk2 Support", conf.is_defined('HAVE_GTK2'))
+	autowaf.display_msg(conf, "Qt4 Support", conf.is_defined('HAVE_QT4'))
 	print('')
 
 def build(bld):
@@ -77,7 +69,7 @@ def build(bld):
 	obj.install_path    = '${LIBDIR}'
 	obj.cflags          = [ '-fvisibility=hidden', '-DSUIL_SHARED', '-DSUIL_INTERNAL' ]
 
-	if bld.env['HAVE_GTK2'] and bld.env['HAVE_QT4']:
+	if bld.is_defined('HAVE_GTK2') and bld.is_defined('HAVE_QT4'):
 		obj = bld(features = 'cxx cxxshlib')
 		obj.source       = 'src/gtk2_in_qt4.cpp'
 		obj.target       = 'suil_gtk2_in_qt4'
