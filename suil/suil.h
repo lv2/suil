@@ -1,26 +1,34 @@
-/* Suil, an LV2 plugin UI hosting library.
- * Copyright 2011 David Robillard <d@drobilla.net>
- *
- * Suil is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Suil is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+/*
+  Copyright 2007-2011 David Robillard <http://drobilla.net>
 
-/** @file
- * Public Suil API.
- */
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
 
-#ifndef SUIL_SUIL_H__
-#define SUIL_SUIL_H__
+  1. Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+
+  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+  AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+  AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+  OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+  THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/**
+   @file slv2.h API for Suil, an LV2 UI wrapper library.
+*/
+
+#ifndef SUIL_SUIL_H
+#define SUIL_SUIL_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -48,34 +56,37 @@
 extern "C" {
 #endif
 
-/** @defgroup suil Suil
- * A library for hosting LV2 plugin UIs.
- * @{
- */
+/**
+   @defgroup suil Suil
+   A library for hosting LV2 plugin UIs.
+   @{
+*/
 
 /** An instance of an LV2 plugin UI. */
 typedef struct _SuilInstance* SuilInstance;
 
-/** Return true iff it is possible to load a UI of a given type.
- * @param host_type_uri The URI of the desired widget type of the host,
- *        corresponding to the @a type_uri parameter of @ref suil_instance_new.
- * @param ui_type_uri The URI of the UI widget type.
- */
+/**
+   Return true iff it is possible to load a UI of a given type.
+   @param host_type_uri The URI of the desired widget type of the host,
+   corresponding to the @a type_uri parameter of @ref suil_instance_new.
+   @param ui_type_uri The URI of the UI widget type.
+*/
 SUIL_API
 bool
 suil_ui_type_supported(const char* host_type_uri,
                        const char* ui_type_uri);
 
-/** Instantiate a UI for an LV2 plugin.
- * @param uis Set of available UIs for the plugin.
- * @param type_uri URI of the desired widget type.
- * @param ui_uri URI of a specifically desired UI, or NULL to use the
- *        best choice given @a type_uri.
- * @param write_function Write function as defined by the LV2 UI extension.
- * @param controller Opaque controller to be passed to @a write_function.
- * @param features NULL-terminated array of supported features, or NULL.
- * @return A new UI instance, or NULL if instantiation failed.
- */
+/**
+   Instantiate a UI for an LV2 plugin.
+   @param uis Set of available UIs for the plugin.
+   @param type_uri URI of the desired widget type.
+   @param ui_uri URI of a specifically desired UI, or NULL to use the
+   best choice given @a type_uri.
+   @param write_function Write function as defined by the LV2 UI extension.
+   @param controller Opaque controller to be passed to @a write_function.
+   @param features NULL-terminated array of supported features, or NULL.
+   @return A new UI instance, or NULL if instantiation failed.
+*/
 SUIL_API
 SuilInstance
 suil_instance_new(const char*               plugin_uri,
@@ -88,40 +99,45 @@ suil_instance_new(const char*               plugin_uri,
                   LV2UI_Controller          controller,
                   const LV2_Feature* const* features);
 
-/** Free a plugin UI instance.
- * The caller must ensure all references to the UI have been dropped before
- * calling this function (e.g. it has been removed from its parent).
- */
+/**
+   Free a plugin UI instance.
+   The caller must ensure all references to the UI have been dropped before
+   calling this function (e.g. it has been removed from its parent).
+*/
 SUIL_API
 void
 suil_instance_free(SuilInstance instance);
 
-/** Get the LV2UI_Descriptor of a UI instance.
- * This function should not be needed under normal circumstances.
- */
+/**
+   Get the LV2UI_Descriptor of a UI instance.
+   This function should not be needed under normal circumstances.
+*/
 SUIL_API
 const LV2UI_Descriptor*
 suil_instance_get_descriptor(SuilInstance instance);
 
-/** Get the LV2UI_Handle of a UI instance.
- * This function should not be needed under normal circumstances.
- */
+/**
+   Get the LV2UI_Handle of a UI instance.
+   This function should not be needed under normal circumstances.
+*/
 SUIL_API
 LV2UI_Handle
 suil_instance_get_handle(SuilInstance instance);
 
-/** Get the widget for a UI instance.
- * Returns an opaque pointer to a widget, the type of which is defined by the
- * corresponding parameter to suil_instantiate. Note this may be a wrapper
- * widget created by Suil, and not necessarily an LV2UI_Widget implemented
- * in an LV2 bundle.
- */
+/**
+   Get the widget for a UI instance.
+   Returns an opaque pointer to a widget, the type of which is defined by the
+   corresponding parameter to suil_instantiate. Note this may be a wrapper
+   widget created by Suil, and not necessarily an LV2UI_Widget implemented
+   in an LV2 bundle.
+*/
 SUIL_API
 LV2UI_Widget
 suil_instance_get_widget(SuilInstance instance);
 
-/** Notify the UI about a change in a plugin port.
- */
+/**
+   Notify the UI about a change in a plugin port.
+*/
 SUIL_API
 void
 suil_instance_port_event(SuilInstance instance,
@@ -130,14 +146,17 @@ suil_instance_port_event(SuilInstance instance,
                          uint32_t     format,
                          const void*  buffer);
 
-/** Return a data structure defined by some LV2 extension URI.
- */
+/**
+   Return a data structure defined by some LV2 extension URI.
+*/
 SUIL_API
 const void*
 suil_instance_extension_data(SuilInstance instance,
                              const char*  uri);
 
-/** @} */
+/**
+   @}
+*/
 
 #ifdef __cplusplus
 } /* extern "C" */
