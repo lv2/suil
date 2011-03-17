@@ -24,7 +24,7 @@
 */
 
 /**
-   @file slv2.h API for Suil, an LV2 UI wrapper library.
+   @file suil.h API for Suil, an LV2 UI wrapper library.
 */
 
 #ifndef SUIL_SUIL_H
@@ -78,10 +78,13 @@ suil_ui_type_supported(const char* host_type_uri,
 
 /**
    Instantiate a UI for an LV2 plugin.
-   @param uis Set of available UIs for the plugin.
-   @param type_uri URI of the desired widget type.
+   @param plugin_uri URI of the plugin to instantiate this UI for.
    @param ui_uri URI of a specifically desired UI, or NULL to use the
    best choice given @a type_uri.
+   @param ui_bundle_path Path of the UI bundle.
+   @param ui_binary_path Path of the UI binary.
+   @param ui_type_uri URI of the actual UI widget type.
+   @param host_type_uri URI of the desired widget type.
    @param write_function Write function as defined by the LV2 UI extension.
    @param controller Opaque controller to be passed to @a write_function.
    @param features NULL-terminated array of supported features, or NULL.
@@ -162,4 +165,4 @@ suil_instance_extension_data(SuilInstance instance,
 } /* extern "C" */
 #endif
 
-#endif /* SUIL_SUIL_H__ */
+#endif /* SUIL_SUIL_H */

@@ -3,24 +3,35 @@ body {
 	font-family: sans-serif;
 }
 
-.navigation {
+#top {
 	display: none;
 }
 
-h1 {
-	font-size: 160%;
+h1 h2 h3 h4 h5 h6 {
 	font-weight: bold;
 }
 
+h1 {
+	font-size: 164%;
+}
+
 h2 {
-	font-size: 130%;
+	font-size: 132%;
 }
 
 h3 {
-	font-size: 110%;
+	font-size: 124%;
 }
 
-h4 h5 h6 {
+h4 {
+	font-size: 116%;
+}
+
+h5 {
+	font-size: 108%;
+}
+
+h6 {
 	font-size: 100%;
 }
 
@@ -89,7 +100,6 @@ div.navtab {
 /* @group Link Styling */
 a {
 	color: #3D578C;
-	font-weight: 400;
 	text-decoration: none;
 }
 
@@ -102,18 +112,15 @@ a:hover {
 }
 
 a.qindex {
-	font-weight: 700;
 }
 
 a.qindexHL {
-	font-weight: 700;
 	background-color: #9CAFD4;
 	color: #FFF;
 	border: 1px double #869DCA;
 }
 
 a.el {
-	font-weight: 700;
 }
 
 a.elRef {
@@ -154,7 +161,7 @@ div.ah {
 	margin-bottom: 3px;
 	margin-top: 3px;
 	padding: .2em;
-	border: solid thin #333;
+	border: thin solid #333;
 }
 
 div.groupHeader {
@@ -292,8 +299,8 @@ th.dirtab {
 hr {
 	height: 0;
 	border: none;
-	border-top: 1px solid #BBB;
-	margin: 3em 0 1em;
+	border-top: 1px solid #DDD;
+	margin: 2em 0 1em;
 }
 
 hr.footer {
@@ -303,10 +310,11 @@ hr.footer {
 /* @group Member Descriptions */
 table.memberdecls {
 	border-spacing: 0;
+	font-size: 94%;
 }
 
 .mdescLeft,.mdescRight,.memItemLeft,.memItemRight,.memTemplItemLeft,.memTemplItemRight,.memTemplParams {
-	background-color: #F9F9F9;
+	background-color: #FBFBFB;
 	margin: 0;
 	padding: 0.25ex;
 }
@@ -316,7 +324,7 @@ table.memberdecls {
 }
 
 .memItemLeft,.memItemRight,.memTemplParams {
-	border-top: 1px solid #DDD;
+	border-top: 1px solid #EEE;
 }
 
 .memItemLeft,.memTemplItemLeft {
@@ -335,8 +343,7 @@ table.memberdecls {
 .memtemplate {
 	font-size: 80%;
 	color: #4665A2;
-	font-weight: 400;
-	margin-left: 3px;
+	font-weight: bold;
 }
 
 .memnav {
@@ -350,31 +357,25 @@ table.memberdecls {
 
 .memitem {
 	padding: 0;
-	margin-bottom: 10px;
+	margin: 1ex 0 2ex 0;
 }
 
 .memname {
 	white-space: nowrap;
-	font-weight: 700;
-	margin-left: 6px;
+	font-weight: bold;
 }
 
 .memproto {
-	border-top: 1px solid #A8B8D9;
-	border-left: 1px solid #A8B8D9;
-	border-right: 1px solid #A8B8D9;
-	padding: 6px 0;
+	border-top: 1px solid #DDD;
+	padding: 0.5ex;
 	color: #253555;
-	font-weight: 700;
-	background-color: #EEE;
+	font-weight: bold;
+	background-color: #F3F3F3;
 }
 
 .memdoc {
-	border-bottom: 1px solid #A8A8A8;
-	border-left: 1px solid #A8A8A8;
-	border-right: 1px solid #A8A8A8;
-	padding: 2px 5px;
-	background-color: #F9F9F9;
+	padding: 1ex;
+	background-color: #FBFBFB;
 	border-top-width: 0;
 }
 
@@ -406,7 +407,7 @@ table.memberdecls {
 /* these are for tree view when used as main index */
 .directory {
 	font-size: 9pt;
-	font-weight: 700;
+	font-weight: bold;
 	margin: 5px;
 }
 
@@ -437,7 +438,7 @@ table.memberdecls {
 /* these are for tree view when not used as main index */
 .directory-alt {
 	font-size: 100%;
-	font-weight: 700;
+	font-weight: bold;
 }
 
 .directory-alt h3 {
@@ -476,20 +477,21 @@ address {
 
 table.doxtable {
 	border-collapse: collapse;
+	margin: 0.5ex;
 }
 
 table.doxtable td,table.doxtable th {
-	border: 1px solid #2D4068;
+	border: 1px solid #DDD;
 	padding: 3px 7px 2px;
 }
 
 table.doxtable th {
-	background-color: #374F7F;
-	color: #FFF;
-	font-size: 110%;
+	background-color: #F3F3F3;
+	color: #000;
 	padding-bottom: 4px;
 	padding-top: 5px;
 	text-align: left;
+	font-weight: bold;
 }
 
 .tabsearch {
@@ -506,7 +508,7 @@ table.doxtable th {
 	height: 30px;
 	line-height: 30px;
 	color: #8AA0CC;
-	border: solid 1px #C2CDE4;
+	border: 1px solid #C2CDE4;
 	overflow: hidden;
 	margin: 0;
 	padding: 0;
@@ -544,9 +546,9 @@ div.summary a {
 }
 
 div.header {
-	background-color: #EEE;
+	background-color: #F3F3F3;
 	margin: 0;
-	border-bottom: 1px solid #CCC;
+	border-bottom: 1px solid #DDD;
 }
 
 div.headertitle {

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 import subprocess
 
 import waflib.Logs as Logs, waflib.Options as Options
@@ -90,6 +91,18 @@ def build(bld):
 	autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)
 
 	bld.add_post_fun(autowaf.run_ldconfig)
+
+def fixdocs(ctx):
+    try:
+        os.chdir('build/doc/html')
+        os.system("sed -i 's/SUIL_API //' group__suil.html")
+        os.system("sed -i 's/SUIL_DEPRECATED //' group__suil.html")
+        os.remove('index.html')
+        os.symlink('group__suil.html',
+                   'index.html')
+    except Exception as e:
+        Logs.error("Failed to fix up Doxygen documentation\n")
+        Logs.error(e)
 
 def lint(ctx):
 	subprocess.call('cpplint.py --filter=-whitespace,+whitespace/comments,-build/header_guard,-readability/casting,-readability/todo src/* suil/*', shell=True)
