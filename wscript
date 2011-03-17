@@ -102,7 +102,6 @@ def fixdocs(ctx):
                    'index.html')
     except Exception as e:
         Logs.error("Failed to fix up Doxygen documentation\n")
-        Logs.error(e)
 
 def lint(ctx):
 	subprocess.call('cpplint.py --filter=-whitespace,+whitespace/comments,-build/header_guard,-readability/casting,-readability/todo src/* suil/*', shell=True)
