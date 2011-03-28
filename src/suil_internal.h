@@ -29,7 +29,15 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#ifdef __WIN32__
+#include <windows.h>
+#define dlopen(path, flags) LoadLibrary(path)
+#define dlclose(lib) FreeLibrary(lib)
+#define dlsym GetProcAddress
+static inline char* dlerror(void) { return "Unknown error"; }
+#else
 #include <dlfcn.h>
+#endif
 
 #include "suil/suil.h"
 
