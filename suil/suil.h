@@ -36,20 +36,20 @@
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 #ifdef SUIL_SHARED
-	#if defined _WIN32 || defined __CYGWIN__
-		#define SUIL_LIB_IMPORT __declspec(dllimport)
-		#define SUIL_LIB_EXPORT __declspec(dllexport)
-	#else
-		#define SUIL_LIB_IMPORT __attribute__ ((visibility("default")))
-		#define SUIL_LIB_EXPORT __attribute__ ((visibility("default")))
-	#endif
-	#ifdef SUIL_INTERNAL
-		#define SUIL_API SUIL_LIB_EXPORT
-	#else
-		#define SUIL_API SUIL_LIB_IMPORT
-	#endif
+#    ifdef __WIN32__
+#        define SUIL_LIB_IMPORT __declspec(dllimport)
+#        define SUIL_LIB_EXPORT __declspec(dllexport)
+#    else
+#        define SUIL_LIB_IMPORT __attribute__((visibility("default")))
+#        define SUIL_LIB_EXPORT __attribute__((visibility("default")))
+#    endif
+#    ifdef SUIL_INTERNAL
+#        define SUIL_API SUIL_LIB_EXPORT
+#    else
+#        define SUIL_API SUIL_LIB_IMPORT
+#    endif
 #else
-	#define SUIL_API
+#    define SUIL_API
 #endif
 
 #ifdef __cplusplus
