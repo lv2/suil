@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import subprocess
+import sys
 
 from waflib.extras import autowaf as autowaf
 import waflib.Logs as Logs, waflib.Options as Options
@@ -59,7 +60,12 @@ def build(bld):
     # Pkgconfig file
     autowaf.build_pc(bld, 'SUIL', SUIL_VERSION, [])
 
-    cflags   = [ '-fvisibility=hidden', '-DSUIL_SHARED', '-DSUIL_INTERNAL' ]
+    cflags    = [ '-DSUIL_SHARED',
+                  '-DSUIL_INTERNAL' ]
+    linkflags = []
+    if sys.platform != 'win32':
+        cflags    += [ '-fvisibility=hidden' ]
+        linkflags += [ '-ldl' ]
 
     # Library
     obj = bld(features        = 'c cshlib',
@@ -70,7 +76,8 @@ def build(bld):
               name            = 'libsuil',
               vnum            = SUIL_LIB_VERSION,
               install_path    = '${LIBDIR}',
-              cflags          = cflags)
+              cflags          = cflags,
+              linkflags       = linkflags)
 
     if bld.is_defined('HAVE_GTK2') and bld.is_defined('HAVE_QT4'):
         obj = bld(features     = 'cxx cxxshlib',
