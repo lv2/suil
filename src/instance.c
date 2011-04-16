@@ -108,7 +108,7 @@ get_wrap_module(const char* host_type_uri,
 	}
 
 	free(path);
-		
+
 	return module;
 }
 
@@ -214,7 +214,6 @@ suil_instance_new(const char*               plugin_uri,
 		instance->host_widget = instance->ui_widget;
 	}
 
-		
 	return instance;
 }
 

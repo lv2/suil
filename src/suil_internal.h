@@ -61,7 +61,6 @@ typedef int (*SuilWrapInitFunc)(const char*               host_type_uri,
                                 const char*               ui_type_uri,
                                 const LV2_Feature* const* features);
 
-
 typedef int (*SuilWrapFunc)(const char*  host_type_uri,
                             const char*  ui_type_uri,
                             SuilInstance instance);
