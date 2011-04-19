@@ -109,7 +109,7 @@ def fix_docs(ctx):
         os.remove('index.html')
         os.symlink('group__suil.html',
                    'index.html')
-    except Exception as e:
+    except Exception, e:
         Logs.error("Failed to fix up Doxygen documentation (%s)\n" % e)
 
 def upload_docs(ctx):
