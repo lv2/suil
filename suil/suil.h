@@ -90,14 +90,17 @@ typedef uint32_t (*SuilPortIndexFunc)(SuilController controller,
                                       const char*    port_symbol);
 
 /** Function to subscribe to notifications for a port. */
-typedef uint32_t (*SuilPortSubscribeFunc)(SuilController controller,
-                                          uint32_t       port_index,
-                                          uint32_t       protocol);
+typedef uint32_t (*SuilPortSubscribeFunc)(SuilController            controller,
+                                          uint32_t                  port_index,
+                                          uint32_t                  protocol,
+                                          const LV2_Feature* const* features);
+
 
 /** Function to unsubscribe from notifications for a port. */
-typedef uint32_t (*SuilPortUnsubscribeFunc)(SuilController controller,
-                                            uint32_t       port_index,
-                                            uint32_t       protocol);
+typedef uint32_t (*SuilPortUnsubscribeFunc)(SuilController            controller,
+                                            uint32_t                  port_index,
+                                            uint32_t                  protocol,
+                                            const LV2_Feature* const* features);
 
 /**
    Create a new UI host descriptor.
