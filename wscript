@@ -7,7 +7,7 @@ from waflib.extras import autowaf as autowaf
 import waflib.Logs as Logs, waflib.Options as Options
 
 # Version of this package (even if built as a child)
-SUIL_VERSION = '0.0.0'
+SUIL_VERSION = '0.1.0'
 
 # Library version (UNIX style major, minor, micro)
 # major increment <=> incompatible changes
@@ -70,7 +70,7 @@ def build(bld):
     # Library
     obj = bld(features        = 'c cshlib',
               export_includes = ['.'],
-              source          = 'src/instance.c',
+              source          = 'src/host.c src/instance.c',
               target          = 'suil',
               includes        = ['.'],
               name            = 'libsuil',

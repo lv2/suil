@@ -29,6 +29,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+
 #ifdef __WIN32__
 #include <windows.h>
 #define dlopen(path, flags) LoadLibrary(path)
@@ -44,12 +46,19 @@ static inline char* dlerror(void) { return "Unknown error"; }
 #define SUIL_ERRORF(fmt, ...) fprintf(stderr, "error: %s: " fmt, \
                                       __func__, __VA_ARGS__)
 
+struct _SuilHost {
+	SuilPortWriteFunc       write_func;
+	SuilPortIndexFunc       index_func;
+	SuilPortSubscribeFunc   subscribe_func;
+	SuilPortUnsubscribeFunc unsubscribe_func;
+};
+
 struct _SuilInstance {
 	void*                   lib_handle;
 	const LV2UI_Descriptor* descriptor;
 	LV2UI_Handle            handle;
-	LV2UI_Widget            ui_widget;
-	LV2UI_Widget            host_widget;
+	SuilWidget              ui_widget;
+	SuilWidget              host_widget;
 };
 
 /** Type of a module's suil_wrap_init function.

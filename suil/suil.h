@@ -33,7 +33,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 #ifdef SUIL_SHARED
 #    ifdef __WIN32__
@@ -62,48 +62,116 @@ extern "C" {
    @{
 */
 
+/**
+   UI host descriptor.
+
+   This contains the various functions that a plugin UI may use to communicate
+   with the plugin.  It is passed to @ref suil_instance_new to provide
+   these functions to the UI.
+*/
+typedef struct _SuilHost* SuilHost;
+
 /** An instance of an LV2 plugin UI. */
 typedef struct _SuilInstance* SuilInstance;
 
+/** Opaque pointer to a UI widget. */
+typedef void* SuilWidget;
+
 /**
-   Return true iff it is possible to load a UI of a given type.
+   UI controller.
+
+   This is an opaque pointer passed by the user which is passed to the various
+   UI control functions (e.g. SuilPortWriteFunc).  It is typically used to pass
+   a pointer to some controller object the host uses to communicate with
+   plugins.
+*/
+typedef void* SuilController;
+
+/** Function to write/send a value to a port. */
+typedef void (*SuilPortWriteFunc)(SuilController controller,
+                                  uint32_t       port_index,
+                                  uint32_t       buffer_size,
+                                  uint32_t       protocol,
+                                  void const*    buffer);
+
+/** Function to return the index for a port by symbol. */
+typedef uint32_t (*SuilPortIndexFunc)(SuilController controller,
+                                      const char*    port_symbol);
+
+/** Function to subscribe to notifications for a port. */
+typedef uint32_t (*SuilPortSubscribeFunc)(SuilController controller,
+                                          uint32_t       port_index,
+                                          uint32_t       protocol);
+
+/** Function to unsubscribe from notifications for a port. */
+typedef uint32_t (*SuilPortUnsubscribeFunc)(SuilController controller,
+                                            uint32_t       port_index,
+                                            uint32_t       protocol);
+
+/**
+   Create a new UI host descriptor.
+   @param write_func Function to send a value to a plugin port.
+   @param index_func Function to get the index for a port by symbol.
+   @param subscribe_func Function to subscribe to port updates.
+   @param unsubscribe_func Function to unsubscribe from port updates.
+*/
+SUIL_API
+SuilHost
+suil_host_new(SuilPortWriteFunc       write_func,
+              SuilPortIndexFunc       index_func,
+              SuilPortSubscribeFunc   subscribe_func,
+              SuilPortUnsubscribeFunc unsubscribe_func);
+
+/**
+   Free @a host.
+*/
+SUIL_API
+void
+suil_host_free(SuilHost host);
+
+/**
+   Check if suil can wrap a UI type.
    @param host_type_uri The URI of the desired widget type of the host,
    corresponding to the @a type_uri parameter of @ref suil_instance_new.
    @param ui_type_uri The URI of the UI widget type.
+   @return 0 if wrapping is unsupported, otherwise the quality of the wrapping
+   where 1 is the highest quality (direct native embedding with no wrapping)
+   and increaing values are of a progressively lower quality and/or stability.
 */
 SUIL_API
-bool
-suil_ui_type_supported(const char* host_type_uri,
-                       const char* ui_type_uri);
+unsigned
+suil_ui_supported(const char* host_type_uri,
+                  const char* ui_type_uri);
 
 /**
    Instantiate a UI for an LV2 plugin.
+   @param host Host descriptor.
+   @param controller Opaque host controller pointer.
+   @param container_type_uri URI of the desired host container widget type.
    @param plugin_uri URI of the plugin to instantiate this UI for.
    @param ui_uri URI of a specifically desired UI, or NULL to use the
    best choice given @a type_uri.
+   @param ui_type_uri URI of the actual UI widget type.
    @param ui_bundle_path Path of the UI bundle.
    @param ui_binary_path Path of the UI binary.
-   @param ui_type_uri URI of the actual UI widget type.
-   @param host_type_uri URI of the desired widget type.
-   @param write_function Write function as defined by the LV2 UI extension.
-   @param controller Opaque controller to be passed to @a write_function.
    @param features NULL-terminated array of supported features, or NULL.
    @return A new UI instance, or NULL if instantiation failed.
 */
 SUIL_API
 SuilInstance
-suil_instance_new(const char*               plugin_uri,
+suil_instance_new(SuilHost                  host,
+                  SuilController            controller,
+                  const char*               container_type_uri,
+                  const char*               plugin_uri,
                   const char*               ui_uri,
+                  const char*               ui_type_uri,
                   const char*               ui_bundle_path,
                   const char*               ui_binary_path,
-                  const char*               ui_type_uri,
-                  const char*               host_type_uri,
-                  LV2UI_Write_Function      write_function,
-                  LV2UI_Controller          controller,
                   const LV2_Feature* const* features);
 
 /**
    Free a plugin UI instance.
+
    The caller must ensure all references to the UI have been dropped before
    calling this function (e.g. it has been removed from its parent).
 */
@@ -112,30 +180,15 @@ void
 suil_instance_free(SuilInstance instance);
 
 /**
-   Get the LV2UI_Descriptor of a UI instance.
-   This function should not be needed under normal circumstances.
-*/
-SUIL_API
-const LV2UI_Descriptor*
-suil_instance_get_descriptor(SuilInstance instance);
-
-/**
-   Get the LV2UI_Handle of a UI instance.
-   This function should not be needed under normal circumstances.
-*/
-SUIL_API
-LV2UI_Handle
-suil_instance_get_handle(SuilInstance instance);
-
-/**
    Get the widget for a UI instance.
+
    Returns an opaque pointer to a widget, the type of which is defined by the
    corresponding parameter to suil_instantiate. Note this may be a wrapper
-   widget created by Suil, and not necessarily an LV2UI_Widget implemented
-   in an LV2 bundle.
+   widget created by Suil, and not necessarily the widget directly implemented
+   by the UI.
 */
 SUIL_API
-LV2UI_Widget
+SuilWidget
 suil_instance_get_widget(SuilInstance instance);
 
 /**

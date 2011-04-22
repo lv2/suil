@@ -39,14 +39,25 @@
 #define QT4_UI_URI  NS_UI "Qt4UI"
 
 SUIL_API
-bool
-suil_ui_type_supported(const char* host_type_uri,
-                       const char* ui_type_uri)
+unsigned
+suil_ui_supported(const char* container_type_uri,
+                  const char* ui_type_uri)
 {
-	return (!strcmp(host_type_uri, GTK2_UI_URI)
-	        || !strcmp(host_type_uri, QT4_UI_URI))
-		&& (!strcmp(ui_type_uri, GTK2_UI_URI)
-		    || !strcmp(ui_type_uri, QT4_UI_URI));
+	enum {
+		SUIL_WRAPPING_UNSUPPORTED = 0,
+		SUIL_WRAPPING_NATIVE      = 1,
+		SUIL_WRAPPING_EMBEDDED    = 2
+	};
+	if (!strcmp(container_type_uri, ui_type_uri)) {
+		return SUIL_WRAPPING_NATIVE;
+	} else if ((!strcmp(container_type_uri, GTK2_UI_URI)
+	            && !strcmp(ui_type_uri, QT4_UI_URI))
+	           || (!strcmp(container_type_uri, QT4_UI_URI)
+	               && !strcmp(ui_type_uri, GTK2_UI_URI))) {
+		return SUIL_WRAPPING_EMBEDDED;
+	} else {
+		return SUIL_WRAPPING_UNSUPPORTED;
+	}
 }
 
 struct _SuilModule {
@@ -57,25 +68,25 @@ struct _SuilModule {
 typedef struct _SuilModule* SuilModule;
 
 static SuilModule
-get_wrap_module(const char* host_type_uri,
+get_wrap_module(const char* container_type_uri,
                 const char* ui_type_uri)
 {
-	if (!strcmp(host_type_uri, ui_type_uri)) {
+	if (!strcmp(container_type_uri, ui_type_uri)) {
 		return NULL;
 	}
 
 	const char* module_name = NULL;
-	if (!strcmp(host_type_uri, QT4_UI_URI)
+	if (!strcmp(container_type_uri, QT4_UI_URI)
 	    && !strcmp(ui_type_uri, GTK2_UI_URI)) {
 		module_name = "libsuil_gtk2_in_qt4";
-	} else if (!strcmp(host_type_uri, GTK2_UI_URI)
+	} else if (!strcmp(container_type_uri, GTK2_UI_URI)
 	    && !strcmp(ui_type_uri, QT4_UI_URI)) {
 		module_name = "libsuil_qt4_in_gtk2";
 	}
 
 	if (!module_name) {
 		SUIL_ERRORF("Unable to wrap UI type <%s> as type <%s>\n",
-		            ui_type_uri, host_type_uri);
+		            ui_type_uri, container_type_uri);
 		return NULL;
 	}
 
@@ -114,14 +125,14 @@ get_wrap_module(const char* host_type_uri,
 
 SUIL_API
 SuilInstance
-suil_instance_new(const char*               plugin_uri,
+suil_instance_new(SuilHost                  host,
+                  SuilController            controller,
+                  const char*               container_type_uri,
+                  const char*               plugin_uri,
                   const char*               ui_uri,
+                  const char*               ui_type_uri,
                   const char*               ui_bundle_path,
                   const char*               ui_binary_path,
-                  const char*               ui_type_uri,
-                  const char*               host_type_uri,
-                  LV2UI_Write_Function      write_function,
-                  LV2UI_Controller          controller,
                   const LV2_Feature* const* features)
 {
 	// Open UI library
@@ -166,9 +177,9 @@ suil_instance_new(const char*               plugin_uri,
 		features = (const LV2_Feature* const*)&local_features;
 	}
 
-	SuilModule module = get_wrap_module(host_type_uri, ui_type_uri);
+	SuilModule module = get_wrap_module(container_type_uri, ui_type_uri);
 	if (module) {
-		module->init(host_type_uri, ui_type_uri, features);
+		module->init(container_type_uri, ui_type_uri, features);
 	}
 
 	// Instantiate UI
@@ -181,7 +192,7 @@ suil_instance_new(const char*               plugin_uri,
 		descriptor,
 		plugin_uri,
 		ui_bundle_path,
-		write_function,
+		host->write_func,
 		controller,
 		&instance->ui_widget,
 		features);
@@ -204,9 +215,9 @@ suil_instance_new(const char*               plugin_uri,
 	}
 
 	if (module) {
-		if (module->wrap(host_type_uri, ui_type_uri, instance)) {
+		if (module->wrap(container_type_uri, ui_type_uri, instance)) {
 			SUIL_ERRORF("Failed to wrap UI <%s> in type <%s>\n",
-			            ui_uri, host_type_uri);
+			            ui_uri, container_type_uri);
 			suil_instance_free(instance);
 			return NULL;
 		}
