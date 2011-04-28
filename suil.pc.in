@@ -3,8 +3,8 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: libsuil
+Name: Suil
 Version: @SUIL_VERSION@
 Description: LV2 plugin UI hosting library
-Libs: -L${libdir} -lsuil
-Cflags: -I${includedir}
+Libs: -L${libdir} -lsuil-@SUIL_MAJOR_VERSION@
+Cflags: -I${includedir}/suil-@SUIL_MAJOR_VERSION@

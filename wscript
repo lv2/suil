@@ -7,7 +7,8 @@ from waflib.extras import autowaf as autowaf
 import waflib.Logs as Logs, waflib.Options as Options
 
 # Version of this package (even if built as a child)
-SUIL_VERSION = '0.2.0'
+SUIL_VERSION       = '0.2.0'
+SUIL_MAJOR_VERSION = '0'
 
 # Library version (UNIX style major, minor, micro)
 # major increment <=> incompatible changes
@@ -55,10 +56,12 @@ def configure(conf):
 
 def build(bld):
     # C Headers
-    bld.install_files('${INCLUDEDIR}/suil', bld.path.ant_glob('suil/*.h'))
+    includedir = '${INCLUDEDIR}/suil-%s/suil' % SUIL_MAJOR_VERSION
+    bld.install_files(includedir, bld.path.ant_glob('suil/*.h'))
 
     # Pkgconfig file
-    autowaf.build_pc(bld, 'SUIL', SUIL_VERSION, [])
+    autowaf.build_pc(bld, 'SUIL', SUIL_VERSION, SUIL_MAJOR_VERSION, [],
+                     {'SUIL_MAJOR_VERSION' : SUIL_MAJOR_VERSION})
 
     cflags    = [ '-DSUIL_SHARED',
                   '-DSUIL_INTERNAL' ]
@@ -71,7 +74,7 @@ def build(bld):
     obj = bld(features        = 'c cshlib',
               export_includes = ['.'],
               source          = 'src/host.c src/instance.c',
-              target          = 'suil',
+              target          = 'suil-%s' % SUIL_MAJOR_VERSION,
               includes        = ['.'],
               name            = 'libsuil',
               vnum            = SUIL_LIB_VERSION,
