@@ -115,8 +115,8 @@ get_wrap_module(const char* container_type_uri,
 }
 
 SUIL_API
-SuilInstance
-suil_instance_new(SuilHost                  host,
+SuilInstance*
+suil_instance_new(SuilHost*                 host,
                   SuilController            controller,
                   const char*               container_type_uri,
                   const char*               plugin_uri,
@@ -174,7 +174,7 @@ suil_instance_new(SuilHost                  host,
 	}
 
 	// Instantiate UI
-	struct _SuilInstance* instance = malloc(sizeof(struct _SuilInstance));
+	SuilInstance* instance = malloc(sizeof(struct SuilInstanceImpl));
 	instance->lib_handle  = lib;
 	instance->descriptor  = descriptor;
 	instance->host_widget = NULL;
@@ -221,7 +221,7 @@ suil_instance_new(SuilHost                  host,
 
 SUIL_API
 void
-suil_instance_free(SuilInstance instance)
+suil_instance_free(SuilInstance* instance)
 {
 	if (instance) {
 		instance->descriptor->cleanup(instance->handle);
@@ -231,33 +231,19 @@ suil_instance_free(SuilInstance instance)
 }
 
 SUIL_API
-const LV2UI_Descriptor*
-suil_instance_get_descriptor(SuilInstance instance)
-{
-	return instance->descriptor;
-}
-
-SUIL_API
-LV2UI_Handle
-suil_instance_get_handle(SuilInstance instance)
-{
-	return instance->handle;
-}
-
-SUIL_API
 LV2UI_Widget
-suil_instance_get_widget(SuilInstance instance)
+suil_instance_get_widget(SuilInstance* instance)
 {
 	return instance->host_widget;
 }
 
 SUIL_API
 void
-suil_instance_port_event(SuilInstance instance,
-                         uint32_t     port_index,
-                         uint32_t     buffer_size,
-                         uint32_t     format,
-                         const void*  buffer)
+suil_instance_port_event(SuilInstance* instance,
+                         uint32_t      port_index,
+                         uint32_t      buffer_size,
+                         uint32_t      format,
+                         const void*   buffer)
 {
 	instance->descriptor->port_event(instance->handle,
 	                                 port_index,
@@ -268,8 +254,8 @@ suil_instance_port_event(SuilInstance instance,
 
 SUIL_API
 const void*
-suil_instance_extension_data(SuilInstance instance,
-                             const char*  uri)
+suil_instance_extension_data(SuilInstance* instance,
+                             const char*   uri)
 {
 	return instance->descriptor->extension_data(uri);
 }

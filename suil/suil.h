@@ -60,10 +60,10 @@ extern "C" {
    with the plugin.  It is passed to @ref suil_instance_new to provide
    these functions to the UI.
 */
-typedef struct _SuilHost* SuilHost;
+typedef struct SuilHostImpl SuilHost;
 
 /** An instance of an LV2 plugin UI. */
-typedef struct _SuilInstance* SuilInstance;
+typedef struct SuilInstanceImpl SuilInstance;
 
 /** Opaque pointer to a UI widget. */
 typedef void* SuilWidget;
@@ -110,7 +110,7 @@ typedef uint32_t (*SuilPortUnsubscribeFunc)(SuilController            controller
    @param unsubscribe_func Function to unsubscribe from port updates.
 */
 SUIL_API
-SuilHost
+SuilHost*
 suil_host_new(SuilPortWriteFunc       write_func,
               SuilPortIndexFunc       index_func,
               SuilPortSubscribeFunc   subscribe_func,
@@ -121,7 +121,7 @@ suil_host_new(SuilPortWriteFunc       write_func,
 */
 SUIL_API
 void
-suil_host_free(SuilHost host);
+suil_host_free(SuilHost* host);
 
 /**
    Check if suil can wrap a UI type.
@@ -152,8 +152,8 @@ suil_ui_supported(const char* host_type_uri,
    @return A new UI instance, or NULL if instantiation failed.
 */
 SUIL_API
-SuilInstance
-suil_instance_new(SuilHost                  host,
+SuilInstance*
+suil_instance_new(SuilHost*                 host,
                   SuilController            controller,
                   const char*               container_type_uri,
                   const char*               plugin_uri,
@@ -171,7 +171,7 @@ suil_instance_new(SuilHost                  host,
 */
 SUIL_API
 void
-suil_instance_free(SuilInstance instance);
+suil_instance_free(SuilInstance* instance);
 
 /**
    Get the widget for a UI instance.
@@ -183,26 +183,26 @@ suil_instance_free(SuilInstance instance);
 */
 SUIL_API
 SuilWidget
-suil_instance_get_widget(SuilInstance instance);
+suil_instance_get_widget(SuilInstance* instance);
 
 /**
    Notify the UI about a change in a plugin port.
 */
 SUIL_API
 void
-suil_instance_port_event(SuilInstance instance,
-                         uint32_t     port_index,
-                         uint32_t     buffer_size,
-                         uint32_t     format,
-                         const void*  buffer);
+suil_instance_port_event(SuilInstance* instance,
+                         uint32_t      port_index,
+                         uint32_t      buffer_size,
+                         uint32_t      format,
+                         const void*   buffer);
 
 /**
    Return a data structure defined by some LV2 extension URI.
 */
 SUIL_API
 const void*
-suil_instance_extension_data(SuilInstance instance,
-                             const char*  uri);
+suil_instance_extension_data(SuilInstance* instance,
+                             const char*   uri);
 
 /**
    @}

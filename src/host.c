@@ -17,13 +17,13 @@
 #include "suil_internal.h"
 
 SUIL_API
-SuilHost
+SuilHost*
 suil_host_new(SuilPortWriteFunc       write_func,
               SuilPortIndexFunc       index_func,
               SuilPortSubscribeFunc   subscribe_func,
               SuilPortUnsubscribeFunc unsubscribe_func)
 {
-	SuilHost host = malloc(sizeof(struct _SuilHost));
+	SuilHost* host = malloc(sizeof(struct SuilHostImpl));
 	host->write_func       = write_func;
 	host->index_func       = index_func;
 	host->subscribe_func   = subscribe_func;
@@ -33,7 +33,7 @@ suil_host_new(SuilPortWriteFunc       write_func,
 
 SUIL_API
 void
-suil_host_free(SuilHost host)
+suil_host_free(SuilHost* host)
 {
 	free(host);
 }

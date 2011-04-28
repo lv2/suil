@@ -62,7 +62,7 @@ GType wrap_widget_get_type(void);  // Accessor for GTK_TYPE_WIDGET
 
 struct _WrapWidgetPrivate {
 	QX11EmbedWidget* qembed;
-	SuilInstance     instance;
+	SuilInstance*    instance;
 };
 
 G_DEFINE_TYPE(WrapWidget, wrap_widget, GTK_TYPE_SOCKET);
@@ -116,9 +116,9 @@ wrap_widget_realize(GtkWidget* w, gpointer data)
 
 SUIL_API
 int
-suil_wrap(const char*  host_type_uri,
-          const char*  ui_type_uri,
-          SuilInstance instance)
+suil_wrap(const char*   host_type_uri,
+          const char*   ui_type_uri,
+          SuilInstance* instance)
 {
 	WrapWidget* const wrap = WRAP_WIDGET(g_object_new(WRAP_TYPE_WIDGET, NULL));
 

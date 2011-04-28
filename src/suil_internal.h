@@ -37,14 +37,14 @@ static inline char* dlerror(void) { return "Unknown error"; }
 #define SUIL_ERRORF(fmt, ...) fprintf(stderr, "error: %s: " fmt, \
                                       __func__, __VA_ARGS__)
 
-struct _SuilHost {
+struct SuilHostImpl {
 	SuilPortWriteFunc       write_func;
 	SuilPortIndexFunc       index_func;
 	SuilPortSubscribeFunc   subscribe_func;
 	SuilPortUnsubscribeFunc unsubscribe_func;
 };
 
-struct _SuilInstance {
+struct SuilInstanceImpl {
 	void*                   lib_handle;
 	const LV2UI_Descriptor* descriptor;
 	LV2UI_Handle            handle;
@@ -61,9 +61,9 @@ typedef int (*SuilWrapInitFunc)(const char*               host_type_uri,
                                 const char*               ui_type_uri,
                                 const LV2_Feature* const* features);
 
-typedef int (*SuilWrapFunc)(const char*  host_type_uri,
-                            const char*  ui_type_uri,
-                            SuilInstance instance);
+typedef int (*SuilWrapFunc)(const char*   host_type_uri,
+                            const char*   ui_type_uri,
+                            SuilInstance* instance);
 
 typedef void (*SuilVoidFunc)();
 
