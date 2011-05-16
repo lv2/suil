@@ -29,7 +29,7 @@ def options(opt):
     autowaf.set_options(opt)
 
 def configure(conf):
-    conf.line_just = max(conf.line_just, 56)
+    conf.line_just = 56
     autowaf.configure(conf)
     autowaf.display_header('Suil Configuration')
 
