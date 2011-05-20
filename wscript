@@ -39,7 +39,12 @@ def configure(conf):
     autowaf.check_header(conf, 'lv2/lv2plug.in/ns/extensions/ui/ui.h')
 
     autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
-                      atleast_version='2.0.0', mandatory=False)
+                      atleast_version='2.18.0', mandatory=False)
+    if not conf.env['HAVE_GTK2']:
+        autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
+                          atleast_version='2.0.0', mandatory=False)
+        if conf.env['HAVE_GTK']:
+            autowaf.define('SUIL_OLD_GTK', 1)
 
     autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
                       atleast_version='4.0.0', mandatory=False)
