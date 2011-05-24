@@ -108,15 +108,21 @@ def build(bld):
     autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)
 
     bld.add_post_fun(autowaf.run_ldconfig)
+    if bld.env['DOCS']:
+        bld.add_post_fun(fix_docs)
 
 def fix_docs(ctx):
     try:
+        top = os.getcwd()
         os.chdir('build/doc/html')
         os.system("sed -i 's/SUIL_API //' group__suil.html")
         os.system("sed -i 's/SUIL_DEPRECATED //' group__suil.html")
         os.remove('index.html')
         os.symlink('group__suil.html',
                    'index.html')
+        os.chdir(top)
+        os.chdir('build/doc/man/man3')
+        os.system("sed -i 's/SUIL_API //' suil.3")
     except Exception, e:
         Logs.error("Failed to fix up Doxygen documentation (%s)\n" % e)
 
