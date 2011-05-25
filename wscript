@@ -114,23 +114,30 @@ def build(bld):
     if bld.env['DOCS']:
         bld.add_post_fun(fix_docs)
 
+def build_dir(ctx, subdir):
+    if autowaf.is_child():
+        return os.path.join('build', APPNAME, subdir)
+    else:
+        return os.path.join('build', subdir)
+
 def fix_docs(ctx):
     try:
         top = os.getcwd()
-        os.chdir('build/doc/html')
+        os.chdir(build_dir(ctx, 'doc/html'))
         os.system("sed -i 's/SUIL_API //' group__suil.html")
         os.system("sed -i 's/SUIL_DEPRECATED //' group__suil.html")
         os.remove('index.html')
         os.symlink('group__suil.html',
                    'index.html')
         os.chdir(top)
-        os.chdir('build/doc/man/man3')
+        os.chdir(build_dir(ctx, 'doc/man/man3'))
         os.system("sed -i 's/SUIL_API //' suil.3")
-    except:
-        Logs.error("Failed to fix up documentation\n")
+        os.chdir(top)
+    except Exception:
+        Logs.error("Failed to fix up %s documentation" % APPNAME)
 
 def upload_docs(ctx):
-    os.system("rsync -avz --delete -e ssh build/doc/html/* drobilla@drobilla.net:~/drobilla.net/docs/suil")
+    os.system("rsync -ravz --delete -e ssh build/doc/html/ drobilla@drobilla.net:~/drobilla.net/docs/suil/")
 
 def lint(ctx):
     subprocess.call('cpplint.py --filter=-whitespace,+whitespace/comments,-build/header_guard,-readability/casting,-readability/todo src/* suil/*', shell=True)
