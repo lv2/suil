@@ -117,7 +117,7 @@ suil_host_new(SuilPortWriteFunc       write_func,
               SuilPortUnsubscribeFunc unsubscribe_func);
 
 /**
-   Free @a host.
+   Free @c host.
 */
 SUIL_API
 void
@@ -126,7 +126,7 @@ suil_host_free(SuilHost* host);
 /**
    Check if suil can wrap a UI type.
    @param host_type_uri The URI of the desired widget type of the host,
-   corresponding to the @a type_uri parameter of @ref suil_instance_new.
+   corresponding to the @c type_uri parameter of @ref suil_instance_new.
    @param ui_type_uri The URI of the UI widget type.
    @return 0 if wrapping is unsupported, otherwise the quality of the wrapping
    where 1 is the highest quality (direct native embedding with no wrapping)
@@ -143,8 +143,7 @@ suil_ui_supported(const char* host_type_uri,
    @param controller Opaque host controller pointer.
    @param container_type_uri URI of the desired host container widget type.
    @param plugin_uri URI of the plugin to instantiate this UI for.
-   @param ui_uri URI of a specifically desired UI, or NULL to use the
-   best choice given @a type_uri.
+   @param ui_uri URI of the specifically desired UI.
    @param ui_type_uri URI of the actual UI widget type.
    @param ui_bundle_path Path of the UI bundle.
    @param ui_binary_path Path of the UI binary.
@@ -176,10 +175,10 @@ suil_instance_free(SuilInstance* instance);
 /**
    Get the widget for a UI instance.
 
-   Returns an opaque pointer to a widget, the type of which is defined by the
-   corresponding parameter to suil_instantiate. Note this may be a wrapper
-   widget created by Suil, and not necessarily the widget directly implemented
-   by the UI.
+   Returns an opaque pointer to a widget, the type of which matches the @c
+   container_type_uri parameter of @ref suil_instance_new.  Note this may be a
+   wrapper widget created by Suil, and not necessarily the widget directly
+   implemented by the UI.
 */
 SUIL_API
 SuilWidget
