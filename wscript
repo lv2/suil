@@ -7,7 +7,7 @@ from waflib.extras import autowaf as autowaf
 import waflib.Logs as Logs, waflib.Options as Options
 
 # Version of this package (even if built as a child)
-SUIL_VERSION       = '0.2.0'
+SUIL_VERSION       = '0.4.0'
 SUIL_MAJOR_VERSION = '0'
 
 # Library version (UNIX style major, minor, micro)
@@ -50,7 +50,8 @@ def configure(conf):
                       atleast_version='4.0.0', mandatory=False)
 
     autowaf.define(conf, 'SUIL_VERSION', SUIL_VERSION)
-    autowaf.define(conf, 'SUIL_MODULE_DIR', conf.env['LIBDIR'] + '/suil')
+    autowaf.define(conf, 'SUIL_MODULE_DIR',
+                   conf.env['LIBDIR'] + '/suil-' + SUIL_MAJOR_VERSION)
     autowaf.define(conf, 'SUIL_DIR_SEP', '/')
     autowaf.define(conf, 'SUIL_MODULE_EXT', '.so')
     conf.write_config_header('suil-config.h', remove=False)
@@ -75,6 +76,8 @@ def build(bld):
         cflags    += [ '-fvisibility=hidden' ]
         linkflags += [ '-ldl' ]
 
+    module_dir = '${LIBDIR}/suil-' + SUIL_MAJOR_VERSION
+
     # Library
     obj = bld(features        = 'c cshlib',
               export_includes = ['.'],
@@ -92,7 +95,7 @@ def build(bld):
                   source       = 'src/gtk2_in_qt4.cpp',
                   target       = 'suil_gtk2_in_qt4',
                   includes     = ['.'],
-                  install_path = '${LIBDIR}/suil',
+                  install_path = module_dir,
                   cflags       = cflags)
         autowaf.use_lib(bld, obj, 'GTK2 QT4')
 
@@ -100,7 +103,7 @@ def build(bld):
                   source       = 'src/qt4_in_gtk2.cpp',
                   target       = 'suil_qt4_in_gtk2',
                   includes     = ['.'],
-                  install_path = '${LIBDIR}/suil',
+                  install_path = module_dir,
                   cflags       = cflags)
         autowaf.use_lib(bld, obj, 'GTK2 QT4')
 
