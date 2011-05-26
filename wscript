@@ -7,7 +7,7 @@ from waflib.extras import autowaf as autowaf
 import waflib.Logs as Logs, waflib.Options as Options
 
 # Version of this package (even if built as a child)
-SUIL_VERSION       = '0.4.0'
+SUIL_VERSION       = '0.4.2'
 SUIL_MAJOR_VERSION = '0'
 
 # Library version (UNIX style major, minor, micro)
@@ -54,6 +54,9 @@ def configure(conf):
                    conf.env['LIBDIR'] + '/suil-' + SUIL_MAJOR_VERSION)
     autowaf.define(conf, 'SUIL_DIR_SEP', '/')
     autowaf.define(conf, 'SUIL_MODULE_EXT', '.so')
+
+    conf.env['LIB_SUIL'] = ['suil-%s' % SUIL_MAJOR_VERSION]
+
     conf.write_config_header('suil-config.h', remove=False)
 
     autowaf.display_msg(conf, "Gtk2 Support", conf.is_defined('HAVE_GTK2'))
