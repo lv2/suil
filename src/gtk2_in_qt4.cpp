@@ -30,7 +30,7 @@ suil_wrap_init(const char*               host_type_uri,
                const char*               ui_type_uri,
                const LV2_Feature* const* features)
 {
-	// TODO: What Gtk initialisation is required here?
+	gtk_init(0, NULL);
 	return 0;
 }
 
@@ -41,15 +41,14 @@ suil_wrap(const char*   host_type_uri,
           const char*   ui_type_uri,
           SuilInstance* instance)
 {
-	GtkWidget* const plug = gtk_plug_new(0);
-	GtkWidget* const widget = (GtkWidget*)instance->ui_widget;
+	QX11EmbedContainer* const wrapper = new QX11EmbedContainer();
+	GtkWidget* const          plug    = gtk_plug_new(wrapper->winId());
+	GtkWidget* const          widget  = (GtkWidget*)instance->ui_widget;
+
+	//wrapper->embedClient(gtk_plug_get_id(GTK_PLUG(plug)));
 
 	gtk_container_add(GTK_CONTAINER(plug), widget);
-
 	gtk_widget_show_all(plug);
-
-	QX11EmbedContainer* const wrapper = new QX11EmbedContainer();
-	wrapper->embedClient(gtk_plug_get_id(GTK_PLUG(plug)));
 
 #ifdef SUIL_OLD_GTK
 	wrapper->resize(widget->allocation.width, widget->allocation.height);
