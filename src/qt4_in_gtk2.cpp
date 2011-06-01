@@ -29,7 +29,8 @@ static QApplication application(argc, NULL, true);
 
 SUIL_API
 int
-suil_wrap_init(const char*               host_type_uri,
+suil_wrap_init(SuilHost*                 host,
+               const char*               host_type_uri,
                const char*               ui_type_uri,
                const LV2_Feature* const* features)
 {

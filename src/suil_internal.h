@@ -42,6 +42,7 @@ struct SuilHostImpl {
 	SuilPortIndexFunc       index_func;
 	SuilPortSubscribeFunc   subscribe_func;
 	SuilPortUnsubscribeFunc unsubscribe_func;
+	void*                   gtk_lib;
 };
 
 struct SuilInstanceImpl {
@@ -52,12 +53,15 @@ struct SuilInstanceImpl {
 	SuilWidget              host_widget;
 };
 
-/** Type of a module's suil_wrap_init function.
- * This initialisation function must be called before instantiating any
- * UI that will need to be wrapped by this wrapper (e.g. it will perform any
- * initialisation required to create a widget for the given toolkit).
- */
-typedef int (*SuilWrapInitFunc)(const char*               host_type_uri,
+/**
+   Type of a module's suil_wrap_init function.
+
+   This initialisation function must be called before instantiating any UI that
+   will need to be wrapped by this wrapper (e.g. it will perform any
+   initialisation required to create a widget for the given toolkit).
+*/
+typedef int (*SuilWrapInitFunc)(SuilHost*                 host,
+                                const char*               host_type_uri,
                                 const char*               ui_type_uri,
                                 const LV2_Feature* const* features);
 

@@ -21,16 +21,32 @@
 #include <gdk/gdkx.h>
 
 #include "suil_internal.h"
+#include "suil-config.h"
 
 extern "C" {
 
 SUIL_API
 int
-suil_wrap_init(const char*               host_type_uri,
+suil_wrap_init(SuilHost*                 host,
+               const char*               host_type_uri,
                const char*               ui_type_uri,
                const LV2_Feature* const* features)
 {
-	gtk_init(0, NULL);
+	/* We have to open libgtk here, so Gtk type symbols are present and will be
+	   found by the introspection stuff.  This is required at least to make
+	   GtkBuilder use in UIs work, otherwise they will cause "Invalid object
+	   type" errors.
+	*/
+	if (!host->gtk_lib) {
+		dlerror();
+		host->gtk_lib = dlopen(SUIL_GTK2_LIB_NAME, RTLD_LAZY|RTLD_GLOBAL);
+		if (!host->gtk_lib) {
+			fprintf(stderr, "Failed to open %s (%s)\n",
+			        SUIL_GTK2_LIB_NAME, dlerror());
+		}
+		return 1;
+	}
+
 	return 0;
 }
 

@@ -7,7 +7,7 @@ from waflib.extras import autowaf as autowaf
 import waflib.Logs as Logs, waflib.Options as Options
 
 # Version of this package (even if built as a child)
-SUIL_VERSION       = '0.4.2'
+SUIL_VERSION       = '0.4.3'
 SUIL_MAJOR_VERSION = '0'
 
 # Library version (UNIX style major, minor, micro)
@@ -27,6 +27,9 @@ out = 'build'
 
 def options(opt):
     autowaf.set_options(opt)
+    opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
+                   default="libgtk-x11-2.0.so",
+                   help="Gtk2 library name [Default: libgtk-x11-2.0.so]")
 
 def configure(conf):
     conf.line_just = 56
@@ -54,13 +57,18 @@ def configure(conf):
                    conf.env['LIBDIR'] + '/suil-' + SUIL_MAJOR_VERSION)
     autowaf.define(conf, 'SUIL_DIR_SEP', '/')
     autowaf.define(conf, 'SUIL_MODULE_EXT', '.so')
+    autowaf.define(conf, 'SUIL_GTK2_LIB_NAME', Options.options.gtk2_lib_name);
 
     conf.env['LIB_SUIL'] = ['suil-%s' % SUIL_MAJOR_VERSION]
 
     conf.write_config_header('suil-config.h', remove=False)
 
-    autowaf.display_msg(conf, "Gtk2 Support", conf.is_defined('HAVE_GTK2'))
-    autowaf.display_msg(conf, "Qt4 Support", conf.is_defined('HAVE_QT4'))
+    autowaf.display_msg(conf, "Gtk2 Support",
+                        conf.is_defined('HAVE_GTK2'))
+    autowaf.display_msg(conf, "Gtk2 Library Name",
+                        conf.env['SUIL_GTK2_LIB_NAME'])
+    autowaf.display_msg(conf, "Qt4 Support",
+                        conf.is_defined('HAVE_QT4'))
     print('')
 
 def build(bld):

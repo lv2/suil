@@ -28,6 +28,7 @@ suil_host_new(SuilPortWriteFunc       write_func,
 	host->index_func       = index_func;
 	host->subscribe_func   = subscribe_func;
 	host->unsubscribe_func = unsubscribe_func;
+	host->gtk_lib          = NULL;
 	return host;
 }
 
@@ -35,5 +36,8 @@ SUIL_API
 void
 suil_host_free(SuilHost* host)
 {
+	if (host->gtk_lib) {
+		dlclose(host->gtk_lib);
+	}
 	free(host);
 }

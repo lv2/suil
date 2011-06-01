@@ -170,7 +170,7 @@ suil_instance_new(SuilHost*                 host,
 
 	SuilModule module = get_wrap_module(container_type_uri, ui_type_uri);
 	if (module) {
-		module->init(container_type_uri, ui_type_uri, features);
+		module->init(host, container_type_uri, ui_type_uri, features);
 	}
 
 	// Instantiate UI
