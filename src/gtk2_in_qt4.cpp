@@ -43,8 +43,9 @@ suil_wrap_init(SuilHost*                 host,
 		if (!host->gtk_lib) {
 			fprintf(stderr, "Failed to open %s (%s)\n",
 			        SUIL_GTK2_LIB_NAME, dlerror());
+			return 1;
 		}
-		return 1;
+		gtk_init(NULL, NULL);
 	}
 
 	return 0;
