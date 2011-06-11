@@ -36,8 +36,10 @@ SUIL_API
 void
 suil_host_free(SuilHost* host)
 {
-	if (host->gtk_lib) {
-		dlclose(host->gtk_lib);
+	if (host) {
+		if (host->gtk_lib) {
+			dlclose(host->gtk_lib);
+		}
+		free(host);
 	}
-	free(host);
 }
