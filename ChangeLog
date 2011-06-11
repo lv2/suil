@@ -1,8 +1,8 @@
-suil (UNRELEASED) unstable; urgency=low
+suil (0.4.4) unstable; urgency=low
 
   * Fix embedding Gtk2 Qt4 UIs in Qt4 hosts that do not link to Gtk2
 
-  -- David Robillard <d@drobilla.net>  UNRELEASED
+  -- David Robillard <d@drobilla.net>  Sat, 11 Jun 2011 11:20:11 -0400
 
 suil (0.4.2) unstable; urgency=low
 
