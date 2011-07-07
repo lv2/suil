@@ -27,6 +27,7 @@ out = 'build'
 
 def options(opt):
     autowaf.set_options(opt)
+    opt.load('compiler_c')
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
                    default="libgtk-x11-2.0.so",
                    help="Gtk2 library name [Default: libgtk-x11-2.0.so]")
@@ -36,10 +37,10 @@ def configure(conf):
     autowaf.configure(conf)
     autowaf.display_header('Suil Configuration')
 
-    conf.load('compiler_cc')
+    conf.load('compiler_c')
     conf.env.append_value('CFLAGS', '-std=c99')
 
-    autowaf.check_header(conf, 'lv2/lv2plug.in/ns/extensions/ui/ui.h')
+    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/extensions/ui/ui.h')
 
     autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                       atleast_version='2.18.0', mandatory=False)
