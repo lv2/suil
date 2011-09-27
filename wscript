@@ -40,7 +40,7 @@ def configure(conf):
 
     conf.load('compiler_c')
     conf.load('compiler_cxx')
-    conf.env.append_value('CFLAGS', '-std=c99')
+    conf.env.append_unique('CFLAGS', '-std=c99')
 
     autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/extensions/ui/ui.h')
 
