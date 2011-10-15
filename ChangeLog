@@ -1,3 +1,9 @@
+suil (UNRELEASED) unstable; urgency=low
+
+  * Use path variables in pkgconfig files
+
+ -- David Robillard <d@drobilla.net>  (UNRELEASED)
+
 suil (0.4.4) unstable; urgency=low
 
   * Fix embedding Gtk2 Qt4 UIs in Qt4 hosts that do not link to Gtk2
