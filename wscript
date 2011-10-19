@@ -36,13 +36,13 @@ def options(opt):
 def configure(conf):
     conf.load('compiler_c')
     conf.load('compiler_cxx')
-    conf.line_just = 56
+    conf.line_just = 46
     autowaf.configure(conf)
     autowaf.display_header('Suil Configuration')
 
     conf.env.append_unique('CFLAGS', '-std=c99')
 
-    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/extensions/ui/ui.h')
+    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-extensions-ui', uselib_store='LV2_UI')
 
     autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                       atleast_version='2.18.0', mandatory=False)
@@ -102,7 +102,8 @@ def build(bld):
               vnum            = SUIL_LIB_VERSION,
               install_path    = '${LIBDIR}',
               cflags          = cflags,
-              linkflags       = linkflags)
+              linkflags       = linkflags,
+              uselib          = 'LV2_UI')
 
     if bld.is_defined('HAVE_GTK2') and bld.is_defined('HAVE_QT4'):
         obj = bld(features     = 'cxx cxxshlib',
