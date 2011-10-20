@@ -1,6 +1,7 @@
 suil (UNRELEASED) unstable; urgency=low
 
   * Use path variables in pkgconfig files
+  * Add support for embedding X11 UIs (ui:X11UI)
 
  -- David Robillard <d@drobilla.net>  (UNRELEASED)
 

@@ -28,6 +28,7 @@
 #define NS_UI       "http://lv2plug.in/ns/extensions/ui#"
 #define GTK2_UI_URI NS_UI "GtkUI"
 #define QT4_UI_URI  NS_UI "Qt4UI"
+#define X11_UI_URI  NS_UI "X11UI"
 
 SUIL_API
 unsigned
@@ -44,7 +45,11 @@ suil_ui_supported(const char* container_type_uri,
 	} else if ((!strcmp(container_type_uri, GTK2_UI_URI)
 	            && !strcmp(ui_type_uri, QT4_UI_URI))
 	           || (!strcmp(container_type_uri, QT4_UI_URI)
-	               && !strcmp(ui_type_uri, GTK2_UI_URI))) {
+	               && !strcmp(ui_type_uri, GTK2_UI_URI))
+	           || (!strcmp(container_type_uri, GTK2_UI_URI)
+	               && !strcmp(ui_type_uri, X11_UI_URI))
+	           || (!strcmp(container_type_uri, QT4_UI_URI)
+	               && !strcmp(ui_type_uri, X11_UI_URI))) {
 		return SUIL_WRAPPING_EMBEDDED;
 	} else {
 		return SUIL_WRAPPING_UNSUPPORTED;
@@ -71,8 +76,14 @@ get_wrap_module(const char* container_type_uri,
 	    && !strcmp(ui_type_uri, GTK2_UI_URI)) {
 		module_name = "libsuil_gtk2_in_qt4";
 	} else if (!strcmp(container_type_uri, GTK2_UI_URI)
-	    && !strcmp(ui_type_uri, QT4_UI_URI)) {
+	           && !strcmp(ui_type_uri, QT4_UI_URI)) {
 		module_name = "libsuil_qt4_in_gtk2";
+	} else if (!strcmp(container_type_uri, GTK2_UI_URI)
+	           && !strcmp(ui_type_uri, X11_UI_URI)) {
+		module_name = "libsuil_x11_in_gtk2";
+	} else if (!strcmp(container_type_uri, QT4_UI_URI)
+	           && !strcmp(ui_type_uri, X11_UI_URI)) {
+		module_name = "libsuil_x11_in_qt4";
 	}
 
 	if (!module_name) {

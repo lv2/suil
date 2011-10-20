@@ -7,7 +7,7 @@ from waflib.extras import autowaf as autowaf
 import waflib.Logs as Logs, waflib.Options as Options
 
 # Version of this package (even if built as a child)
-SUIL_VERSION       = '0.4.4'
+SUIL_VERSION       = '0.4.5'
 SUIL_MAJOR_VERSION = '0'
 
 # Library version (UNIX style major, minor, micro)
@@ -121,6 +121,24 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags)
         autowaf.use_lib(bld, obj, 'GTK2 QT4')
+
+    if bld.is_defined('HAVE_GTK2'):
+        obj = bld(features     = 'c cshlib',
+                  source       = 'src/x11_in_gtk2.c',
+                  target       = 'suil_x11_in_gtk2',
+                  includes     = ['.'],
+                  install_path = module_dir,
+                  cflags       = cflags)
+        autowaf.use_lib(bld, obj, 'GTK2')
+
+    if bld.is_defined('HAVE_QT4'):
+        obj = bld(features     = 'cxx cxxshlib',
+                  source       = 'src/x11_in_qt4.cpp',
+                  target       = 'suil_x11_in_qt4',
+                  includes     = ['.'],
+                  install_path = module_dir,
+                  cflags       = cflags)
+        autowaf.use_lib(bld, obj, 'QT4')
 
     # Documentation
     autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)

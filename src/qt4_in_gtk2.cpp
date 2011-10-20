@@ -66,7 +66,7 @@ struct _WrapWidgetPrivate {
 	SuilInstance*    instance;
 };
 
-G_DEFINE_TYPE(WrapWidget, wrap_widget, GTK_TYPE_SOCKET);
+G_DEFINE_TYPE(WrapWidget, wrap_widget, GTK_TYPE_SOCKET)
 
 static void
 wrap_widget_dispose(GObject* gobject)
