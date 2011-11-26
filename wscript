@@ -85,10 +85,10 @@ def build(bld):
 
     cflags    = [ '-DSUIL_SHARED',
                   '-DSUIL_INTERNAL' ]
-    linkflags = []
+    lib = []
     if sys.platform != 'win32':
-        cflags    += [ '-fvisibility=hidden' ]
-        linkflags += [ '-ldl' ]
+        cflags += [ '-fvisibility=hidden' ]
+        lib    += [ 'dl' ]
 
     module_dir = '${LIBDIR}/suil-' + SUIL_MAJOR_VERSION
 
@@ -102,7 +102,7 @@ def build(bld):
               vnum            = SUIL_LIB_VERSION,
               install_path    = '${LIBDIR}',
               cflags          = cflags,
-              linkflags       = linkflags,
+              lib             = lib,
               uselib          = 'LV2_UI')
 
     if bld.is_defined('HAVE_GTK2') and bld.is_defined('HAVE_QT4'):
