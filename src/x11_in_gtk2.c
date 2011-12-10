@@ -31,82 +31,65 @@ suil_wrap_init(SuilHost*                 host,
 	return 0;
 }
 
-#define WRAP_TYPE_WIDGET (wrap_widget_get_type())
-#define WRAP_WIDGET(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST((obj), WRAP_TYPE_WIDGET, WrapWidget))
-#define WRAP_WIDGET_GET_PRIVATE(obj) \
-	G_TYPE_INSTANCE_GET_PRIVATE((obj), \
-	                            WRAP_TYPE_WIDGET, \
-	                            WrapWidgetPrivate)
+#define SUIL_TYPE_X11_WRAPPER (suil_x11_wrapper_get_type())
+#define SUIL_X11_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_X11_WRAPPER, SuilX11Wrapper))
 
-typedef struct _WrapWidget        WrapWidget;
-typedef struct _WrapWidgetClass   WrapWidgetClass;
-typedef struct _WrapWidgetPrivate WrapWidgetPrivate;
+typedef struct _SuilX11Wrapper      SuilX11Wrapper;
+typedef struct _SuilX11WrapperClass SuilX11WrapperClass;
 
-struct _WrapWidget {
-  GtkSocket parent_instance;
-
-  WrapWidgetPrivate* priv;
+struct _SuilX11Wrapper {
+	GtkSocket     socket;
+	GtkPlug*      plug;
+	SuilInstance* instance;
+	int           id;
 };
 
-struct _WrapWidgetClass {
+struct _SuilX11WrapperClass {
 	GtkSocketClass parent_class;
 };
 
-GType wrap_widget_get_type(void);  // Accessor for GTK_TYPE_WIDGET
+GType suil_x11_wrapper_get_type(void);  // Accessor for SUIL_TYPE_X11_WRAPPER
 
-struct _WrapWidgetPrivate {
-	SuilInstance*    instance;
-	int              id;
-};
-
-G_DEFINE_TYPE(WrapWidget, wrap_widget, GTK_TYPE_SOCKET)
+G_DEFINE_TYPE(SuilX11Wrapper, suil_x11_wrapper, GTK_TYPE_SOCKET)
 
 static void
 wrap_widget_dispose(GObject* gobject)
 {
-	//WrapWidget* const        self = WRAP_WIDGET(gobject);
-	//WrapWidgetPrivate* const priv = WRAP_WIDGET_GET_PRIVATE(self);
-
-	G_OBJECT_CLASS(wrap_widget_parent_class)->dispose(gobject);
+	G_OBJECT_CLASS(suil_x11_wrapper_parent_class)->dispose(gobject);
 }
 
 static void
-wrap_widget_class_init(WrapWidgetClass* klass)
+suil_x11_wrapper_class_init(SuilX11WrapperClass* klass)
 {
 	GObjectClass* const gobject_class = G_OBJECT_CLASS(klass);
 
 	gobject_class->dispose = wrap_widget_dispose;
-
-	g_type_class_add_private(klass, sizeof(WrapWidgetPrivate));
 }
 
 static void
-wrap_widget_init(WrapWidget* self)
+suil_x11_wrapper_init(SuilX11Wrapper* self)
 {
-	WrapWidgetPrivate* const priv = WRAP_WIDGET_GET_PRIVATE(self);
-	priv->instance = NULL;
-	priv->id       = 0;
-	self->priv     = priv;
+	self->instance = NULL;
+	self->plug     = NULL;
+	self->id       = 0;
 }
 
 static void
-wrap_widget_realize(GtkWidget* w, gpointer data)
+suil_x11_wrapper_realize(GtkWidget* w, gpointer data)
 {
-	WrapWidget* const        wrap = WRAP_WIDGET(w);
-	GtkSocket* const         s    = GTK_SOCKET(w);
-	WrapWidgetPrivate* const priv = wrap->priv;
+	SuilX11Wrapper* const wrap   = SUIL_X11_WRAPPER(w);
+	GtkSocket* const      socket = GTK_SOCKET(w);
 
 	/*
-	GdkWindow* wrap_win = GTK_WIDGET(wrap)->window;
-	Display*   display  = GDK_WINDOW_XDISPLAY(wrap_win);
-	Window     win      = priv->id;
-	XWindowAttributes attr;
-	XGetWindowAttributes(display, win, &attr);
-	printf("WIDTH: %d HEIGHT: %d\n", attr.width, attr.height);
+	  GdkWindow* wrap_win = GTK_WIDGET(wrap)->window;
+	  Display*   display  = GDK_WINDOW_XDISPLAY(wrap_win);
+	  Window     win      = wrap->id;
+	  XWindowAttributes attr;
+	  XGetWindowAttributes(display, win, &attr);
+	  printf("WIDTH: %d HEIGHT: %d\n", attr.width, attr.height);
 	*/
 
-	gtk_socket_add_id(s, priv->id);
+	gtk_socket_add_id(socket, wrap->id);
 }
 
 SUIL_API
@@ -115,15 +98,15 @@ suil_wrap(const char*   host_type_uri,
           const char*   ui_type_uri,
           SuilInstance* instance)
 {
-	WrapWidget* const wrap = WRAP_WIDGET(g_object_new(WRAP_TYPE_WIDGET, NULL));
+	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(
+		g_object_new(SUIL_TYPE_X11_WRAPPER, NULL));
 
-	WrapWidgetPrivate* const priv = wrap->priv;
-	priv->instance = instance;
-	priv->id       = (intptr_t)instance->ui_widget;
+	wrap->instance = instance;
+	wrap->id       = (intptr_t)instance->ui_widget;
 
 	g_signal_connect_after(G_OBJECT(wrap),
 	                       "realize",
-	                       G_CALLBACK(wrap_widget_realize),
+	                       G_CALLBACK(suil_x11_wrapper_realize),
 	                       NULL);
 
 	instance->host_widget = GTK_WIDGET(wrap);

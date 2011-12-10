@@ -37,82 +37,65 @@ suil_wrap_init(SuilHost*                 host,
 	return 0;
 }
 
-#define WRAP_TYPE_WIDGET (wrap_widget_get_type())
-#define WRAP_WIDGET(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST((obj), WRAP_TYPE_WIDGET, WrapWidget))
-#define WRAP_WIDGET_GET_PRIVATE(obj) \
-	G_TYPE_INSTANCE_GET_PRIVATE((obj), \
-	                            WRAP_TYPE_WIDGET, \
-	                            WrapWidgetPrivate)
+#define SUIL_TYPE_QT_WRAPPER (suil_qt_wrapper_get_type())
+#define SUIL_QT_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_QT_WRAPPER, SuilQtWrapper))
 
-typedef struct _WrapWidget        WrapWidget;
-typedef struct _WrapWidgetClass   WrapWidgetClass;
-typedef struct _WrapWidgetPrivate WrapWidgetPrivate;
+typedef struct _SuilQtWrapper      SuilQtWrapper;
+typedef struct _SuilQtWrapperClass SuilQtWrapperClass;
 
-struct _WrapWidget {
-  GtkSocket parent_instance;
-
-  WrapWidgetPrivate* priv;
-};
-
-struct _WrapWidgetClass {
-	GtkSocketClass parent_class;
-};
-
-GType wrap_widget_get_type(void);  // Accessor for GTK_TYPE_WIDGET
-
-struct _WrapWidgetPrivate {
+struct _SuilQtWrapper {
+	GtkSocket        socket;
 	QX11EmbedWidget* qembed;
 	SuilInstance*    instance;
 };
 
-G_DEFINE_TYPE(WrapWidget, wrap_widget, GTK_TYPE_SOCKET)
+struct _SuilQtWrapperClass {
+	GtkSocketClass parent_class;
+};
+
+GType suil_qt_wrapper_get_type(void);  // Accessor for SUIL_TYPE_QT_WRAPPER
+
+G_DEFINE_TYPE(SuilQtWrapper, suil_qt_wrapper, GTK_TYPE_SOCKET)
 
 static void
-wrap_widget_dispose(GObject* gobject)
+suil_qt_wrapper_dispose(GObject* gobject)
 {
-	WrapWidget* const        self = WRAP_WIDGET(gobject);
-	WrapWidgetPrivate* const priv = WRAP_WIDGET_GET_PRIVATE(self);
+	SuilQtWrapper* const self = SUIL_QT_WRAPPER(gobject);
 
-	if (priv->qembed) {
-		QWidget* const qwidget = (QWidget*)priv->instance->ui_widget;
+	if (self->qembed) {
+		QWidget* const qwidget = (QWidget*)self->instance->ui_widget;
 		qwidget->setParent(NULL);
 
-		delete self->priv->qembed;
-		self->priv->qembed = NULL;
+		delete self->qembed;
+		self->qembed = NULL;
 	}
 
-	G_OBJECT_CLASS(wrap_widget_parent_class)->dispose(gobject);
+	G_OBJECT_CLASS(suil_qt_wrapper_parent_class)->dispose(gobject);
 }
 
 static void
-wrap_widget_class_init(WrapWidgetClass* klass)
+suil_qt_wrapper_class_init(SuilQtWrapperClass* klass)
 {
 	GObjectClass* const gobject_class = G_OBJECT_CLASS(klass);
 
-	gobject_class->dispose = wrap_widget_dispose;
-
-	g_type_class_add_private(klass, sizeof(WrapWidgetPrivate));
+	gobject_class->dispose = suil_qt_wrapper_dispose;
 }
 
 static void
-wrap_widget_init(WrapWidget* self)
+suil_qt_wrapper_init(SuilQtWrapper* self)
 {
-	WrapWidgetPrivate* const priv = WRAP_WIDGET_GET_PRIVATE(self);
-	priv->qembed   = NULL;
-	priv->instance = NULL;
-	self->priv     = priv;
+	self->qembed   = NULL;
+	self->instance = NULL;
 }
 
 static void
-wrap_widget_realize(GtkWidget* w, gpointer data)
+suil_qt_wrapper_realize(GtkWidget* w, gpointer data)
 {
-	WrapWidget* const        wrap = WRAP_WIDGET(w);
-	GtkSocket* const         s    = GTK_SOCKET(w);
-	WrapWidgetPrivate* const priv = wrap->priv;
+	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(w);
+	GtkSocket* const     s    = GTK_SOCKET(w);
 
-	gtk_socket_add_id(s, priv->qembed->winId());
-	priv->qembed->show();
+	gtk_socket_add_id(s, wrap->qembed->winId());
+	wrap->qembed->show();
 }
 
 SUIL_API
@@ -121,21 +104,21 @@ suil_wrap(const char*   host_type_uri,
           const char*   ui_type_uri,
           SuilInstance* instance)
 {
-	WrapWidget* const wrap = WRAP_WIDGET(g_object_new(WRAP_TYPE_WIDGET, NULL));
+	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(
+		g_object_new(SUIL_TYPE_QT_WRAPPER, NULL));
 
-	WrapWidgetPrivate* const priv = wrap->priv;
-	priv->qembed   = new QX11EmbedWidget();
-	priv->instance = instance;
+	wrap->qembed   = new QX11EmbedWidget();
+	wrap->instance = instance;
 
 	QWidget*     qwidget = (QWidget*)instance->ui_widget;
-	QVBoxLayout* layout  = new QVBoxLayout(priv->qembed);
+	QVBoxLayout* layout  = new QVBoxLayout(wrap->qembed);
 	layout->addWidget(qwidget);
 
-	qwidget->setParent(priv->qembed);
+	qwidget->setParent(wrap->qembed);
 
 	g_signal_connect_after(G_OBJECT(wrap),
 	                       "realize",
-	                       G_CALLBACK(wrap_widget_realize),
+	                       G_CALLBACK(suil_qt_wrapper_realize),
 	                       NULL);
 
 	instance->host_widget = GTK_WIDGET(wrap);
