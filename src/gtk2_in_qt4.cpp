@@ -25,12 +25,36 @@
 
 extern "C" {
 
+static int
+wrapper_wrap(SuilWrapper*  wrapper,
+             SuilInstance* instance)
+{
+	QX11EmbedContainer* const wrap   = new QX11EmbedContainer();
+	GtkWidget* const          plug   = gtk_plug_new(wrap->winId());
+	GtkWidget* const          widget = (GtkWidget*)instance->ui_widget;
+
+	gtk_container_add(GTK_CONTAINER(plug), widget);
+	gtk_widget_show_all(plug);
+
+#ifdef SUIL_OLD_GTK
+	wrap->resize(widget->allocation.width, widget->allocation.height);
+#else
+	GtkAllocation alloc;
+	gtk_widget_get_allocation(widget, &alloc);
+	wrap->resize(alloc.width, alloc.height);
+#endif
+
+	instance->host_widget = wrap;
+
+	return 0;
+}
+
 SUIL_API
-int
-suil_wrap_init(SuilHost*                 host,
-               const char*               host_type_uri,
-               const char*               ui_type_uri,
-               const LV2_Feature* const* features)
+SuilWrapper*
+suil_wrapper_new(SuilHost*                 host,
+                 const char*               host_type_uri,
+                 const char*               ui_type_uri,
+                 const LV2_Feature* const* features)
 {
 	/* We have to open libgtk here, so Gtk type symbols are present and will be
 	   found by the introspection stuff.  This is required at least to make
@@ -43,41 +67,18 @@ suil_wrap_init(SuilHost*                 host,
 		if (!host->gtk_lib) {
 			fprintf(stderr, "Failed to open %s (%s)\n",
 			        SUIL_GTK2_LIB_NAME, dlerror());
-			return 1;
+			return NULL;
 		}
 		gtk_init(NULL, NULL);
 	}
 
-	return 0;
-}
+	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
+	wrapper->wrap     = wrapper_wrap; 
+	wrapper->free     = (SuilWrapperFreeFunc)free;
+	wrapper->features = (LV2_Feature**)features;
+	wrapper->impl     = NULL;
 
-/** Dynamic module entry point. */
-SUIL_API
-int
-suil_wrap(const char*   host_type_uri,
-          const char*   ui_type_uri,
-          SuilInstance* instance)
-{
-	QX11EmbedContainer* const wrapper = new QX11EmbedContainer();
-	GtkWidget* const          plug    = gtk_plug_new(wrapper->winId());
-	GtkWidget* const          widget  = (GtkWidget*)instance->ui_widget;
-
-	//wrapper->embedClient(gtk_plug_get_id(GTK_PLUG(plug)));
-
-	gtk_container_add(GTK_CONTAINER(plug), widget);
-	gtk_widget_show_all(plug);
-
-#ifdef SUIL_OLD_GTK
-	wrapper->resize(widget->allocation.width, widget->allocation.height);
-#else
-	GtkAllocation alloc;
-	gtk_widget_get_allocation(widget, &alloc);
-	wrapper->resize(alloc.width, alloc.height);
-#endif
-
-	instance->host_widget = wrapper;
-
-	return 0;
+	return wrapper;
 }
 
 } // extern "C"

@@ -54,16 +54,11 @@ suil_ui_supported(const char* container_type_uri,
 	}
 }
 
-struct _SuilModule {
-	SuilWrapInitFunc init;
-	SuilWrapFunc     wrap;
-};
-
-typedef struct _SuilModule* SuilModule;
-
-static SuilModule
-get_wrap_module(const char* container_type_uri,
-                const char* ui_type_uri)
+static SuilWrapper*
+open_wrapper(SuilHost*                 host,
+             const char*               container_type_uri,
+             const char*               ui_type_uri,
+             const LV2_Feature* const* features)
 {
 	if (!strcmp(container_type_uri, ui_type_uri)) {
 		return NULL;
@@ -107,20 +102,28 @@ get_wrap_module(const char* container_type_uri,
 		return NULL;
 	}
 
-	SuilModule module = (SuilModule)malloc(sizeof(struct _SuilModule));
-	module->init = (SuilWrapInitFunc)suil_dlfunc(lib, "suil_wrap_init");
-	module->wrap = (SuilWrapFunc)suil_dlfunc(lib, "suil_wrap");
+	SuilWrapperNewFunc wrapper_new = (SuilWrapperNewFunc)suil_dlfunc(
+		lib, "suil_wrapper_new");
 
-	if (!module->init || !module->wrap) {
+	SuilWrapper* wrapper = wrapper_new
+		? wrapper_new(host,
+		              container_type_uri,
+		              ui_type_uri,
+		              features)
+		: NULL;
+
+	if (!wrapper) {
 		SUIL_ERRORF("Corrupt module %s\n", path);
+		dlclose(lib);
 		free(path);
-		free(module);
 		return NULL;
 	}
 
 	free(path);
 
-	return module;
+	wrapper->lib = lib;
+
+	return wrapper;
 }
 
 SUIL_API
@@ -177,12 +180,17 @@ suil_instance_new(SuilHost*                 host,
 		features = (const LV2_Feature* const*)&local_features;
 	}
 
-	SuilModule module = get_wrap_module(container_type_uri, ui_type_uri);
-	if (module) {
-		module->init(host, container_type_uri, ui_type_uri, features);
+	// Open a new wrapper
+	SuilWrapper* wrapper = open_wrapper(host,
+	                                    container_type_uri,
+	                                    ui_type_uri,
+	                                    features);
+
+	if (wrapper) {
+		features = (const LV2_Feature * const*)wrapper->features;
 	}
 
-	// Instantiate UI
+	// Instantiate UI (possibly with wrapper-provided features)
 	SuilInstance* instance = malloc(sizeof(struct SuilInstanceImpl));
 	instance->lib_handle  = lib;
 	instance->descriptor  = descriptor;
@@ -197,25 +205,16 @@ suil_instance_new(SuilHost*                 host,
 		&instance->ui_widget,
 		features);
 
-	// Failed to find or instantiate UI
+	// Failed to instantiate UI
 	if (!instance || !instance->handle) {
 		SUIL_ERRORF("Failed to instantiate UI <%s> in %s\n",
-		            ui_uri, ui_binary_path);
-		free(instance);
-		dlclose(lib);
-		return NULL;
-	}
-
-	// Got a handle, but failed to create a widget (buggy UI)
-	if (!instance->ui_widget) {
-		SUIL_ERRORF("Widget creation failed for UI <%s> in %s\n",
 		            ui_uri, ui_binary_path);
 		suil_instance_free(instance);
 		return NULL;
 	}
 
-	if (module) {
-		if (module->wrap(container_type_uri, ui_type_uri, instance)) {
+	if (wrapper) {
+		if (wrapper->wrap(wrapper, instance)) {
 			SUIL_ERRORF("Failed to wrap UI <%s> in type <%s>\n",
 			            ui_uri, container_type_uri);
 			suil_instance_free(instance);
@@ -233,8 +232,15 @@ void
 suil_instance_free(SuilInstance* instance)
 {
 	if (instance) {
-		instance->descriptor->cleanup(instance->handle);
+		if (instance->handle) {
+			instance->descriptor->cleanup(instance->handle);
+		}
 		dlclose(instance->lib_handle);
+		if (instance->wrapper) {
+			void* lib = instance->wrapper->lib;
+			instance->wrapper->free(instance->wrapper);
+			dlclose(lib);
+		}
 		free(instance);
 	}
 }

@@ -27,16 +27,6 @@ extern "C" {
 static int          argc = 0;
 static QApplication application(argc, NULL, true);
 
-SUIL_API
-int
-suil_wrap_init(SuilHost*                 host,
-               const char*               host_type_uri,
-               const char*               ui_type_uri,
-               const LV2_Feature* const* features)
-{
-	return 0;
-}
-
 #define SUIL_TYPE_QT_WRAPPER (suil_qt_wrapper_get_type())
 #define SUIL_QT_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_QT_WRAPPER, SuilQtWrapper))
 
@@ -98,11 +88,9 @@ suil_qt_wrapper_realize(GtkWidget* w, gpointer data)
 	wrap->qembed->show();
 }
 
-SUIL_API
-int
-suil_wrap(const char*   host_type_uri,
-          const char*   ui_type_uri,
-          SuilInstance* instance)
+static int
+wrapper_wrap(SuilWrapper*  wrapper,
+             SuilInstance* instance)
 {
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(
 		g_object_new(SUIL_TYPE_QT_WRAPPER, NULL));
@@ -124,6 +112,22 @@ suil_wrap(const char*   host_type_uri,
 	instance->host_widget = GTK_WIDGET(wrap);
 
 	return 0;
+}
+
+SUIL_API
+SuilWrapper*
+suil_wrapper_new(SuilHost*                 host,
+                 const char*               host_type_uri,
+                 const char*               ui_type_uri,
+                 const LV2_Feature* const* features)
+{
+	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
+	wrapper->wrap     = wrapper_wrap; 
+	wrapper->free     = (SuilWrapperFreeFunc)free;
+	wrapper->features = (LV2_Feature**)features;
+	wrapper->impl     = NULL;
+
+	return wrapper;
 }
 
 } // extern "C"

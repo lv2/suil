@@ -45,29 +45,42 @@ struct SuilHostImpl {
 	void*                   gtk_lib;
 };
 
+struct _SuilWrapper;
+
+typedef void (*SuilWrapperFreeFunc)(struct _SuilWrapper*);
+
+typedef int (*SuilWrapperWrapFunc)(struct _SuilWrapper* wrapper,
+                                   SuilInstance*        instance);
+
+typedef struct _SuilWrapper {
+	SuilWrapperWrapFunc wrap;
+	SuilWrapperFreeFunc free;
+	void*               lib;
+	LV2_Feature**       features;
+	void*               impl;
+} SuilWrapper;
+
 struct SuilInstanceImpl {
 	void*                   lib_handle;
 	const LV2UI_Descriptor* descriptor;
 	LV2UI_Handle            handle;
+	SuilWrapper*            wrapper;
 	SuilWidget              ui_widget;
 	SuilWidget              host_widget;
 };
 
 /**
-   Type of a module's suil_wrap_init function.
+   The type of the suil_wrapper_new entry point in a wrapper module.
 
-   This initialisation function must be called before instantiating any UI that
-   will need to be wrapped by this wrapper (e.g. it will perform any
-   initialisation required to create a widget for the given toolkit).
+   This constructs a SuilWrapper which contains everything necessary
+   to wrap a widget, including a possibly extended features array to
+   be used for instantiating the UI.
 */
-typedef int (*SuilWrapInitFunc)(SuilHost*                 host,
-                                const char*               host_type_uri,
-                                const char*               ui_type_uri,
-                                const LV2_Feature* const* features);
-
-typedef int (*SuilWrapFunc)(const char*   host_type_uri,
-                            const char*   ui_type_uri,
-                            SuilInstance* instance);
+typedef SuilWrapper* (*SuilWrapperNewFunc)(
+	SuilHost*                 host,
+	const char*               host_type_uri,
+	const char*               ui_type_uri,
+	const LV2_Feature* const* features);
 
 typedef void (*SuilVoidFunc)();
 

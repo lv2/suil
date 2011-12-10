@@ -14,22 +14,13 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <gtk/gtk.h>
+#include <string.h>
 
+#include <gtk/gtk.h>
 //#include <gdk/gdkx.h>
 //#include <X11/Xlib.h>
 
 #include "suil_internal.h"
-
-SUIL_API
-int
-suil_wrap_init(SuilHost*                 host,
-               const char*               host_type_uri,
-               const char*               ui_type_uri,
-               const LV2_Feature* const* features)
-{
-	return 0;
-}
 
 #define SUIL_TYPE_X11_WRAPPER (suil_x11_wrapper_get_type())
 #define SUIL_X11_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_X11_WRAPPER, SuilX11Wrapper))
@@ -41,7 +32,6 @@ struct _SuilX11Wrapper {
 	GtkSocket     socket;
 	GtkPlug*      plug;
 	SuilInstance* instance;
-	int           id;
 };
 
 struct _SuilX11WrapperClass {
@@ -70,8 +60,7 @@ static void
 suil_x11_wrapper_init(SuilX11Wrapper* self)
 {
 	self->instance = NULL;
-	self->plug     = NULL;
-	self->id       = 0;
+	self->plug     = GTK_PLUG(gtk_plug_new(0));
 }
 
 static void
@@ -89,27 +78,62 @@ suil_x11_wrapper_realize(GtkWidget* w, gpointer data)
 	  printf("WIDTH: %d HEIGHT: %d\n", attr.width, attr.height);
 	*/
 
-	gtk_socket_add_id(socket, wrap->id);
+	gtk_socket_add_id(socket, gtk_plug_get_id(wrap->plug));
+	gtk_widget_show_all(GTK_WIDGET(wrap->plug));
 }
 
-SUIL_API
-int
-suil_wrap(const char*   host_type_uri,
-          const char*   ui_type_uri,
-          SuilInstance* instance)
+static int
+wrapper_wrap(SuilWrapper*  wrapper,
+             SuilInstance* instance)
 {
-	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(
-		g_object_new(SUIL_TYPE_X11_WRAPPER, NULL));
+	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(wrapper->impl);
 
-	wrap->instance = instance;
-	wrap->id       = (intptr_t)instance->ui_widget;
+	instance->host_widget = GTK_WIDGET(wrap);
+	wrap->instance        = instance;
 
 	g_signal_connect_after(G_OBJECT(wrap),
 	                       "realize",
 	                       G_CALLBACK(suil_x11_wrapper_realize),
 	                       NULL);
 
-	instance->host_widget = GTK_WIDGET(wrap);
-
 	return 0;
+}
+
+static void
+wrapper_free(SuilWrapper* wrapper)
+{
+	free(wrapper->features);
+	free(wrapper);
+}
+
+SUIL_API
+SuilWrapper*
+suil_wrapper_new(SuilHost*                 host,
+                 const char*               host_type_uri,
+                 const char*               ui_type_uri,
+                 const LV2_Feature* const* features)
+{
+	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
+	wrapper->wrap = wrapper_wrap; 
+	wrapper->free = wrapper_free;
+
+	unsigned n_features = 0;
+	for (; features[n_features]; ++n_features) {}
+
+	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(
+		g_object_new(SUIL_TYPE_X11_WRAPPER, NULL));
+
+	wrapper->impl = wrap;
+
+	wrapper->features = (LV2_Feature**)malloc(
+		sizeof(LV2_Feature) * (n_features + 1));
+	memcpy(wrapper->features, features, sizeof(LV2_Feature) * n_features);
+
+	LV2_Feature* parent_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
+	parent_feature->URI  = "http://example.org/winid";
+	parent_feature->data = (void*)(intptr_t)gtk_plug_get_id(wrap->plug);
+
+	wrapper->features[n_features] = parent_feature;
+	
+	return wrapper;
 }

@@ -24,29 +24,49 @@
 
 extern "C" {
 
-SUIL_API
-int
-suil_wrap_init(SuilHost*                 host,
-               const char*               host_type_uri,
-               const char*               ui_type_uri,
-               const LV2_Feature* const* features)
+static int
+wrapper_wrap(SuilWrapper*  wrapper,
+             SuilInstance* instance)
 {
+	QX11EmbedWidget* const    ew   = (QX11EmbedWidget*)wrapper->impl;
+	QX11EmbedContainer* const wrap = new QX11EmbedContainer();
+
+	ew->embedInto(wrap->winId());
+	//wrap->embedClient((intptr_t)instance->ui_widget);
+	
+	instance->host_widget = wrap;
+
 	return 0;
 }
 
-/** Dynamic module entry point. */
 SUIL_API
-int
-suil_wrap(const char*   host_type_uri,
-          const char*   ui_type_uri,
-          SuilInstance* instance)
+SuilWrapper*
+suil_wrapper_new(SuilHost*                 host,
+                 const char*               host_type_uri,
+                 const char*               ui_type_uri,
+                 const LV2_Feature* const* features)
 {
-	QX11EmbedContainer* const wrapper = new QX11EmbedContainer();
-	wrapper->embedClient((intptr_t)instance->ui_widget);
-	
-	instance->host_widget = wrapper;
+	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
+	wrapper->wrap = wrapper_wrap; 
+	wrapper->free = (SuilWrapperFreeFunc)free;
 
-	return 0;
+	unsigned n_features = 0;
+	for (; features[n_features]; ++n_features) {}
+
+	QX11EmbedWidget* const ew = new QX11EmbedWidget();
+	wrapper->impl = ew;
+
+	wrapper->features = (LV2_Feature**)malloc(
+		sizeof(LV2_Feature) * (n_features + 1));
+	memcpy(wrapper->features, features, sizeof(LV2_Feature) * n_features);
+
+	LV2_Feature* parent_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
+	parent_feature->URI  = "http://example.org/winid";
+	parent_feature->data = (void*)(intptr_t)ew->winId();
+
+	wrapper->features[n_features] = parent_feature;
+
+	return wrapper;
 }
 
 } // extern "C"
