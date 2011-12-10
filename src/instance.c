@@ -196,6 +196,7 @@ suil_instance_new(SuilHost*                 host,
 	instance->descriptor  = descriptor;
 	instance->host_widget = NULL;
 	instance->ui_widget   = NULL;
+	instance->wrapper     = NULL;
 	instance->handle      = descriptor->instantiate(
 		descriptor,
 		plugin_uri,
