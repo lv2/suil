@@ -130,7 +130,7 @@ suil_wrapper_new(SuilHost*                 host,
 	memcpy(wrapper->features, features, sizeof(LV2_Feature) * n_features);
 
 	LV2_Feature* parent_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
-	parent_feature->URI  = "http://example.org/winid";
+	parent_feature->URI  = NS_UI "parent";
 	parent_feature->data = (void*)(intptr_t)gtk_plug_get_id(wrap->plug);
 
 	wrapper->features[n_features] = parent_feature;

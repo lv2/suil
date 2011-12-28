@@ -34,6 +34,8 @@ static inline char* dlerror(void) { return "Unknown error"; }
 
 #include "suil/suil.h"
 
+#define NS_UI "http://lv2plug.in/ns/extensions/ui#"
+
 #define SUIL_ERRORF(fmt, ...) fprintf(stderr, "error: %s: " fmt, \
                                       __func__, __VA_ARGS__)
 

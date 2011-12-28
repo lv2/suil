@@ -23,7 +23,6 @@
 #include "suil-config.h"
 #include "suil_internal.h"
 
-#define NS_UI       "http://lv2plug.in/ns/extensions/ui#"
 #define GTK2_UI_URI NS_UI "GtkUI"
 #define QT4_UI_URI  NS_UI "Qt4UI"
 #define X11_UI_URI  NS_UI "X11UI"
