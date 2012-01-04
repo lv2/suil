@@ -232,15 +232,14 @@ void
 suil_instance_free(SuilInstance* instance)
 {
 	if (instance) {
+		if (instance->wrapper) {
+			instance->wrapper->free(instance->wrapper);
+			dlclose(instance->wrapper->lib);
+		}
 		if (instance->handle) {
 			instance->descriptor->cleanup(instance->handle);
 		}
 		dlclose(instance->lib_handle);
-		if (instance->wrapper) {
-			void* lib = instance->wrapper->lib;
-			instance->wrapper->free(instance->wrapper);
-			dlclose(lib);
-		}
 		free(instance);
 	}
 }
