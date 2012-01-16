@@ -27,7 +27,7 @@
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 #ifdef SUIL_SHARED
-#    ifdef __WIN32__
+#    ifdef _WIN32
 #        define SUIL_LIB_IMPORT __declspec(dllimport)
 #        define SUIL_LIB_EXPORT __declspec(dllexport)
 #    else
