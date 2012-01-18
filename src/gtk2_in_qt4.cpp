@@ -20,8 +20,8 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 
-#include "suil_internal.h"
-#include "suil-config.h"
+#include "./suil_internal.h"
+#include "./suil-config.h"
 
 extern "C" {
 
@@ -81,4 +81,4 @@ suil_wrapper_new(SuilHost*                 host,
 	return wrapper;
 }
 
-} // extern "C"
+}  // extern "C"

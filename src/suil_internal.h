@@ -20,8 +20,6 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
-
 #ifdef _WIN32
 #include <windows.h>
 #define dlopen(path, flags) LoadLibrary(path)
@@ -31,6 +29,8 @@ static inline char* dlerror(void) { return "Unknown error"; }
 #else
 #include <dlfcn.h>
 #endif
+
+#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 #include "suil/suil.h"
 

@@ -14,7 +14,7 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include "suil_internal.h"
+#include "./suil_internal.h"
 
 SUIL_API
 SuilHost*

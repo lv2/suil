@@ -17,10 +17,8 @@
 #include <string.h>
 
 #include <gtk/gtk.h>
-//#include <gdk/gdkx.h>
-//#include <X11/Xlib.h>
 
-#include "suil_internal.h"
+#include "./suil_internal.h"
 
 #define SUIL_TYPE_X11_WRAPPER (suil_x11_wrapper_get_type())
 #define SUIL_X11_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_X11_WRAPPER, SuilX11Wrapper))
@@ -68,15 +66,6 @@ suil_x11_wrapper_realize(GtkWidget* w, gpointer data)
 {
 	SuilX11Wrapper* const wrap   = SUIL_X11_WRAPPER(w);
 	GtkSocket* const      socket = GTK_SOCKET(w);
-
-	/*
-	  GdkWindow* wrap_win = GTK_WIDGET(wrap)->window;
-	  Display*   display  = GDK_WINDOW_XDISPLAY(wrap_win);
-	  Window     win      = wrap->id;
-	  XWindowAttributes attr;
-	  XGetWindowAttributes(display, win, &attr);
-	  printf("WIDTH: %d HEIGHT: %d\n", attr.width, attr.height);
-	*/
 
 	gtk_socket_add_id(socket, gtk_plug_get_id(wrap->plug));
 	gtk_widget_show_all(GTK_WIDGET(wrap->plug));

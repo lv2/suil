@@ -20,7 +20,7 @@
 #include <QX11EmbedWidget>
 #include <QVBoxLayout>
 
-#include "suil_internal.h"
+#include "./suil_internal.h"
 
 extern "C" {
 
@@ -146,4 +146,4 @@ suil_wrapper_new(SuilHost*                 host,
 	return wrapper;
 }
 
-} // extern "C"
+}  // extern "C"

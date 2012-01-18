@@ -17,10 +17,8 @@
 #include <QX11EmbedContainer>
 #undef signals
 
-#include "suil_internal.h"
-#include "suil-config.h"
-
-#include <cstdio>
+#include "./suil_internal.h"
+#include "./suil-config.h"
 
 extern "C" {
 
@@ -32,7 +30,6 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	QX11EmbedContainer* const wrap = new QX11EmbedContainer();
 
 	ew->embedInto(wrap->winId());
-	//wrap->embedClient((intptr_t)instance->ui_widget);
 	
 	instance->host_widget = wrap;
 
@@ -69,4 +66,4 @@ suil_wrapper_new(SuilHost*                 host,
 	return wrapper;
 }
 
-} // extern "C"
+}  // extern "C"
