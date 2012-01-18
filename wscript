@@ -64,7 +64,7 @@ def configure(conf):
 
     conf.env['LIB_SUIL'] = ['suil-%s' % SUIL_MAJOR_VERSION]
 
-    conf.write_config_header('suil-config.h', remove=False)
+    conf.write_config_header('suil_config.h', remove=False)
 
     autowaf.display_msg(conf, "Gtk2 Support",
                         conf.is_defined('HAVE_GTK2'))

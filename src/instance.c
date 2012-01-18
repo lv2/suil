@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "./suil-config.h"
+#include "./suil_config.h"
 #include "./suil_internal.h"
 
 #define GTK2_UI_URI NS_UI "GtkUI"

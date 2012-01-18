@@ -20,8 +20,8 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 
+#include "./suil_config.h"
 #include "./suil_internal.h"
-#include "./suil-config.h"
 
 extern "C" {
 

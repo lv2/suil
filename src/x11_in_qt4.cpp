@@ -17,8 +17,8 @@
 #include <QX11EmbedContainer>
 #undef signals
 
+#include "./suil_config.h"
 #include "./suil_internal.h"
-#include "./suil-config.h"
 
 extern "C" {
 
