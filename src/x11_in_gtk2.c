@@ -115,14 +115,15 @@ suil_wrapper_new(SuilHost*                 host,
 	wrapper->impl = wrap;
 
 	wrapper->features = (LV2_Feature**)malloc(
-		sizeof(LV2_Feature) * (n_features + 1));
-	memcpy(wrapper->features, features, sizeof(LV2_Feature) * n_features);
+		sizeof(LV2_Feature*) * (n_features + 2));
+	memcpy(wrapper->features, features, sizeof(LV2_Feature*) * n_features);
 
 	LV2_Feature* parent_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
 	parent_feature->URI  = NS_UI "parent";
 	parent_feature->data = (void*)(intptr_t)gtk_plug_get_id(wrap->plug);
 
-	wrapper->features[n_features] = parent_feature;
+	wrapper->features[n_features]     = parent_feature;
+	wrapper->features[n_features + 1] = NULL;
 	
 	return wrapper;
 }
