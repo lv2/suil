@@ -1,5 +1,5 @@
 /*
-  Copyright 2011 David Robillard <http://drobilla.net>
+  Copyright 2011-2012 David Robillard <http://drobilla.net>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -71,6 +71,15 @@ suil_x11_wrapper_realize(GtkWidget* w, gpointer data)
 	gtk_widget_show_all(GTK_WIDGET(wrap->plug));
 }
 
+#ifdef HAVE_LV2_UI_RESIZE
+static int
+wrapper_resize(LV2_UI_Resize_Feature_Data data, int width, int height)
+{
+	gtk_widget_set_size_request(GTK_WIDGET(data), width, height);
+	return 0;
+}
+#endif
+
 static int
 wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
@@ -103,8 +112,8 @@ suil_wrapper_new(SuilHost*                 host,
                  const LV2_Feature* const* features)
 {
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
-	wrapper->wrap = wrapper_wrap; 
-	wrapper->free = wrapper_free;
+	wrapper->wrap        = wrapper_wrap; 
+	wrapper->free        = wrapper_free;
 
 	unsigned n_features = 0;
 	for (; features[n_features]; ++n_features) {}
@@ -115,7 +124,7 @@ suil_wrapper_new(SuilHost*                 host,
 	wrapper->impl = wrap;
 
 	wrapper->features = (LV2_Feature**)malloc(
-		sizeof(LV2_Feature*) * (n_features + 2));
+		sizeof(LV2_Feature*) * (n_features + 3));
 	memcpy(wrapper->features, features, sizeof(LV2_Feature*) * n_features);
 
 	LV2_Feature* parent_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
@@ -124,6 +133,17 @@ suil_wrapper_new(SuilHost*                 host,
 
 	wrapper->features[n_features]     = parent_feature;
 	wrapper->features[n_features + 1] = NULL;
+	wrapper->features[n_features + 2] = NULL;
 	
+#ifdef HAVE_LV2_UI_RESIZE
+	wrapper->resize.data      = wrap;
+	wrapper->resize.ui_resize = wrapper_resize;
+
+	LV2_Feature* resize_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
+	resize_feature->URI  = "http://lv2plug.in/ns/ext/ui-resize#UIResize";
+	resize_feature->data = &wrapper->resize;
+	wrapper->features[n_features + 1] = resize_feature;
+#endif
+
 	return wrapper;
 }

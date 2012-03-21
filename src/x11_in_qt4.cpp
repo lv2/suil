@@ -1,5 +1,5 @@
 /*
-  Copyright 2011 David Robillard <http://drobilla.net>
+  Copyright 2011-2012 David Robillard <http://drobilla.net>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -36,6 +36,16 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	return 0;
 }
 
+#ifdef HAVE_LV2_UI_RESIZE
+static int
+wrapper_resize(LV2_UI_Resize_Feature_Data data, int width, int height)
+{
+	QX11EmbedWidget* const ew = (QX11EmbedWidget*)data;
+	ew->resize(width, height);
+	return 0;
+}
+#endif
+
 SUIL_API
 SuilWrapper*
 suil_wrapper_new(SuilHost*                 host,
@@ -54,7 +64,7 @@ suil_wrapper_new(SuilHost*                 host,
 	wrapper->impl = ew;
 
 	wrapper->features = (LV2_Feature**)malloc(
-		sizeof(LV2_Feature*) * (n_features + 2));
+		sizeof(LV2_Feature*) * (n_features + 3));
 	memcpy(wrapper->features, features, sizeof(LV2_Feature*) * n_features);
 
 	LV2_Feature* parent_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
@@ -63,6 +73,17 @@ suil_wrapper_new(SuilHost*                 host,
 
 	wrapper->features[n_features]     = parent_feature;
 	wrapper->features[n_features + 1] = NULL;
+	wrapper->features[n_features + 2] = NULL;
+
+#ifdef HAVE_LV2_UI_RESIZE
+	wrapper->resize.data      = ew;
+	wrapper->resize.ui_resize = wrapper_resize;
+
+	LV2_Feature* resize_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
+	resize_feature->URI  = "http://lv2plug.in/ns/ext/ui-resize#UIResize";
+	resize_feature->data = &wrapper->resize;
+	wrapper->features[n_features + 1] = resize_feature;
+#endif
 
 	return wrapper;
 }

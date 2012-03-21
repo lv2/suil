@@ -43,6 +43,11 @@ def configure(conf):
     conf.env.append_unique('CFLAGS', '-std=c99')
 
     autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-extensions-ui', uselib_store='LV2_UI')
+    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-ui-resize',
+                      uselib_store='LV2_UI_RESIZE', mandatory=False)
+
+    if conf.env['HAVE_LV2_UI_RESIZE']:
+        autowaf.define(conf, 'HAVE_LV2_UI_RESIZE', 1)
 
     autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                       atleast_version='2.18.0', mandatory=False)
