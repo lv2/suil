@@ -72,7 +72,7 @@ suil_x11_wrapper_realize(GtkWidget* w, gpointer data)
 }
 
 static int
-wrapper_resize(LV2UI_Resize_Handle handle, int width, int height)
+wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 {
 	gtk_widget_set_size_request(GTK_WIDGET(handle), width, height);
 	return 0;

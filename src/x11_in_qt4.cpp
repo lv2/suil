@@ -37,7 +37,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 }
 
 static int
-wrapper_resize(LV2UI_Resize_Handle handle, int width, int height)
+wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 {
 	QX11EmbedWidget* const ew = (QX11EmbedWidget*)handle;
 	ew->resize(width, height);
