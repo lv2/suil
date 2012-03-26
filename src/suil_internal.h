@@ -31,9 +31,6 @@ static inline char* dlerror(void) { return "Unknown error"; }
 #endif
 
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
-#ifdef HAVE_LV2_UI_RESIZE
-#include "lv2/lv2plug.in/ns/ext/ui-resize/ui-resize.h"
-#endif
 
 #include "suil/suil.h"
 
@@ -63,9 +60,7 @@ typedef struct _SuilWrapper {
 	void*               lib;
 	LV2_Feature**       features;
 	void*               impl;
-#ifdef HAVE_LV2_UI_RESIZE
-	LV2_UI_Resize_Feature resize;
-#endif
+	LV2UI_Resize        resize;
 } SuilWrapper;
 
 struct SuilInstanceImpl {

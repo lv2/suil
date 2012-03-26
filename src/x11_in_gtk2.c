@@ -71,14 +71,12 @@ suil_x11_wrapper_realize(GtkWidget* w, gpointer data)
 	gtk_widget_show_all(GTK_WIDGET(wrap->plug));
 }
 
-#ifdef HAVE_LV2_UI_RESIZE
 static int
-wrapper_resize(LV2_UI_Resize_Feature_Data data, int width, int height)
+wrapper_resize(LV2UI_Resize_Handle handle, int width, int height)
 {
-	gtk_widget_set_size_request(GTK_WIDGET(data), width, height);
+	gtk_widget_set_size_request(GTK_WIDGET(handle), width, height);
 	return 0;
 }
-#endif
 
 static int
 wrapper_wrap(SuilWrapper*  wrapper,
@@ -135,15 +133,13 @@ suil_wrapper_new(SuilHost*                 host,
 	wrapper->features[n_features + 1] = NULL;
 	wrapper->features[n_features + 2] = NULL;
 	
-#ifdef HAVE_LV2_UI_RESIZE
-	wrapper->resize.data      = wrap;
+	wrapper->resize.handle    = wrap;
 	wrapper->resize.ui_resize = wrapper_resize;
 
 	LV2_Feature* resize_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
 	resize_feature->URI  = "http://lv2plug.in/ns/ext/ui-resize#UIResize";
 	resize_feature->data = &wrapper->resize;
 	wrapper->features[n_features + 1] = resize_feature;
-#endif
 
 	return wrapper;
 }
