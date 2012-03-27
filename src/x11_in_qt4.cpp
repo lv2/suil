@@ -30,7 +30,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	QX11EmbedContainer* const wrap = new QX11EmbedContainer();
 
 	ew->embedInto(wrap->winId());
-	
+
 	instance->host_widget = wrap;
 
 	return 0;
@@ -52,7 +52,7 @@ suil_wrapper_new(SuilHost*                 host,
                  const LV2_Feature* const* features)
 {
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
-	wrapper->wrap = wrapper_wrap; 
+	wrapper->wrap = wrapper_wrap;
 	wrapper->free = (SuilWrapperFreeFunc)free;
 
 	unsigned n_features = 0;

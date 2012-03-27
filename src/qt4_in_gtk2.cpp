@@ -121,7 +121,7 @@ wrapper_free(SuilWrapper* wrapper)
 	gtk_object_destroy(GTK_OBJECT(wrap));
 	free(wrap);
 }
-	
+
 SUIL_API
 SuilWrapper*
 suil_wrapper_new(SuilHost*                 host,
@@ -130,7 +130,7 @@ suil_wrapper_new(SuilHost*                 host,
                  const LV2_Feature* const* features)
 {
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
-	wrapper->wrap     = wrapper_wrap; 
+	wrapper->wrap     = wrapper_wrap;
 	wrapper->free     = wrapper_free;
 	wrapper->features = (LV2_Feature**)features;
 	wrapper->impl     = NULL;

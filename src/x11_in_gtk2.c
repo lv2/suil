@@ -110,7 +110,7 @@ suil_wrapper_new(SuilHost*                 host,
                  const LV2_Feature* const* features)
 {
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
-	wrapper->wrap        = wrapper_wrap; 
+	wrapper->wrap        = wrapper_wrap;
 	wrapper->free        = wrapper_free;
 
 	unsigned n_features = 0;
@@ -132,7 +132,7 @@ suil_wrapper_new(SuilHost*                 host,
 	wrapper->features[n_features]     = parent_feature;
 	wrapper->features[n_features + 1] = NULL;
 	wrapper->features[n_features + 2] = NULL;
-	
+
 	wrapper->resize.handle    = wrap;
 	wrapper->resize.ui_resize = wrapper_resize;
 
