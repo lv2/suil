@@ -98,7 +98,6 @@ typedef uint32_t (*SuilPortSubscribeFunc)(
 	uint32_t                  protocol,
 	const LV2_Feature* const* features);
 
-
 /** Function to unsubscribe from notifications for a port. */
 typedef uint32_t (*SuilPortUnsubscribeFunc)(
 	SuilController            controller,
