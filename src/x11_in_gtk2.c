@@ -137,7 +137,7 @@ suil_wrapper_new(SuilHost*                 host,
 	wrapper->resize.ui_resize = wrapper_resize;
 
 	LV2_Feature* resize_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
-	resize_feature->URI  = "http://lv2plug.in/ns/ext/ui-resize#UIResize";
+	resize_feature->URI  = LV2_UI__resize;
 	resize_feature->data = &wrapper->resize;
 	wrapper->features[n_features + 1] = resize_feature;
 
