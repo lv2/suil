@@ -137,7 +137,7 @@ suil_wrapper_new(SuilHost*      host,
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(
 		g_object_new(SUIL_TYPE_QT_WRAPPER, NULL));
 
-	int argc = 0;
+	static int argc = 0;
 	wrap->app = new QApplication(argc, NULL, true);
 
 	wrapper->impl = wrap;
