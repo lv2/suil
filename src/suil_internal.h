@@ -34,17 +34,15 @@ static inline char* dlerror(void) { return "Unknown error"; }
 
 #include "suil/suil.h"
 
-#define NS_UI "http://lv2plug.in/ns/extensions/ui#"
-
 #define SUIL_ERRORF(fmt, ...) fprintf(stderr, "error: %s: " fmt, \
                                       __func__, __VA_ARGS__)
 
 struct SuilHostImpl {
-	SuilPortWriteFunc       write_func;
-	SuilPortIndexFunc       index_func;
-	SuilPortSubscribeFunc   subscribe_func;
-	SuilPortUnsubscribeFunc unsubscribe_func;
-	void*                   gtk_lib;
+	SuilPortWriteFunc    write_func;
+	LV2UI_Port_Map       port_map;
+	LV2UI_Port_Subscribe port_subscribe;
+	LV2UI_Touch          touch;
+	void*                gtk_lib;
 };
 
 struct _SuilWrapper;
@@ -58,7 +56,6 @@ typedef struct _SuilWrapper {
 	SuilWrapperWrapFunc wrap;
 	SuilWrapperFreeFunc free;
 	void*               lib;
-	LV2_Feature**       features;
 	void*               impl;
 	LV2UI_Resize        resize;
 } SuilWrapper;
@@ -68,6 +65,7 @@ struct SuilInstanceImpl {
 	const LV2UI_Descriptor* descriptor;
 	LV2UI_Handle            handle;
 	SuilWrapper*            wrapper;
+	LV2_Feature**           features;
 	SuilWidget              ui_widget;
 	SuilWidget              host_widget;
 };
@@ -79,11 +77,11 @@ struct SuilInstanceImpl {
    to wrap a widget, including a possibly extended features array to
    be used for instantiating the UI.
 */
-typedef SuilWrapper* (*SuilWrapperNewFunc)(
-	SuilHost*                 host,
-	const char*               host_type_uri,
-	const char*               ui_type_uri,
-	const LV2_Feature* const* features);
+typedef SuilWrapper* (*SuilWrapperNewFunc)(SuilHost*      host,
+                                           const char*    host_type_uri,
+                                           const char*    ui_type_uri,
+                                           LV2_Feature*** features,
+                                           unsigned       n_features);
 
 typedef void (*SuilVoidFunc)();
 
@@ -94,6 +92,22 @@ suil_dlfunc(void* handle, const char* symbol)
 	typedef SuilVoidFunc (*VoidFuncGetter)(void*, const char*);
 	VoidFuncGetter dlfunc = (VoidFuncGetter)dlsym;
 	return dlfunc(handle, symbol);
+}
+
+/** Add a feature to a (mutable) LV2 feature array. */
+static inline void
+suil_add_feature(LV2_Feature*** features,
+                 unsigned       n,
+                 const char*    uri,
+                 void*          data)
+{
+	*features = (LV2_Feature**)realloc(*features,
+	                                   sizeof(LV2_Feature*) * (n + 2));
+
+	(*features)[n]       = (LV2_Feature*)malloc(sizeof(LV2_Feature));
+	(*features)[n]->URI  = uri;
+	(*features)[n]->data = data;
+	(*features)[n + 1]   = NULL;
 }
 
 #endif  // SUIL_INTERNAL_H

@@ -124,16 +124,15 @@ wrapper_free(SuilWrapper* wrapper)
 
 SUIL_API
 SuilWrapper*
-suil_wrapper_new(SuilHost*                 host,
-                 const char*               host_type_uri,
-                 const char*               ui_type_uri,
-                 const LV2_Feature* const* features)
+suil_wrapper_new(SuilHost*      host,
+                 const char*    host_type_uri,
+                 const char*    ui_type_uri,
+                 LV2_Feature*** features)
 {
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
-	wrapper->wrap     = wrapper_wrap;
-	wrapper->free     = wrapper_free;
-	wrapper->features = (LV2_Feature**)features;
-	wrapper->impl     = NULL;
+	wrapper->wrap = wrapper_wrap;
+	wrapper->free = wrapper_free;
+	wrapper->impl = NULL;
 
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(
 		g_object_new(SUIL_TYPE_QT_WRAPPER, NULL));

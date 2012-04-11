@@ -24,12 +24,24 @@ suil_host_new(SuilPortWriteFunc       write_func,
               SuilPortUnsubscribeFunc unsubscribe_func)
 {
 	SuilHost* host = malloc(sizeof(struct SuilHostImpl));
-	host->write_func       = write_func;
-	host->index_func       = index_func;
-	host->subscribe_func   = subscribe_func;
-	host->unsubscribe_func = unsubscribe_func;
-	host->gtk_lib          = NULL;
+	host->write_func                 = write_func;
+	host->port_map.handle            = host;
+	host->port_map.port_index        = index_func;
+	host->port_subscribe.handle      = host;
+	host->port_subscribe.subscribe   = subscribe_func;
+	host->port_subscribe.unsubscribe = unsubscribe_func;
+	host->touch.handle               = host;
+	host->touch.touch                = NULL;
+	host->gtk_lib                    = NULL;
 	return host;
+}
+
+SUIL_API
+void
+suil_host_set_touch_func(SuilHost*     host,
+                         SuilTouchFunc touch_func)
+{
+	host->touch.touch = touch_func;
 }
 
 SUIL_API

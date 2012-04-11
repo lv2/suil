@@ -23,9 +23,9 @@
 #include "./suil_config.h"
 #include "./suil_internal.h"
 
-#define GTK2_UI_URI NS_UI "GtkUI"
-#define QT4_UI_URI  NS_UI "Qt4UI"
-#define X11_UI_URI  NS_UI "X11UI"
+#define GTK2_UI_URI LV2_UI__GtkUI
+#define QT4_UI_URI  LV2_UI__Qt4UI
+#define X11_UI_URI  LV2_UI__X11UI
 
 SUIL_API
 unsigned
@@ -54,10 +54,11 @@ suil_ui_supported(const char* container_type_uri,
 }
 
 static SuilWrapper*
-open_wrapper(SuilHost*                 host,
-             const char*               container_type_uri,
-             const char*               ui_type_uri,
-             const LV2_Feature* const* features)
+open_wrapper(SuilHost*      host,
+             const char*    container_type_uri,
+             const char*    ui_type_uri,
+             LV2_Feature*** features,
+             unsigned       n_features)
 {
 	if (!strcmp(container_type_uri, ui_type_uri)) {
 		return NULL;
@@ -108,7 +109,8 @@ open_wrapper(SuilHost*                 host,
 		? wrapper_new(host,
 		              container_type_uri,
 		              ui_type_uri,
-		              features)
+		              features,
+		              n_features)
 		: NULL;
 
 	if (!wrapper) {
@@ -172,38 +174,54 @@ suil_instance_new(SuilHost*                 host,
 		return NULL;
 	}
 
-	// Use empty local features array if necessary
-	const LV2_Feature* local_features[1];
-	local_features[0] = NULL;
-	if (!features) {
-		features = (const LV2_Feature* const*)&local_features;
-	}
-
-	// Open a new wrapper
-	SuilWrapper* wrapper = open_wrapper(host,
-	                                    container_type_uri,
-	                                    ui_type_uri,
-	                                    features);
-
-	if (wrapper) {
-		features = (const LV2_Feature * const*)wrapper->features;
-	}
-
-	// Instantiate UI (possibly with wrapper-provided features)
+	// Create SuilInstance
 	SuilInstance* instance = malloc(sizeof(struct SuilInstanceImpl));
 	instance->lib_handle  = lib;
 	instance->descriptor  = descriptor;
 	instance->host_widget = NULL;
 	instance->ui_widget   = NULL;
 	instance->wrapper     = NULL;
-	instance->handle      = descriptor->instantiate(
+	instance->features    = NULL;
+	instance->handle      = NULL;
+
+	// Make UI features array
+	instance->features = (LV2_Feature**)malloc(sizeof(LV2_Feature**));
+	instance->features[0] = NULL;
+
+	// Copy user provided features
+	unsigned n_features = 0;
+	for (; features && features[n_features]; ++n_features) {
+		const LV2_Feature* f = features[n_features];
+		suil_add_feature(&instance->features, n_features, f->URI, f->data);
+	}
+
+	// Add additional features implemented by SuilHost functions
+	if (host->port_map.port_index) {
+		suil_add_feature(&instance->features, n_features++,
+		                 LV2_UI__portMap, &host->port_map);
+	}
+	if (host->port_subscribe.subscribe && host->port_subscribe.unsubscribe) {
+		suil_add_feature(&instance->features, n_features++,
+		                 LV2_UI__portSubscribe, &host->port_subscribe);
+	}
+	if (host->touch.touch) {
+		suil_add_feature(&instance->features, n_features++,
+		                 LV2_UI__touch, &host->touch);
+	}
+
+	// Open wrapper (this may add additional features)
+	instance->wrapper = open_wrapper(
+		host, container_type_uri, ui_type_uri, &instance->features, n_features);
+
+	// Instantiate UI
+	instance->handle  = descriptor->instantiate(
 		descriptor,
 		plugin_uri,
 		ui_bundle_path,
 		host->write_func,
 		controller,
 		&instance->ui_widget,
-		features);
+		(const LV2_Feature* const*)instance->features);
 
 	// Failed to instantiate UI
 	if (!instance || !instance->handle) {
@@ -213,8 +231,8 @@ suil_instance_new(SuilHost*                 host,
 		return NULL;
 	}
 
-	if (wrapper) {
-		if (wrapper->wrap(wrapper, instance)) {
+	if (instance->wrapper) {
+		if (instance->wrapper->wrap(instance->wrapper, instance)) {
 			SUIL_ERRORF("Failed to wrap UI <%s> in type <%s>\n",
 			            ui_uri, container_type_uri);
 			suil_instance_free(instance);
@@ -232,6 +250,11 @@ void
 suil_instance_free(SuilInstance* instance)
 {
 	if (instance) {
+		for (unsigned i = 0; instance->features[i]; ++i) {
+			free(instance->features[i]);
+		}
+		free(instance->features);
+
 		if (instance->wrapper) {
 			instance->wrapper->free(instance->wrapper);
 			dlclose(instance->wrapper->lib);

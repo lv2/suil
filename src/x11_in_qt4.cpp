@@ -46,40 +46,27 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 
 SUIL_API
 SuilWrapper*
-suil_wrapper_new(SuilHost*                 host,
-                 const char*               host_type_uri,
-                 const char*               ui_type_uri,
-                 const LV2_Feature* const* features)
+suil_wrapper_new(SuilHost*      host,
+                 const char*    host_type_uri,
+                 const char*    ui_type_uri,
+                 LV2_Feature*** features,
+                 unsigned       n_features)
 {
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = (SuilWrapperFreeFunc)free;
 
-	unsigned n_features = 0;
-	for (; features[n_features]; ++n_features) {}
-
 	QX11EmbedWidget* const ew = new QX11EmbedWidget();
-	wrapper->impl = ew;
 
-	wrapper->features = (LV2_Feature**)malloc(
-		sizeof(LV2_Feature*) * (n_features + 3));
-	memcpy(wrapper->features, features, sizeof(LV2_Feature*) * n_features);
-
-	LV2_Feature* parent_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
-	parent_feature->URI  = NS_UI "parent";
-	parent_feature->data = (void*)(intptr_t)ew->winId();
-
-	wrapper->features[n_features]     = parent_feature;
-	wrapper->features[n_features + 1] = NULL;
-	wrapper->features[n_features + 2] = NULL;
-
+	wrapper->impl             = ew;
 	wrapper->resize.handle    = ew;
 	wrapper->resize.ui_resize = wrapper_resize;
 
-	LV2_Feature* resize_feature = (LV2_Feature*)malloc(sizeof(LV2_Feature));
-	resize_feature->URI  = LV2_UI__resize;
-	resize_feature->data = &wrapper->resize;
-	wrapper->features[n_features + 1] = resize_feature;
+	suil_add_feature(features, n_features++, LV2_UI__parent,
+	                 (void*)(intptr_t)ew->winId());
+
+	suil_add_feature(features, n_features++, LV2_UI__resize,
+	                 &wrapper->resize);
 
 	return wrapper;
 }

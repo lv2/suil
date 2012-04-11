@@ -51,10 +51,10 @@ wrapper_wrap(SuilWrapper*  wrapper,
 
 SUIL_API
 SuilWrapper*
-suil_wrapper_new(SuilHost*                 host,
-                 const char*               host_type_uri,
-                 const char*               ui_type_uri,
-                 const LV2_Feature* const* features)
+suil_wrapper_new(SuilHost*      host,
+                 const char*    host_type_uri,
+                 const char*    ui_type_uri,
+                 LV2_Feature*** features)
 {
 	/* We have to open libgtk here, so Gtk type symbols are present and will be
 	   found by the introspection stuff.  This is required at least to make
@@ -73,10 +73,9 @@ suil_wrapper_new(SuilHost*                 host,
 	}
 
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
-	wrapper->wrap     = wrapper_wrap;
-	wrapper->free     = (SuilWrapperFreeFunc)free;
-	wrapper->features = (LV2_Feature**)features;
-	wrapper->impl     = NULL;
+	wrapper->wrap = wrapper_wrap;
+	wrapper->free = (SuilWrapperFreeFunc)free;
+	wrapper->impl = NULL;
 
 	return wrapper;
 }

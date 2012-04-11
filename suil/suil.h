@@ -105,6 +105,12 @@ typedef uint32_t (*SuilPortUnsubscribeFunc)(
 	uint32_t                  protocol,
 	const LV2_Feature* const* features);
 
+/** Function called when a control is grabbed or released. */
+typedef void (*SuilTouchFunc)(
+	SuilController controller,
+	uint32_t       port_index,
+	bool           grabbed);
+
 /**
    Create a new UI host descriptor.
    @param write_func Function to send a value to a plugin port.
@@ -118,6 +124,16 @@ suil_host_new(SuilPortWriteFunc       write_func,
               SuilPortIndexFunc       index_func,
               SuilPortSubscribeFunc   subscribe_func,
               SuilPortUnsubscribeFunc unsubscribe_func);
+
+/**
+   Set a touch function for a host descriptor.
+
+   Note this function will only be called if the UI supports it.
+*/
+SUIL_API
+void
+suil_host_set_touch_func(SuilHost*     host,
+                         SuilTouchFunc touch_func);
 
 /**
    Free @c host.
