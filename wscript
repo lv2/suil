@@ -42,7 +42,7 @@ def configure(conf):
 
     conf.env.append_unique('CFLAGS', '-std=c99')
 
-    autowaf.check_pkg(conf, 'lv2', atleast_version='0.1.0', uselib_store='LV2')
+    autowaf.check_pkg(conf, 'lv2', atleast_version='0.5.0', uselib_store='LV2')
 
     autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                       atleast_version='2.18.0', mandatory=False)
