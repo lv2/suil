@@ -38,11 +38,12 @@ static inline char* dlerror(void) { return "Unknown error"; }
                                       __func__, __VA_ARGS__)
 
 struct SuilHostImpl {
-	SuilPortWriteFunc    write_func;
-	LV2UI_Port_Map       port_map;
-	LV2UI_Port_Subscribe port_subscribe;
-	LV2UI_Touch          touch;
-	void*                gtk_lib;
+	SuilPortWriteFunc       write_func;
+	SuilPortIndexFunc       index_func;
+	SuilPortSubscribeFunc   subscribe_func;
+	SuilPortUnsubscribeFunc unsubscribe_func;
+	SuilTouchFunc           touch_func;
+	void*                   gtk_lib;
 };
 
 struct _SuilWrapper;
@@ -66,6 +67,9 @@ struct SuilInstanceImpl {
 	LV2UI_Handle            handle;
 	SuilWrapper*            wrapper;
 	LV2_Feature**           features;
+	LV2UI_Port_Map          port_map;
+	LV2UI_Port_Subscribe    port_subscribe;
+	LV2UI_Touch             touch;
 	SuilWidget              ui_widget;
 	SuilWidget              host_widget;
 };

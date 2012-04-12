@@ -175,14 +175,9 @@ suil_instance_new(SuilHost*                 host,
 	}
 
 	// Create SuilInstance
-	SuilInstance* instance = malloc(sizeof(struct SuilInstanceImpl));
-	instance->lib_handle  = lib;
-	instance->descriptor  = descriptor;
-	instance->host_widget = NULL;
-	instance->ui_widget   = NULL;
-	instance->wrapper     = NULL;
-	instance->features    = NULL;
-	instance->handle      = NULL;
+	SuilInstance* instance = calloc(1, sizeof(struct SuilInstanceImpl));
+	instance->lib_handle = lib;
+	instance->descriptor = descriptor;
 
 	// Make UI features array
 	instance->features = (LV2_Feature**)malloc(sizeof(LV2_Feature**));
@@ -196,17 +191,24 @@ suil_instance_new(SuilHost*                 host,
 	}
 
 	// Add additional features implemented by SuilHost functions
-	if (host->port_map.port_index) {
+	if (host->index_func) {
+		instance->port_map.handle     = controller;
+		instance->port_map.port_index = host->index_func;
 		suil_add_feature(&instance->features, n_features++,
-		                 LV2_UI__portMap, &host->port_map);
+		                 LV2_UI__portMap, &instance->port_map);
 	}
-	if (host->port_subscribe.subscribe && host->port_subscribe.unsubscribe) {
+	if (host->subscribe_func && host->unsubscribe_func) {
+		instance->port_subscribe.handle      = controller;
+		instance->port_subscribe.subscribe   = host->subscribe_func;
+		instance->port_subscribe.unsubscribe = host->unsubscribe_func;
 		suil_add_feature(&instance->features, n_features++,
-		                 LV2_UI__portSubscribe, &host->port_subscribe);
+		                 LV2_UI__portSubscribe, &instance->port_subscribe);
 	}
-	if (host->touch.touch) {
+	if (host->touch_func) {
+		instance->touch.handle = controller;
+		instance->touch.touch  = host->touch_func;
 		suil_add_feature(&instance->features, n_features++,
-		                 LV2_UI__touch, &host->touch);
+		                 LV2_UI__touch, &instance->touch);
 	}
 
 	// Open wrapper (this may add additional features)
@@ -214,7 +216,7 @@ suil_instance_new(SuilHost*                 host,
 		host, container_type_uri, ui_type_uri, &instance->features, n_features);
 
 	// Instantiate UI
-	instance->handle  = descriptor->instantiate(
+	instance->handle = descriptor->instantiate(
 		descriptor,
 		plugin_uri,
 		ui_bundle_path,
