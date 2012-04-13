@@ -112,7 +112,7 @@ def build(bld):
                   includes     = ['.'],
                   install_path = module_dir,
                   cflags       = cflags)
-        autowaf.use_lib(bld, obj, 'GTK2 QT4')
+        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
         obj = bld(features     = 'cxx cxxshlib',
                   source       = 'src/qt4_in_gtk2.cpp',
@@ -120,7 +120,7 @@ def build(bld):
                   includes     = ['.'],
                   install_path = module_dir,
                   cflags       = cflags)
-        autowaf.use_lib(bld, obj, 'GTK2 QT4')
+        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
     if bld.is_defined('HAVE_GTK2'):
         obj = bld(features     = 'c cshlib',
@@ -129,7 +129,7 @@ def build(bld):
                   includes     = ['.'],
                   install_path = module_dir,
                   cflags       = cflags)
-        autowaf.use_lib(bld, obj, 'GTK2')
+        autowaf.use_lib(bld, obj, 'GTK2 LV2')
 
     if bld.is_defined('HAVE_QT4'):
         obj = bld(features     = 'cxx cxxshlib',
@@ -138,7 +138,7 @@ def build(bld):
                   includes     = ['.'],
                   install_path = module_dir,
                   cflags       = cflags)
-        autowaf.use_lib(bld, obj, 'QT4')
+        autowaf.use_lib(bld, obj, 'QT4 LV2')
 
     # Documentation
     autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)
