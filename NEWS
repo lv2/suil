@@ -2,8 +2,9 @@ suil (0.6.0) stable;
 
   * Use path variables in pkgconfig files
   * Add support for embedding X11 UIs (ui:X11UI)
+  * Support new LV2 UI features automatically if provided by host
 
- -- David Robillard <d@drobilla.net>  Tue, 17 Apr 2012 18:46:03 -0400
+ -- David Robillard <d@drobilla.net>  Wed, 18 Apr 2012 19:32:43 -0400
 
 suil (0.4.4) stable;
 
