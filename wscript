@@ -119,7 +119,8 @@ def build(bld):
                   target       = 'suil_qt4_in_gtk2',
                   includes     = ['.'],
                   install_path = module_dir,
-                  cflags       = cflags)
+                  cflags       = cflags,
+                  linkflags    = ['-Wl,-z,nodelete'])
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
     if bld.is_defined('HAVE_GTK2'):
@@ -128,7 +129,8 @@ def build(bld):
                   target       = 'suil_x11_in_gtk2',
                   includes     = ['.'],
                   install_path = module_dir,
-                  cflags       = cflags)
+                  cflags       = cflags,
+                  linkflags    = ['-Wl,-z,nodelete'])
         autowaf.use_lib(bld, obj, 'GTK2 LV2')
 
     if bld.is_defined('HAVE_QT4'):
