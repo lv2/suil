@@ -29,6 +29,7 @@ typedef struct _SuilX11WrapperClass SuilX11WrapperClass;
 struct _SuilX11Wrapper {
 	GtkSocket     socket;
 	GtkPlug*      plug;
+	SuilWrapper*  wrapper;
 	SuilInstance* instance;
 };
 
@@ -40,10 +41,28 @@ GType suil_x11_wrapper_get_type(void);  // Accessor for SUIL_TYPE_X11_WRAPPER
 
 G_DEFINE_TYPE(SuilX11Wrapper, suil_x11_wrapper, GTK_TYPE_SOCKET)
 
-static void
-wrap_widget_dispose(GObject* gobject)
+static gboolean
+on_plug_removed(GtkSocket* sock, gpointer data)
 {
-	G_OBJECT_CLASS(suil_x11_wrapper_parent_class)->dispose(gobject);
+	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(sock);
+
+	if (self->instance->handle) {
+		self->instance->descriptor->cleanup(self->instance->handle);
+		self->instance->handle = NULL;
+	}
+
+	self->plug = NULL;
+	return TRUE;
+}
+
+static void
+suil_x11_wrapper_finalize(GObject* gobject)
+{
+	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(gobject);
+
+	self->wrapper->impl = NULL;
+
+	G_OBJECT_CLASS(suil_x11_wrapper_parent_class)->finalize(gobject);
 }
 
 static void
@@ -51,7 +70,7 @@ suil_x11_wrapper_class_init(SuilX11WrapperClass* klass)
 {
 	GObjectClass* const gobject_class = G_OBJECT_CLASS(klass);
 
-	gobject_class->dispose = wrap_widget_dispose;
+	gobject_class->finalize = suil_x11_wrapper_finalize;
 }
 
 static void
@@ -85,6 +104,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(wrapper->impl);
 
 	instance->host_widget = GTK_WIDGET(wrap);
+	wrap->wrapper         = wrapper;
 	wrap->instance        = instance;
 
 	g_signal_connect_after(G_OBJECT(wrap),
@@ -92,14 +112,23 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	                       G_CALLBACK(suil_x11_wrapper_realize),
 	                       NULL);
 
+	g_signal_connect(G_OBJECT(wrap),
+	                 "plug-removed",
+	                 G_CALLBACK(on_plug_removed),
+	                 NULL);
+
 	return 0;
 }
 
 static void
 wrapper_free(SuilWrapper* wrapper)
 {
-	free(wrapper);
+	if (wrapper->impl) {
+		SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(wrapper->impl);
+		gtk_object_destroy(GTK_OBJECT(wrap));
+	}
 }
+
 
 SUIL_API
 SuilWrapper*
@@ -110,11 +139,13 @@ suil_wrapper_new(SuilHost*      host,
                  unsigned       n_features)
 {
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
-	wrapper->wrap        = wrapper_wrap;
-	wrapper->free        = wrapper_free;
+	wrapper->wrap = wrapper_wrap;
+	wrapper->free = wrapper_free;
 
 	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(
 		g_object_new(SUIL_TYPE_X11_WRAPPER, NULL));
+
+	wrap->wrapper = NULL;
 
 	wrapper->impl             = wrap;
 	wrapper->resize.handle    = wrap;

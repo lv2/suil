@@ -54,7 +54,7 @@ suil_wrapper_new(SuilHost*      host,
 {
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
-	wrapper->free = (SuilWrapperFreeFunc)free;
+	wrapper->free = NULL;
 
 	QX11EmbedWidget* const ew = new QX11EmbedWidget();
 

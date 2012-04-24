@@ -34,6 +34,7 @@ struct _SuilQtWrapper {
 	GtkSocket        socket;
 	QApplication*    app;
 	QX11EmbedWidget* qembed;
+	SuilWrapper*     wrapper;
 	SuilInstance*    instance;
 };
 
@@ -46,19 +47,24 @@ GType suil_qt_wrapper_get_type(void);  // Accessor for SUIL_TYPE_QT_WRAPPER
 G_DEFINE_TYPE(SuilQtWrapper, suil_qt_wrapper, GTK_TYPE_SOCKET)
 
 static void
-suil_qt_wrapper_dispose(GObject* gobject)
+suil_qt_wrapper_finalize(GObject* gobject)
 {
 	SuilQtWrapper* const self = SUIL_QT_WRAPPER(gobject);
 
-	if (self->qembed) {
-		delete self->qembed;
-		self->qembed = NULL;
-
-		delete self->app;
-		self->app = NULL;
+	if (self->instance->handle) {
+		self->instance->descriptor->cleanup(self->instance->handle);
+		self->instance->handle = NULL;
 	}
 
-	G_OBJECT_CLASS(suil_qt_wrapper_parent_class)->dispose(gobject);
+	delete self->qembed;
+	self->qembed = NULL;
+
+	delete self->app;
+	self->app = NULL;
+
+	self->wrapper->impl = NULL;
+
+	G_OBJECT_CLASS(suil_qt_wrapper_parent_class)->finalize(gobject);
 }
 
 static void
@@ -66,7 +72,7 @@ suil_qt_wrapper_class_init(SuilQtWrapperClass* klass)
 {
 	GObjectClass* const gobject_class = G_OBJECT_CLASS(klass);
 
-	gobject_class->dispose = suil_qt_wrapper_dispose;
+	gobject_class->finalize = suil_qt_wrapper_finalize;
 }
 
 static void
@@ -94,6 +100,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(wrapper->impl);
 
 	wrap->qembed   = new QX11EmbedWidget();
+	wrap->wrapper  = wrapper;
 	wrap->instance = instance;
 
 	QWidget*     qwidget = (QWidget*)instance->ui_widget;
@@ -115,11 +122,10 @@ wrapper_wrap(SuilWrapper*  wrapper,
 static void
 wrapper_free(SuilWrapper* wrapper)
 {
-	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(
-		g_object_new(SUIL_TYPE_QT_WRAPPER, NULL));
-
-	gtk_object_destroy(GTK_OBJECT(wrap));
-	free(wrap);
+	if (wrapper->impl) {
+		SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(wrapper->impl);
+		gtk_object_destroy(GTK_OBJECT(wrap));
+	}
 }
 
 SUIL_API
@@ -130,15 +136,16 @@ suil_wrapper_new(SuilHost*      host,
                  LV2_Feature*** features)
 {
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
-	wrapper->wrap = wrapper_wrap;
-	wrapper->free = wrapper_free;
-	wrapper->impl = NULL;
+	wrapper->wrap    = wrapper_wrap;
+	wrapper->free    = wrapper_free;
+	wrapper->impl    = NULL;
 
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(
 		g_object_new(SUIL_TYPE_QT_WRAPPER, NULL));
 
 	static int argc = 0;
-	wrap->app = new QApplication(argc, NULL, true);
+	wrap->app     = new QApplication(argc, NULL, true);
+	wrap->wrapper = NULL;
 
 	wrapper->impl = wrap;
 

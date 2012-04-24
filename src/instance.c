@@ -257,12 +257,15 @@ suil_instance_free(SuilInstance* instance)
 		}
 		free(instance->features);
 
-		if (instance->wrapper) {
-			instance->wrapper->free(instance->wrapper);
-			dlclose(instance->wrapper->lib);
-		}
 		if (instance->handle) {
 			instance->descriptor->cleanup(instance->handle);
+		}
+		if (instance->wrapper) {
+			if (instance->wrapper->free) {
+				instance->wrapper->free(instance->wrapper);
+			}
+			dlclose(instance->wrapper->lib);
+			free(instance->wrapper);
 		}
 		dlclose(instance->lib_handle);
 		free(instance);
