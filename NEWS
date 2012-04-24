@@ -1,7 +1,8 @@
 suil (9999) stable;
 
   * Fix crashes when wrapper widget is destroyed by toolkit before
-    suil cleanup function is called.
+    suil cleanup function is called
+  * Link Gtk wrappers with 'nodelete' to avoid Glib type errors
 
  -- David Robillard <d@drobilla.net>
 
