@@ -55,6 +55,12 @@ def configure(conf):
     autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
                       atleast_version='4.0.0', mandatory=False)
 
+    conf.env['NODELETE_FLAGS'] = []
+    if conf.check(linkflags = ['-Wl,-z,nodelete'],
+                  msg       = 'Checking for link flags -Wl,-z,-nodelete',
+                  mandatory = False):
+        conf.env['NODELETE_FLAGS'] = ['-Wl,-z,nodelete']
+
     autowaf.define(conf, 'SUIL_VERSION', SUIL_VERSION)
     autowaf.define(conf, 'SUIL_MODULE_DIR',
                    conf.env['LIBDIR'] + '/suil-' + SUIL_MAJOR_VERSION)
@@ -83,9 +89,8 @@ def build(bld):
     autowaf.build_pc(bld, 'SUIL', SUIL_VERSION, SUIL_MAJOR_VERSION, [],
                      {'SUIL_MAJOR_VERSION' : SUIL_MAJOR_VERSION})
 
-    cflags    = [ '-DSUIL_SHARED',
-                  '-DSUIL_INTERNAL' ]
-    lib = []
+    cflags = [ '-DSUIL_SHARED', '-DSUIL_INTERNAL' ]
+    lib    = []
     if sys.platform != 'win32':
         cflags += [ '-fvisibility=hidden' ]
         lib    += [ 'dl' ]
@@ -120,7 +125,7 @@ def build(bld):
                   includes     = ['.'],
                   install_path = module_dir,
                   cflags       = cflags,
-                  linkflags    = ['-Wl,-z,nodelete'])
+                  linkflags    = bld.env['NODELETE_FLAGS'])
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
     if bld.is_defined('HAVE_GTK2'):
@@ -130,7 +135,7 @@ def build(bld):
                   includes     = ['.'],
                   install_path = module_dir,
                   cflags       = cflags,
-                  linkflags    = ['-Wl,-z,nodelete'])
+                  linkflags    = bld.env['NODELETE_FLAGS'])
         autowaf.use_lib(bld, obj, 'GTK2 LV2')
 
     if bld.is_defined('HAVE_QT4'):
