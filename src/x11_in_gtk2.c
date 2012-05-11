@@ -129,7 +129,6 @@ wrapper_free(SuilWrapper* wrapper)
 	}
 }
 
-
 SUIL_API
 SuilWrapper*
 suil_wrapper_new(SuilHost*      host,

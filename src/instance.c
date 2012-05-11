@@ -257,13 +257,18 @@ suil_instance_free(SuilInstance* instance)
 		}
 		free(instance->features);
 
+		// Call wrapper free function to destroy widgets and drop references
+		if (instance->wrapper && instance->wrapper->free) {
+			instance->wrapper->free(instance->wrapper);
+		}
+
+		// Call cleanup to destroy UI (if it still exists at this point)
 		if (instance->handle) {
 			instance->descriptor->cleanup(instance->handle);
 		}
+
+		// Close libraries and free everything
 		if (instance->wrapper) {
-			if (instance->wrapper->free) {
-				instance->wrapper->free(instance->wrapper);
-			}
 			dlclose(instance->wrapper->lib);
 			free(instance->wrapper);
 		}
