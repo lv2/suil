@@ -176,6 +176,12 @@ suil_instance_new(SuilHost*                 host,
 
 	// Create SuilInstance
 	SuilInstance* instance = calloc(1, sizeof(struct SuilInstanceImpl));
+	if (!instance) {
+		SUIL_ERRORF("Failed to allocate memory for <%s> instance\n", ui_uri);
+		dlclose(lib);
+		return NULL;
+	}
+		
 	instance->lib_handle = lib;
 	instance->descriptor = descriptor;
 
@@ -226,7 +232,7 @@ suil_instance_new(SuilHost*                 host,
 		(const LV2_Feature* const*)instance->features);
 
 	// Failed to instantiate UI
-	if (!instance || !instance->handle) {
+	if (!instance->handle) {
 		SUIL_ERRORF("Failed to instantiate UI <%s> in %s\n",
 		            ui_uri, ui_binary_path);
 		suil_instance_free(instance);
