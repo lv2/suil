@@ -3,6 +3,8 @@ suil (9999) stable;
   * Fix crashes when wrapper widget is destroyed by toolkit before
     suil cleanup function is called
   * Link Gtk wrappers with 'nodelete' to avoid Glib type errors
+  * Allow run-time configuation of module directory via environment variable
+    SUIL_MODULE_DIR
 
  -- David Robillard <d@drobilla.net>
 

@@ -85,14 +85,17 @@ open_wrapper(SuilHost*      host,
 		return NULL;
 	}
 
-	const size_t path_len = strlen(SUIL_MODULE_DIR)
+	const char* const env_dir = getenv("SUIL_MODULE_DIR");
+	const char* const mod_dir = env_dir ? env_dir : SUIL_MODULE_DIR;
+
+	const size_t path_len = strlen(mod_dir)
 		+ strlen(module_name)
 		+ strlen(SUIL_MODULE_EXT)
 		+ 2;
 
 	char* const path = calloc(path_len, 1);
 	snprintf(path, path_len, "%s%s%s%s",
-	         SUIL_MODULE_DIR, SUIL_DIR_SEP, module_name, SUIL_MODULE_EXT);
+	         mod_dir, SUIL_DIR_SEP, module_name, SUIL_MODULE_EXT);
 
 	// Open wrap module
 	dlerror();
@@ -181,7 +184,7 @@ suil_instance_new(SuilHost*                 host,
 		dlclose(lib);
 		return NULL;
 	}
-		
+
 	instance->lib_handle = lib;
 	instance->descriptor = descriptor;
 
