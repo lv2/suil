@@ -149,7 +149,7 @@ suil_host_free(SuilHost* host);
    @param ui_type_uri The URI of the UI widget type.
    @return 0 if wrapping is unsupported, otherwise the quality of the wrapping
    where 1 is the highest quality (direct native embedding with no wrapping)
-   and increaing values are of a progressively lower quality and/or stability.
+   and increasing values are of a progressively lower quality and/or stability.
 */
 SUIL_API
 unsigned
