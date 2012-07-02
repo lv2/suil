@@ -25,6 +25,24 @@
 
 extern "C" {
 
+static void
+on_size_request(GtkWidget*      widget,
+                GtkRequisition* requisition,
+                gpointer        user_data)
+{
+	QX11EmbedContainer* const wrap   = (QX11EmbedContainer*)user_data;
+	wrap->setMinimumSize(requisition->width, requisition->height);
+}
+
+static void
+on_size_allocate(GtkWidget*    widget,
+                 GdkRectangle* allocation,
+                 gpointer      user_data)
+{
+	QX11EmbedContainer* const wrap   = (QX11EmbedContainer*)user_data;
+	wrap->resize(allocation->width, allocation->height);
+}
+
 static int
 wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
@@ -43,6 +61,12 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	gtk_widget_get_allocation(widget, &alloc);
 	wrap->resize(alloc.width, alloc.height);
 #endif
+
+	g_signal_connect(
+		G_OBJECT(plug), "size-request", G_CALLBACK(on_size_request), wrap);
+
+	g_signal_connect(
+		G_OBJECT(plug), "size-allocate", G_CALLBACK(on_size_allocate), wrap);
 
 	instance->host_widget = wrap;
 
