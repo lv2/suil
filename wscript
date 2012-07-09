@@ -36,7 +36,7 @@ def options(opt):
 def configure(conf):
     conf.load('compiler_c')
     conf.load('compiler_cxx')
-    conf.line_just = 46
+    conf.line_just = 40
     autowaf.configure(conf)
     autowaf.display_header('Suil Configuration')
 
@@ -154,27 +154,9 @@ def build(bld):
     if bld.env['DOCS']:
         bld.add_post_fun(fix_docs)
 
-def build_dir(ctx, subdir):
-    if autowaf.is_child():
-        return os.path.join('build', APPNAME, subdir)
-    else:
-        return os.path.join('build', subdir)
-
 def fix_docs(ctx):
-    try:
-        top = os.getcwd()
-        os.chdir(build_dir(ctx, 'doc/html'))
-        os.system("sed -i 's/SUIL_API //' group__suil.html")
-        os.system("sed -i 's/SUIL_DEPRECATED //' group__suil.html")
-        os.system("sed -i 's/href=\"doc\/style.css\"/href=\"style.css\"/' group__suil.html")
-        os.remove('index.html')
-        os.symlink('group__suil.html', 'index.html')
-        os.chdir(top)
-        os.chdir(build_dir(ctx, 'doc/man/man3'))
-        os.system("sed -i 's/SUIL_API //' suil.3")
-        os.chdir(top)
-    except:
-        Logs.error("Failed to fix up %s documentation" % APPNAME)
+    if ctx.cmd == 'build':
+        autowaf.make_simple_dox(APPNAME)
 
 def upload_docs(ctx):
     os.system("rsync -ravz --delete -e ssh build/doc/html/ drobilla@drobilla.net:~/drobilla.net/docs/suil/")

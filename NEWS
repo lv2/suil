@@ -1,7 +1,7 @@
 suil (9999) unstable;
 
-  * Fix typo in suil_ui_supported() documentation
   * Correctly handle resizing for Gtk2 in Qt4
+  * Improve documentation
 
  -- David Robillard <d@drobilla.net>
 
