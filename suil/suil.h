@@ -211,6 +211,19 @@ suil_instance_get_widget(SuilInstance* instance);
 
 /**
    Notify the UI about a change in a plugin port.
+   @param instance UI instance.
+   @param port_index Index of the port which has changed.
+   @param buffer_size Size of @p buffer in bytes.
+   @param format Format of @p buffer (mapped URI, or 0 for float).
+   @param buffer Change data, e.g. the new port value.
+
+   This function can be used to notify the UI about any port change, but in the
+   simplest case is used to set the value of lv2:ControlPort ports.  For
+   simplicity, this is a special case where @p format is 0, @p buffer_size is
+   4, and @p buffer should point to a single float.
+
+   The @p buffer must be valid only for the duration of this call, the UI must
+   not keep a reference to it.
 */
 SUIL_API
 void
