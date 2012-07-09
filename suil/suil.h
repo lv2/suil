@@ -49,7 +49,15 @@ extern "C" {
 
 /**
    @defgroup suil Suil
-   A library for hosting LV2 plugin UIs.
+
+   Suil is a library for loading and wrapping LV2 plugin UIs.  With Suil, a
+   host written in one supported toolkit can embed a plugin UI written in a
+   different supported toolkit.  Suil insulates hosts from toolkit libraries
+   used by plugin UIs.  For example, a Gtk host can embed a Qt UI without
+   linking against Qt at compile time.
+
+   Visit <http://drobilla.net/software/suil> for more information.
+
    @{
 */
 
