@@ -30,7 +30,7 @@ on_size_request(GtkWidget*      widget,
                 GtkRequisition* requisition,
                 gpointer        user_data)
 {
-	QX11EmbedContainer* const wrap   = (QX11EmbedContainer*)user_data;
+	QX11EmbedContainer* const wrap = (QX11EmbedContainer*)user_data;
 	wrap->setMinimumSize(requisition->width, requisition->height);
 }
 
@@ -39,7 +39,7 @@ on_size_allocate(GtkWidget*    widget,
                  GdkRectangle* allocation,
                  gpointer      user_data)
 {
-	QX11EmbedContainer* const wrap   = (QX11EmbedContainer*)user_data;
+	QX11EmbedContainer* const wrap = (QX11EmbedContainer*)user_data;
 	wrap->resize(allocation->width, allocation->height);
 }
 
