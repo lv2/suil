@@ -301,11 +301,13 @@ suil_instance_port_event(SuilInstance* instance,
                          uint32_t      format,
                          const void*   buffer)
 {
-	instance->descriptor->port_event(instance->handle,
-	                                 port_index,
-	                                 buffer_size,
-	                                 format,
-	                                 buffer);
+	if (instance->descriptor->port_event) {
+		instance->descriptor->port_event(instance->handle,
+		                                 port_index,
+		                                 buffer_size,
+		                                 format,
+		                                 buffer);
+	}
 }
 
 SUIL_API

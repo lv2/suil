@@ -1,3 +1,9 @@
+suil (9999) unstable;
+
+  * Gracefully handle UIs with no port_event method
+
+ -- David Robillard <d@drobilla.net>  Tue, 17 Jul 2012 23:16:19 -0400
+
 suil (0.6.4) stable;
 
   * Correctly handle resizing for Gtk2 in Qt4
