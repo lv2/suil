@@ -150,10 +150,10 @@ suil_wrapper_new(SuilHost*      host,
 	wrapper->resize.handle    = wrap;
 	wrapper->resize.ui_resize = wrapper_resize;
 
-	suil_add_feature(features, n_features++, LV2_UI__parent,
+	suil_add_feature(features, &n_features, LV2_UI__parent,
 	                 (void*)(intptr_t)gtk_plug_get_id(wrap->plug));
 
-	suil_add_feature(features, n_features++, LV2_UI__resize,
+	suil_add_feature(features, &n_features, LV2_UI__resize,
 	                 &wrapper->resize);
 
 	return wrapper;

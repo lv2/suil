@@ -19,6 +19,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -101,17 +102,25 @@ suil_dlfunc(void* handle, const char* symbol)
 /** Add a feature to a (mutable) LV2 feature array. */
 static inline void
 suil_add_feature(LV2_Feature*** features,
-                 unsigned       n,
+                 unsigned*      n,
                  const char*    uri,
                  void*          data)
 {
-	*features = (LV2_Feature**)realloc(*features,
-	                                   sizeof(LV2_Feature*) * (n + 2));
+	for (unsigned i = 0; i < *n && (*features)[i]; ++i) {
+		if (!strcmp((*features)[i]->URI, uri)) {
+			(*features)[i]->data = data;
+			return;
+		}
+	}
 
-	(*features)[n]       = (LV2_Feature*)malloc(sizeof(LV2_Feature));
-	(*features)[n]->URI  = uri;
-	(*features)[n]->data = data;
-	(*features)[n + 1]   = NULL;
+	*features = (LV2_Feature**)realloc(*features,
+	                                   sizeof(LV2_Feature*) * (*n + 2));
+
+	(*features)[*n]       = (LV2_Feature*)malloc(sizeof(LV2_Feature));
+	(*features)[*n]->URI  = uri;
+	(*features)[*n]->data = data;
+	(*features)[*n + 1]   = NULL;
+	*n += 1;
 }
 
 #endif  // SUIL_INTERNAL_H

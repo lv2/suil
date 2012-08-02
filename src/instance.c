@@ -193,30 +193,31 @@ suil_instance_new(SuilHost*                 host,
 	instance->features[0] = NULL;
 
 	// Copy user provided features
-	unsigned n_features = 0;
-	for (; features && features[n_features]; ++n_features) {
-		const LV2_Feature* f = features[n_features];
-		suil_add_feature(&instance->features, n_features, f->URI, f->data);
+	const LV2_Feature* const* fi         = features;
+	unsigned                  n_features = 0;
+	while (fi && *fi) {
+		const LV2_Feature* f = *fi++;
+		suil_add_feature(&instance->features, &n_features, f->URI, f->data);
 	}
 
 	// Add additional features implemented by SuilHost functions
 	if (host->index_func) {
 		instance->port_map.handle     = controller;
 		instance->port_map.port_index = host->index_func;
-		suil_add_feature(&instance->features, n_features++,
+		suil_add_feature(&instance->features, &n_features,
 		                 LV2_UI__portMap, &instance->port_map);
 	}
 	if (host->subscribe_func && host->unsubscribe_func) {
 		instance->port_subscribe.handle      = controller;
 		instance->port_subscribe.subscribe   = host->subscribe_func;
 		instance->port_subscribe.unsubscribe = host->unsubscribe_func;
-		suil_add_feature(&instance->features, n_features++,
+		suil_add_feature(&instance->features, &n_features,
 		                 LV2_UI__portSubscribe, &instance->port_subscribe);
 	}
 	if (host->touch_func) {
 		instance->touch.handle = controller;
 		instance->touch.touch  = host->touch_func;
-		suil_add_feature(&instance->features, n_features++,
+		suil_add_feature(&instance->features, &n_features,
 		                 LV2_UI__touch, &instance->touch);
 	}
 
