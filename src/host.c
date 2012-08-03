@@ -23,7 +23,7 @@ suil_host_new(SuilPortWriteFunc       write_func,
               SuilPortSubscribeFunc   subscribe_func,
               SuilPortUnsubscribeFunc unsubscribe_func)
 {
-	SuilHost* host = malloc(sizeof(struct SuilHostImpl));
+	SuilHost* host = (SuilHost*)malloc(sizeof(struct SuilHostImpl));
 	host->write_func       = write_func;
 	host->index_func       = index_func;
 	host->subscribe_func   = subscribe_func;

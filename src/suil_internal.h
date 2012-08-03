@@ -24,8 +24,10 @@
 #ifdef _WIN32
 #include <windows.h>
 #define dlopen(path, flags) LoadLibrary(path)
-#define dlclose(lib) FreeLibrary(lib)
+#define dlclose(lib) FreeLibrary((HMODULE)lib)
 #define dlsym GetProcAddress
+#define inline __inline
+#define snprintf _snprintf
 static inline char* dlerror(void) { return "Unknown error"; }
 #else
 #include <dlfcn.h>
@@ -35,8 +37,7 @@ static inline char* dlerror(void) { return "Unknown error"; }
 
 #include "suil/suil.h"
 
-#define SUIL_ERRORF(fmt, ...) fprintf(stderr, "error: %s: " fmt, \
-                                      __func__, __VA_ARGS__)
+#define SUIL_ERRORF(fmt, ...) fprintf(stderr, "suil error: " fmt, __VA_ARGS__)
 
 struct SuilHostImpl {
 	SuilPortWriteFunc       write_func;

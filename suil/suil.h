@@ -21,7 +21,6 @@
 #ifndef SUIL_SUIL_H
 #define SUIL_SUIL_H
 
-#include <stdbool.h>
 #include <stdint.h>
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
@@ -45,6 +44,8 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#    include <stdbool.h>
 #endif
 
 /**

@@ -98,7 +98,7 @@ open_wrapper(SuilHost*      host,
 		+ strlen(module_name)
 		+ 2;
 
-	char* const path = calloc(path_len, 1);
+	char* const path = (char*)calloc(path_len, 1);
 	snprintf(path, path_len, "%s%s%s%s%s",
 	         mod_dir, SUIL_DIR_SEP,
 	         SUIL_MODULE_PREFIX, module_name, SUIL_MODULE_EXT);
@@ -184,7 +184,7 @@ suil_instance_new(SuilHost*                 host,
 	}
 
 	// Create SuilInstance
-	SuilInstance* instance = calloc(1, sizeof(struct SuilInstanceImpl));
+	SuilInstance* instance = (SuilInstance*)calloc(1, sizeof(SuilInstance));
 	if (!instance) {
 		SUIL_ERRORF("Failed to allocate memory for <%s> instance\n", ui_uri);
 		dlclose(lib);

@@ -40,7 +40,15 @@ def configure(conf):
     autowaf.configure(conf)
     autowaf.display_header('Suil Configuration')
 
-    conf.env.append_unique('CFLAGS', '-std=c99')
+    conf.env['NODELETE_FLAGS'] = []
+    if conf.env['MSVC_COMPILER']:
+        conf.env.append_unique('CFLAGS', ['-TP', '-MD'])
+    else:
+        conf.env.append_unique('CFLAGS', '-std=c99')
+        if conf.check(linkflags = ['-Wl,-z,nodelete'],
+                      msg       = 'Checking for link flags -Wl,-z,-nodelete',
+                      mandatory = False):
+            conf.env['NODELETE_FLAGS'] = ['-Wl,-z,nodelete']
 
     autowaf.check_pkg(conf, 'lv2', atleast_version='1.0.0', uselib_store='LV2')
 
@@ -57,12 +65,6 @@ def configure(conf):
 
     autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
                       atleast_version='4.0.0', mandatory=False)
-
-    conf.env['NODELETE_FLAGS'] = []
-    if conf.check(linkflags = ['-Wl,-z,nodelete'],
-                  msg       = 'Checking for link flags -Wl,-z,-nodelete',
-                  mandatory = False):
-        conf.env['NODELETE_FLAGS'] = ['-Wl,-z,nodelete']
 
     autowaf.define(conf, 'SUIL_VERSION', SUIL_VERSION)
     autowaf.define(conf, 'SUIL_MODULE_DIR',
@@ -99,7 +101,10 @@ def build(bld):
 
     cflags = []
     lib    = []
-    if sys.platform != 'win32':
+    modlib = []
+    if sys.platform == 'win32':
+        modlib += ['user32']
+    else:
         cflags += ['-fvisibility=hidden']
         lib    += ['dl']
 
@@ -126,7 +131,8 @@ def build(bld):
                   includes     = ['.'],
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
-                  cflags       = cflags)
+                  cflags       = cflags,
+                  lib          = modlib)
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
         obj = bld(features     = 'cxx cxxshlib',
@@ -136,6 +142,7 @@ def build(bld):
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags,
+                  lib          = modlib,
                   linkflags    = bld.env['NODELETE_FLAGS'])
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
@@ -147,6 +154,7 @@ def build(bld):
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags,
+                  lib          = modlib,
                   linkflags    = bld.env['NODELETE_FLAGS'])
         autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2')
 
@@ -158,6 +166,7 @@ def build(bld):
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags,
+                  lib          = modlib,
                   linkflags    = bld.env['NODELETE_FLAGS'])
         autowaf.use_lib(bld, obj, 'GTK2 LV2')
 
@@ -168,7 +177,8 @@ def build(bld):
                   includes     = ['.'],
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
-                  cflags       = cflags)
+                  cflags       = cflags,
+                  lib          = modlib)
         autowaf.use_lib(bld, obj, 'QT4 LV2')
 
     # Documentation
