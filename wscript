@@ -52,6 +52,9 @@ def configure(conf):
         if conf.env['HAVE_GTK']:
             autowaf.define('SUIL_OLD_GTK', 1)
 
+    autowaf.check_pkg(conf, 'gtk+-x11-2.0', uselib_store='GTK2_X11',
+                      atleast_version='2.0.0', mandatory=False)
+
     autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
                       atleast_version='4.0.0', mandatory=False)
 
@@ -133,7 +136,7 @@ def build(bld):
                   linkflags    = bld.env['NODELETE_FLAGS'])
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
-    if bld.is_defined('HAVE_GTK2'):
+    if bld.is_defined('HAVE_GTK2') and bld.is_defined('HAVE_GTK2_X11'):
         obj = bld(features     = 'c cshlib',
                   source       = 'src/x11_in_gtk2.c',
                   target       = 'suil_x11_in_gtk2',
@@ -141,17 +144,17 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   linkflags    = bld.env['NODELETE_FLAGS'])
-        autowaf.use_lib(bld, obj, 'GTK2 LV2')
+        autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2')
 
-        if sys.platform == 'win32':
-            obj = bld(features     = 'cxx cxxshlib',
-                      source       = 'src/win_in_gtk2.c',
-                      target       = 'suil_win_in_gtk2',
-                      includes     = ['.'],
-                      install_path = module_dir,
-                      cflags       = cflags,
-                      linkflags    = bld.env['NODELETE_FLAGS'])
-            autowaf.use_lib(bld, obj, 'GTK2 LV2')
+    if bld.is_defined('HAVE_GTK2') and sys.platform == 'win32':
+        obj = bld(features     = 'cxx cxxshlib',
+                  source       = 'src/win_in_gtk2.c',
+                  target       = 'suil_win_in_gtk2',
+                  includes     = ['.'],
+                  install_path = module_dir,
+                  cflags       = cflags,
+                  linkflags    = bld.env['NODELETE_FLAGS'])
+        autowaf.use_lib(bld, obj, 'GTK2 LV2')
 
     if bld.is_defined('HAVE_QT4'):
         obj = bld(features     = 'cxx cxxshlib',
