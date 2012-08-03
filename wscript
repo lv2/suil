@@ -97,11 +97,11 @@ def build(bld):
     autowaf.build_pc(bld, 'SUIL', SUIL_VERSION, SUIL_MAJOR_VERSION, [],
                      {'SUIL_MAJOR_VERSION' : SUIL_MAJOR_VERSION})
 
-    cflags = [ '-DSUIL_SHARED', '-DSUIL_INTERNAL' ]
+    cflags = []
     lib    = []
     if sys.platform != 'win32':
-        cflags += [ '-fvisibility=hidden' ]
-        lib    += [ 'dl' ]
+        cflags += ['-fvisibility=hidden']
+        lib    += ['dl']
 
     module_dir = '${LIBDIR}/suil-' + SUIL_MAJOR_VERSION
 
@@ -111,6 +111,7 @@ def build(bld):
               source          = 'src/host.c src/instance.c',
               target          = 'suil-%s' % SUIL_MAJOR_VERSION,
               includes        = ['.'],
+              defines         = ['SUIL_SHARED', 'SUIL_INTERNAL'],
               name            = 'libsuil',
               vnum            = SUIL_LIB_VERSION,
               install_path    = '${LIBDIR}',
@@ -123,6 +124,7 @@ def build(bld):
                   source       = 'src/gtk2_in_qt4.cpp',
                   target       = 'suil_gtk2_in_qt4',
                   includes     = ['.'],
+                  defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags)
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
@@ -131,6 +133,7 @@ def build(bld):
                   source       = 'src/qt4_in_gtk2.cpp',
                   target       = 'suil_qt4_in_gtk2',
                   includes     = ['.'],
+                  defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags,
                   linkflags    = bld.env['NODELETE_FLAGS'])
@@ -141,6 +144,7 @@ def build(bld):
                   source       = 'src/x11_in_gtk2.c',
                   target       = 'suil_x11_in_gtk2',
                   includes     = ['.'],
+                  defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags,
                   linkflags    = bld.env['NODELETE_FLAGS'])
@@ -151,6 +155,7 @@ def build(bld):
                   source       = 'src/win_in_gtk2.c',
                   target       = 'suil_win_in_gtk2',
                   includes     = ['.'],
+                  defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags,
                   linkflags    = bld.env['NODELETE_FLAGS'])
@@ -161,6 +166,7 @@ def build(bld):
                   source       = 'src/x11_in_qt4.cpp',
                   target       = 'suil_x11_in_qt4',
                   includes     = ['.'],
+                  defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags)
         autowaf.use_lib(bld, obj, 'QT4 LV2')
