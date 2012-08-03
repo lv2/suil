@@ -95,8 +95,8 @@ open_wrapper(SuilHost*      host,
 	const char* const mod_dir = env_dir ? env_dir : SUIL_MODULE_DIR;
 
 	const size_t path_len = strlen(mod_dir)
+		+ strlen(SUIL_DIR_SEP SUIL_MODULE_PREFIX SUIL_MODULE_EXT)
 		+ strlen(module_name)
-		+ strlen(SUIL_MODULE_EXT)
 		+ 2;
 
 	char* const path = calloc(path_len, 1);
