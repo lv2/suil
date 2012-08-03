@@ -65,8 +65,13 @@ def configure(conf):
     autowaf.define(conf, 'SUIL_MODULE_DIR',
                    conf.env['LIBDIR'] + '/suil-' + SUIL_MAJOR_VERSION)
     autowaf.define(conf, 'SUIL_DIR_SEP', '/')
-    autowaf.define(conf, 'SUIL_MODULE_EXT', '.so')
     autowaf.define(conf, 'SUIL_GTK2_LIB_NAME', Options.options.gtk2_lib_name);
+    if Options.platform == 'win32':
+        autowaf.define(conf, 'SUIL_MODULE_PREFIX', '')
+        autowaf.define(conf, 'SUIL_MODULE_EXT', '.dll')
+    else:
+        autowaf.define(conf, 'SUIL_MODULE_PREFIX', 'lib')
+        autowaf.define(conf, 'SUIL_MODULE_EXT', '.so')
 
     conf.env['LIB_SUIL'] = ['suil-%s' % SUIL_MAJOR_VERSION]
 
@@ -137,6 +142,16 @@ def build(bld):
                   cflags       = cflags,
                   linkflags    = bld.env['NODELETE_FLAGS'])
         autowaf.use_lib(bld, obj, 'GTK2 LV2')
+
+        if sys.platform == 'win32':
+            obj = bld(features     = 'cxx cxxshlib',
+                      source       = 'src/win_in_gtk2.c',
+                      target       = 'suil_win_in_gtk2',
+                      includes     = ['.'],
+                      install_path = module_dir,
+                      cflags       = cflags,
+                      linkflags    = bld.env['NODELETE_FLAGS'])
+            autowaf.use_lib(bld, obj, 'GTK2 LV2')
 
     if bld.is_defined('HAVE_QT4'):
         obj = bld(features     = 'cxx cxxshlib',

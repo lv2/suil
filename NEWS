@@ -1,5 +1,6 @@
 suil (9999) unstable;
 
+  * Support for wrapping native Windows UIs in Gtk2
   * Gracefully handle UIs with no port_event method
   * Replace host provided features that match Suil implemented features, rather
     than passing UIs duplicate features
