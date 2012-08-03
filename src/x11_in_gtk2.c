@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include <gtk/gtk.h>
+#include <gdk/gdkx.h>
 
 #include "./suil_internal.h"
 
@@ -129,6 +130,19 @@ wrapper_free(SuilWrapper* wrapper)
 	}
 }
 
+static GdkFilterReturn
+event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
+{
+	SuilX11Wrapper* wrap = (SuilX11Wrapper*)data;
+	XEvent*         ev   = (XEvent*)xevent;
+	if (wrap->instance->handle && (ev->type == KeyPress || ev->type == KeyRelease)) {
+		// Forward keyboard events to UI window
+		XSendEvent(ev->xkey.display, (Window)wrap->instance->ui_widget, 1, 0, ev);
+		XSync(ev->xkey.display, TRUE);
+	}
+	return GDK_FILTER_CONTINUE;
+}
+
 SUIL_API
 SuilWrapper*
 suil_wrapper_new(SuilHost*      host,
@@ -149,6 +163,9 @@ suil_wrapper_new(SuilHost*      host,
 	wrapper->impl             = wrap;
 	wrapper->resize.handle    = wrap;
 	wrapper->resize.ui_resize = wrapper_resize;
+
+	GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(wrap));
+	gdk_window_add_filter(window, event_filter, wrap);
 
 	suil_add_feature(features, &n_features, LV2_UI__parent,
 	                 (void*)(intptr_t)gtk_plug_get_id(wrap->plug));

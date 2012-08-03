@@ -65,19 +65,6 @@ suil_win_wrapper_init(SuilWinWrapper* self)
 	self->instance = NULL;
 }
 
-GdkFilterReturn
-event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
-{
-	SuilWinWrapper* wrap = (SuilWinWrapper*)data;
-	MSG*            msg  = (MSG*)xevent;
-	if (msg->message == WM_KEYDOWN || msg->message == WM_KEYUP) {
-		// Forward keyboard events to UI window
-		PostMessage((HWND)wrap->instance->ui_widget,
-		            msg->message, msg->wParam, msg->lParam);
-	}
-	return GDK_FILTER_CONTINUE;
-}
-
 static int
 wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 {
@@ -105,6 +92,19 @@ wrapper_free(SuilWrapper* wrapper)
 		SuilWinWrapper* const wrap = SUIL_WIN_WRAPPER(wrapper->impl);
 		gtk_object_destroy(GTK_OBJECT(wrap));
 	}
+}
+
+static GdkFilterReturn
+event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
+{
+	SuilWinWrapper* wrap = (SuilWinWrapper*)data;
+	MSG*            msg  = (MSG*)xevent;
+	if (msg->message == WM_KEYDOWN || msg->message == WM_KEYUP) {
+		// Forward keyboard events to UI window
+		PostMessage((HWND)wrap->instance->ui_widget,
+		            msg->message, msg->wParam, msg->lParam);
+	}
+	return GDK_FILTER_CONTINUE;
 }
 
 SUIL_API
