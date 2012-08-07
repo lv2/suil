@@ -29,6 +29,8 @@ def options(opt):
     opt.load('compiler_c')
     opt.load('compiler_cxx')
     autowaf.set_options(opt)
+    opt.add_option('--static', action='store_true', default=False, dest='static',
+                   help="Build static library")
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
                    default="libgtk-x11-2.0.so",
                    help="Gtk2 library name [Default: libgtk-x11-2.0.so]")
@@ -41,6 +43,8 @@ def configure(conf):
     autowaf.display_header('Suil Configuration')
 
     conf.env['NODELETE_FLAGS'] = []
+    conf.env['BUILD_STATIC']   = Options.options.static
+
     if conf.env['MSVC_COMPILER']:
         conf.env.append_unique('CFLAGS', ['-TP', '-MD'])
     else:
@@ -110,7 +114,7 @@ def build(bld):
 
     module_dir = '${LIBDIR}/suil-' + SUIL_MAJOR_VERSION
 
-    # Library
+    # Shared Library
     obj = bld(features        = 'c cshlib',
               export_includes = ['.'],
               source          = 'src/host.c src/instance.c',
@@ -123,6 +127,21 @@ def build(bld):
               cflags          = cflags,
               lib             = lib,
               uselib          = 'LV2')
+
+    # Static library
+    if bld.env['BUILD_STATIC']:
+        obj = bld(features        = 'c cstlib',
+                  export_includes = ['.'],
+                  source          = 'src/host.c src/instance.c',
+                  target          = 'suil-%s' % SUIL_MAJOR_VERSION,
+                  includes        = ['.'],
+                  defines         = ['SUIL_INTERNAL'],
+                  name            = 'libsuil_static',
+                  vnum            = SUIL_LIB_VERSION,
+                  install_path    = '${LIBDIR}',
+                  cflags          = cflags,
+                  lib             = lib,
+                  uselib          = 'LV2')
 
     if bld.is_defined('HAVE_GTK2') and bld.is_defined('HAVE_QT4'):
         obj = bld(features     = 'cxx cxxshlib',
