@@ -29,7 +29,7 @@ def options(opt):
     opt.load('compiler_c')
     opt.load('compiler_cxx')
     autowaf.set_options(opt)
-    opt.add_option('--static', action='store_true', default=False, dest='static',
+    opt.add_option('--static', action='store_true', dest='static',
                    help="Build static library")
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
                    default="libgtk-x11-2.0.so",
@@ -42,26 +42,26 @@ def configure(conf):
     autowaf.configure(conf)
     autowaf.display_header('Suil Configuration')
 
-    conf.env['NODELETE_FLAGS'] = []
-    conf.env['BUILD_STATIC']   = Options.options.static
+    conf.env.NODELETE_FLAGS = []
+    conf.env.BUILD_STATIC   = Options.options.static
 
-    if conf.env['MSVC_COMPILER']:
+    if conf.env.MSVC_COMPILER:
         conf.env.append_unique('CFLAGS', ['-TP', '-MD'])
     else:
         conf.env.append_unique('CFLAGS', '-std=c99')
         if conf.check(linkflags = ['-Wl,-z,nodelete'],
                       msg       = 'Checking for link flags -Wl,-z,-nodelete',
                       mandatory = False):
-            conf.env['NODELETE_FLAGS'] = ['-Wl,-z,nodelete']
+            conf.env.NODELETE_FLAGS = ['-Wl,-z,nodelete']
 
     autowaf.check_pkg(conf, 'lv2', atleast_version='1.0.0', uselib_store='LV2')
 
     autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                       atleast_version='2.18.0', mandatory=False)
-    if not conf.env['HAVE_GTK2']:
+    if not conf.env.HAVE_GTK2:
         autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                           atleast_version='2.0.0', mandatory=False)
-        if conf.env['HAVE_GTK']:
+        if conf.env.HAVE_GTK:
             autowaf.define('SUIL_OLD_GTK', 1)
 
     autowaf.check_pkg(conf, 'gtk+-x11-2.0', uselib_store='GTK2_X11',
@@ -72,7 +72,7 @@ def configure(conf):
 
     autowaf.define(conf, 'SUIL_VERSION', SUIL_VERSION)
     autowaf.define(conf, 'SUIL_MODULE_DIR',
-                   conf.env['LIBDIR'] + '/suil-' + SUIL_MAJOR_VERSION)
+                   conf.env.LIBDIR + '/suil-' + SUIL_MAJOR_VERSION)
     autowaf.define(conf, 'SUIL_DIR_SEP', '/')
     autowaf.define(conf, 'SUIL_GTK2_LIB_NAME', Options.options.gtk2_lib_name);
     if Options.platform == 'win32':
@@ -82,14 +82,14 @@ def configure(conf):
         autowaf.define(conf, 'SUIL_MODULE_PREFIX', 'lib')
         autowaf.define(conf, 'SUIL_MODULE_EXT', '.so')
 
-    conf.env['LIB_SUIL'] = ['suil-%s' % SUIL_MAJOR_VERSION]
+    conf.env.LIB_SUIL = ['suil-%s' % SUIL_MAJOR_VERSION]
 
     conf.write_config_header('suil_config.h', remove=False)
 
     autowaf.display_msg(conf, "Gtk2 Support",
                         conf.is_defined('HAVE_GTK2'))
     autowaf.display_msg(conf, "Gtk2 Library Name",
-                        conf.env['SUIL_GTK2_LIB_NAME'])
+                        conf.env.SUIL_GTK2_LIB_NAME)
     autowaf.display_msg(conf, "Qt4 Support",
                         conf.is_defined('HAVE_QT4'))
     print('')
@@ -129,7 +129,7 @@ def build(bld):
               uselib          = 'LV2')
 
     # Static library
-    if bld.env['BUILD_STATIC']:
+    if bld.env.BUILD_STATIC:
         obj = bld(features        = 'c cstlib',
                   export_includes = ['.'],
                   source          = 'src/host.c src/instance.c',
@@ -162,7 +162,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib,
-                  linkflags    = bld.env['NODELETE_FLAGS'])
+                  linkflags    = bld.env.NODELETE_FLAGS)
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
     if bld.is_defined('HAVE_GTK2') and bld.is_defined('HAVE_GTK2_X11'):
@@ -174,7 +174,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib,
-                  linkflags    = bld.env['NODELETE_FLAGS'])
+                  linkflags    = bld.env.NODELETE_FLAGS)
         autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2')
 
     if bld.is_defined('HAVE_GTK2') and sys.platform == 'win32':
@@ -186,7 +186,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib,
-                  linkflags    = bld.env['NODELETE_FLAGS'])
+                  linkflags    = bld.env.NODELETE_FLAGS)
         autowaf.use_lib(bld, obj, 'GTK2 LV2')
 
     if bld.is_defined('HAVE_QT4'):
@@ -204,7 +204,7 @@ def build(bld):
     autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)
 
     bld.add_post_fun(autowaf.run_ldconfig)
-    if bld.env['DOCS']:
+    if bld.env.DOCS:
         bld.add_post_fun(fix_docs)
 
 def fix_docs(ctx):
