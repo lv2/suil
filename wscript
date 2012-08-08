@@ -40,19 +40,17 @@ def configure(conf):
     conf.load('compiler_cxx')
     conf.line_just = 40
     autowaf.configure(conf)
+    autowaf.set_c99_mode(conf)
     autowaf.display_header('Suil Configuration')
 
     conf.env.NODELETE_FLAGS = []
     conf.env.BUILD_STATIC   = Options.options.static
 
-    if conf.env.MSVC_COMPILER:
-        conf.env.append_unique('CFLAGS', ['-TP', '-MD'])
-    else:
-        conf.env.append_unique('CFLAGS', '-std=c99')
-        if conf.check(linkflags = ['-Wl,-z,nodelete'],
-                      msg       = 'Checking for link flags -Wl,-z,-nodelete',
-                      mandatory = False):
-            conf.env.NODELETE_FLAGS = ['-Wl,-z,nodelete']
+    if (not conf.env.MSVC_COMPILER and
+        conf.check(linkflags = ['-Wl,-z,nodelete'],
+                   msg       = 'Checking for link flags -Wl,-z,-nodelete',
+                   mandatory = False)):
+        conf.env.NODELETE_FLAGS = ['-Wl,-z,nodelete']
 
     autowaf.check_pkg(conf, 'lv2', atleast_version='1.0.0', uselib_store='LV2')
 
