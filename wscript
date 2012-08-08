@@ -31,6 +31,8 @@ def options(opt):
     autowaf.set_options(opt)
     opt.add_option('--static', action='store_true', dest='static',
                    help="Build static library")
+    opt.add_option('--no-shared', action='store_true', dest='no_shared',
+                   help='Do not build shared library')
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
                    default="libgtk-x11-2.0.so",
                    help="Gtk2 library name [Default: libgtk-x11-2.0.so]")
@@ -43,9 +45,11 @@ def configure(conf):
     autowaf.set_c99_mode(conf)
     autowaf.display_header('Suil Configuration')
 
-    conf.env.NODELETE_FLAGS = []
-    conf.env.BUILD_STATIC   = Options.options.static
+    conf.env.BUILD_SHARED = not Options.options.no_shared
+    conf.env.BUILD_STATIC = (Options.options.static or
+                             Options.options.static_progs)
 
+    conf.env.NODELETE_FLAGS = []
     if (not conf.env.MSVC_COMPILER and
         conf.check(linkflags = ['-Wl,-z,nodelete'],
                    msg       = 'Checking for link flags -Wl,-z,-nodelete',
@@ -113,18 +117,19 @@ def build(bld):
     module_dir = '${LIBDIR}/suil-' + SUIL_MAJOR_VERSION
 
     # Shared Library
-    obj = bld(features        = 'c cshlib',
-              export_includes = ['.'],
-              source          = 'src/host.c src/instance.c',
-              target          = 'suil-%s' % SUIL_MAJOR_VERSION,
-              includes        = ['.'],
-              defines         = ['SUIL_SHARED', 'SUIL_INTERNAL'],
-              name            = 'libsuil',
-              vnum            = SUIL_LIB_VERSION,
-              install_path    = '${LIBDIR}',
-              cflags          = cflags,
-              lib             = lib,
-              uselib          = 'LV2')
+    if bld.env.BUILD_SHARED:
+        obj = bld(features        = 'c cshlib',
+                  export_includes = ['.'],
+                  source          = 'src/host.c src/instance.c',
+                  target          = 'suil-%s' % SUIL_MAJOR_VERSION,
+                  includes        = ['.'],
+                  defines         = ['SUIL_SHARED', 'SUIL_INTERNAL'],
+                  name            = 'libsuil',
+                  vnum            = SUIL_LIB_VERSION,
+                  install_path    = '${LIBDIR}',
+                  cflags          = cflags,
+                  lib             = lib,
+                  uselib          = 'LV2')
 
     # Static library
     if bld.env.BUILD_STATIC:
