@@ -21,6 +21,8 @@
 
 #include "./suil_internal.h"
 
+extern "C" {
+
 #define SUIL_TYPE_WIN_WRAPPER (suil_win_wrapper_get_type())
 #define SUIL_WIN_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_WIN_WRAPPER, SuilWinWrapper))
 
@@ -159,3 +161,5 @@ suil_wrapper_new(SuilHost*      host,
 
 	return wrapper;
 }
+
+}  // extern "C"

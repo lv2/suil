@@ -184,7 +184,7 @@ def build(bld):
 
     if bld.is_defined('HAVE_GTK2') and sys.platform == 'win32':
         obj = bld(features     = 'cxx cxxshlib',
-                  source       = 'src/win_in_gtk2.c',
+                  source       = 'src/win_in_gtk2.cpp',
                   target       = 'suil_win_in_gtk2',
                   includes     = ['.'],
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
