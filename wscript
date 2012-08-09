@@ -46,8 +46,10 @@ def configure(conf):
     autowaf.display_header('Suil Configuration')
 
     conf.env.BUILD_SHARED = not Options.options.no_shared
-    conf.env.BUILD_STATIC = (Options.options.static or
-                             Options.options.static_progs)
+    conf.env.BUILD_STATIC = Options.options.static
+
+    if not conf.env.BUILD_SHARED and not conf.env.BUILD_STATIC:
+        conf.fatal('Neither a shared nor a static build requested')
 
     conf.env.NODELETE_FLAGS = []
     if (not conf.env.MSVC_COMPILER and
