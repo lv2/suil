@@ -37,6 +37,10 @@ static inline char* dlerror(void) { return "Unknown error"; }
 
 #include "suil/suil.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SUIL_ERRORF(fmt, ...) fprintf(stderr, "suil error: " fmt, __VA_ARGS__)
 
 struct SuilHostImpl {
@@ -89,7 +93,15 @@ typedef SuilWrapper* (*SuilWrapperNewFunc)(SuilHost*      host,
                                            LV2_Feature*** features,
                                            unsigned       n_features);
 
-typedef void (*SuilVoidFunc)();
+/** Prototype for suil_wrapper_new in each module. */
+SuilWrapper*
+suil_wrapper_new(SuilHost*      host,
+                 const char*    host_type_uri,
+                 const char*    ui_type_uri,
+                 LV2_Feature*** features,
+                 unsigned       n_features);
+
+typedef void (*SuilVoidFunc)(void);
 
 /** dlsym wrapper to return a function pointer (without annoying warning) */
 static inline SuilVoidFunc
@@ -123,5 +135,9 @@ suil_add_feature(LV2_Feature*** features,
 	(*features)[*n + 1]   = NULL;
 	*n += 1;
 }
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif  // SUIL_INTERNAL_H

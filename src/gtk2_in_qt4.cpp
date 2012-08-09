@@ -78,7 +78,8 @@ SuilWrapper*
 suil_wrapper_new(SuilHost*      host,
                  const char*    host_type_uri,
                  const char*    ui_type_uri,
-                 LV2_Feature*** features)
+                 LV2_Feature*** features,
+                 unsigned       n_features)
 {
 	/* We have to open libgtk here, so Gtk type symbols are present and will be
 	   found by the introspection stuff.  This is required at least to make

@@ -133,7 +133,8 @@ SuilWrapper*
 suil_wrapper_new(SuilHost*      host,
                  const char*    host_type_uri,
                  const char*    ui_type_uri,
-                 LV2_Feature*** features)
+                 LV2_Feature*** features,
+                 unsigned       n_features)
 {
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
 	wrapper->wrap    = wrapper_wrap;
