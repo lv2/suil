@@ -1,11 +1,12 @@
-suil (9999) unstable;
+suil (0.6.5) unstable;
 
   * Support for wrapping native Windows UIs in Gtk2
   * Gracefully handle UIs with no port_event method
   * Replace host provided features that match Suil implemented features, rather
     than passing UIs duplicate features
+  * Disable timestamps in HTML documentation for reproducible build
 
- -- David Robillard <d@drobilla.net>  Thu, 02 Aug 2012 18:08:43 -0400
+ -- David Robillard <d@drobilla.net>  Sun, 09 Sep 2012 03:19:01 -0400
 
 suil (0.6.4) stable;
 
