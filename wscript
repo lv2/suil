@@ -2,28 +2,21 @@
 import os
 import subprocess
 import sys
-
-from waflib.extras import autowaf as autowaf
 import waflib.Options as Options
+import waflib.extras.autowaf as autowaf
 
-# Version of this package (even if built as a child)
-SUIL_VERSION       = '0.6.5'
-SUIL_MAJOR_VERSION = '0'
-
-# Library version (UNIX style major, minor, micro)
+# Library and package version (UNIX style major, minor, micro)
 # major increment <=> incompatible changes
 # minor increment <=> compatible changes (additions)
 # micro increment <=> no interface changes
-# Suil uses the same version number for both library and package
-SUIL_LIB_VERSION = SUIL_VERSION
+SUIL_VERSION       = '0.6.5'
+SUIL_MAJOR_VERSION = '0'
 
-# Variables for 'waf dist'
-APPNAME = 'suil'
-VERSION = SUIL_VERSION
-
-# Mandatory variables
-top = '.'
-out = 'build'
+# Mandatory waf variables
+APPNAME = 'suil'        # Package name for waf dist
+VERSION = SUIL_VERSION  # Package version for waf dist
+top     = '.'           # Source directory
+out     = 'build'       # Build directory
 
 def options(opt):
     opt.load('compiler_c')
@@ -86,8 +79,7 @@ def configure(conf):
         autowaf.define(conf, 'SUIL_MODULE_PREFIX', 'lib')
         autowaf.define(conf, 'SUIL_MODULE_EXT', '.so')
 
-    conf.env.LIB_SUIL = ['suil-%s' % SUIL_MAJOR_VERSION]
-
+    autowaf.set_lib_env(conf, 'suil', SUIL_VERSION)
     conf.write_config_header('suil_config.h', remove=False)
 
     autowaf.display_msg(conf, "Gtk2 Support",
@@ -127,7 +119,7 @@ def build(bld):
                   includes        = ['.'],
                   defines         = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   name            = 'libsuil',
-                  vnum            = SUIL_LIB_VERSION,
+                  vnum            = SUIL_VERSION,
                   install_path    = '${LIBDIR}',
                   cflags          = cflags,
                   lib             = lib,
@@ -142,7 +134,7 @@ def build(bld):
                   includes        = ['.'],
                   defines         = ['SUIL_INTERNAL'],
                   name            = 'libsuil_static',
-                  vnum            = SUIL_LIB_VERSION,
+                  vnum            = SUIL_VERSION,
                   install_path    = '${LIBDIR}',
                   cflags          = cflags,
                   lib             = lib,
