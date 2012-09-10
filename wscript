@@ -72,12 +72,19 @@ def configure(conf):
                    conf.env.LIBDIR + '/suil-' + SUIL_MAJOR_VERSION)
     autowaf.define(conf, 'SUIL_DIR_SEP', '/')
     autowaf.define(conf, 'SUIL_GTK2_LIB_NAME', Options.options.gtk2_lib_name);
+
+    module_prefix = ''
+    module_ext    = ''
+    if conf.env.PARDEBUG:
+        module_ext += 'D'
     if Options.platform == 'win32':
-        autowaf.define(conf, 'SUIL_MODULE_PREFIX', '')
-        autowaf.define(conf, 'SUIL_MODULE_EXT', '.dll')
+        module_ext += '.dll'
     else:
-        autowaf.define(conf, 'SUIL_MODULE_PREFIX', 'lib')
-        autowaf.define(conf, 'SUIL_MODULE_EXT', '.so')
+        module_prefix = 'lib'
+        module_ext += '.so'
+
+    autowaf.define(conf, 'SUIL_MODULE_PREFIX', module_prefix)
+    autowaf.define(conf, 'SUIL_MODULE_EXT', module_ext)
 
     autowaf.set_lib_env(conf, 'suil', SUIL_VERSION)
     conf.write_config_header('suil_config.h', remove=False)
