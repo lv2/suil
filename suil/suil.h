@@ -25,14 +25,15 @@
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
+#ifdef _WIN32
+#    define SUIL_LIB_IMPORT __declspec(dllimport)
+#    define SUIL_LIB_EXPORT __declspec(dllexport)
+#else
+#    define SUIL_LIB_IMPORT __attribute__((visibility("default")))
+#    define SUIL_LIB_EXPORT __attribute__((visibility("default")))
+#endif
+
 #ifdef SUIL_SHARED
-#    ifdef _WIN32
-#        define SUIL_LIB_IMPORT __declspec(dllimport)
-#        define SUIL_LIB_EXPORT __declspec(dllexport)
-#    else
-#        define SUIL_LIB_IMPORT __attribute__((visibility("default")))
-#        define SUIL_LIB_EXPORT __attribute__((visibility("default")))
-#    endif
 #    ifdef SUIL_INTERNAL
 #        define SUIL_API SUIL_LIB_EXPORT
 #    else

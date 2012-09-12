@@ -44,7 +44,7 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 	return 0;
 }
 
-SUIL_API
+SUIL_LIB_EXPORT
 SuilWrapper*
 suil_wrapper_new(SuilHost*      host,
                  const char*    host_type_uri,

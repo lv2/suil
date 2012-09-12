@@ -109,7 +109,7 @@ event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
 	return GDK_FILTER_CONTINUE;
 }
 
-SUIL_API
+SUIL_LIB_EXPORT
 SuilWrapper*
 suil_wrapper_new(SuilHost*      host,
                  const char*    host_type_uri,

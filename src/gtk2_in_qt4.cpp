@@ -73,7 +73,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	return 0;
 }
 
-SUIL_API
+SUIL_LIB_EXPORT
 SuilWrapper*
 suil_wrapper_new(SuilHost*      host,
                  const char*    host_type_uri,

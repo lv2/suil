@@ -94,7 +94,7 @@ typedef SuilWrapper* (*SuilWrapperNewFunc)(SuilHost*      host,
                                            unsigned       n_features);
 
 /** Prototype for suil_wrapper_new in each module. */
-SUIL_API
+SUIL_LIB_EXPORT
 SuilWrapper*
 suil_wrapper_new(SuilHost*      host,
                  const char*    host_type_uri,
