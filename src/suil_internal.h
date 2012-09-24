@@ -25,7 +25,6 @@
 #include <windows.h>
 #define dlopen(path, flags) LoadLibrary(path)
 #define dlclose(lib) FreeLibrary((HMODULE)lib)
-#define dlsym GetProcAddress
 #define inline __inline
 #define snprintf _snprintf
 static inline char* dlerror(void) { return "Unknown error"; }
@@ -108,9 +107,13 @@ typedef void (*SuilVoidFunc)(void);
 static inline SuilVoidFunc
 suil_dlfunc(void* handle, const char* symbol)
 {
+#ifdef _WIN32
+	 return (SuilVoidFunc)GetProcAddress((HMODULE)handle, symbol);
+#else
 	typedef SuilVoidFunc (*VoidFuncGetter)(void*, const char*);
 	VoidFuncGetter dlfunc = (VoidFuncGetter)dlsym;
 	return dlfunc(handle, symbol);
+#endif
 }
 
 /** Add a feature to a (mutable) LV2 feature array. */
