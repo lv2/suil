@@ -1,4 +1,4 @@
-suil (0.6.5) unstable;
+suil (0.6.6) stable;
 
   * Fix embedding Gtk in Qt as a child widget (support reparenting)
   * Support for wrapping native Windows UIs in Gtk2
@@ -7,7 +7,7 @@ suil (0.6.5) unstable;
     than passing UIs duplicate features
   * Disable timestamps in HTML documentation for reproducible build
 
- -- David Robillard <d@drobilla.net>  Sun, Tue, 13 Nov 2012 22:02:19 -0500
+ -- David Robillard <d@drobilla.net>  Wed, 14 Nov 2012 11:17:03 -0500
 
 suil (0.6.4) stable;
 

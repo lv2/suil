@@ -1,5 +1,5 @@
 /*
-  Copyright 2011 David Robillard <http://drobilla.net>
+  Copyright 2011-2012 David Robillard <http://drobilla.net>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -173,6 +173,11 @@ suil_ui_supported(const char* host_type_uri,
    Suil is configured at compile time to load modules from the appropriate
    place, but this can be changed at run-time via the environment variable
    SUIL_MODULE_DIR.  This makes it possible to bundle suil with an application.
+
+   Note that some situations (Gtk in Qt, Windows in Gtk) require a parent
+   container to be passed as a feature with URI LV2_UI__parent
+   (http://lv2plug.in/ns/extensions/ui#ui) in order to work correctly.  The
+   data must point to a single child container of the host widget set.
 
    @param host Host descriptor.
    @param controller Opaque host controller pointer.
