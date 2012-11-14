@@ -1,12 +1,13 @@
 suil (0.6.5) unstable;
 
+  * Fix embedding Gtk in Qt as a child widget (support reparenting)
   * Support for wrapping native Windows UIs in Gtk2
   * Gracefully handle UIs with no port_event method
   * Replace host provided features that match Suil implemented features, rather
     than passing UIs duplicate features
   * Disable timestamps in HTML documentation for reproducible build
 
- -- David Robillard <d@drobilla.net>  Sun, 09 Sep 2012 03:19:01 -0400
+ -- David Robillard <d@drobilla.net>  Sun, Tue, 13 Nov 2012 22:02:19 -0500
 
 suil (0.6.4) stable;
 

@@ -25,6 +25,14 @@
 
 extern "C" {
 
+typedef struct _SuilGtk2InQt4Wrapper SuilGtk2InQt4Wrapper;
+
+struct _SuilGtk2InQt4Wrapper {
+	QX11EmbedContainer* host_widget;
+	QWidget*            parent;
+	GtkWidget*          plug;
+};
+
 static void
 on_size_request(GtkWidget*      widget,
                 GtkRequisition* requisition,
@@ -43,13 +51,31 @@ on_size_allocate(GtkWidget*    widget,
 	wrap->resize(allocation->width, allocation->height);
 }
 
+static void
+wrapper_free(SuilWrapper* wrapper)
+{
+	SuilGtk2InQt4Wrapper* impl = (SuilGtk2InQt4Wrapper*)wrapper->impl;
+
+	if (impl->plug) {
+		gtk_widget_destroy(impl->plug);
+	}
+
+	if (impl->host_widget) {
+		delete impl->host_widget;
+	}
+
+	free(impl);
+}
+
 static int
 wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
 {
-	QX11EmbedContainer* const wrap   = new QX11EmbedContainer();
-	GtkWidget* const          plug   = gtk_plug_new(wrap->winId());
-	GtkWidget* const          widget = (GtkWidget*)instance->ui_widget;
+	SuilGtk2InQt4Wrapper* const impl   = (SuilGtk2InQt4Wrapper*)wrapper->impl;
+	QWidget*                    root   = static_cast<QWidget*>(impl->parent);
+	QX11EmbedContainer* const   wrap   = new QX11EmbedContainer(root);
+	GtkWidget* const            plug   = gtk_plug_new(wrap->winId());
+	GtkWidget* const            widget = (GtkWidget*)instance->ui_widget;
 
 	gtk_container_add(GTK_CONTAINER(plug), widget);
 	gtk_widget_show_all(plug);
@@ -68,6 +94,8 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	g_signal_connect(
 		G_OBJECT(plug), "size-allocate", G_CALLBACK(on_size_allocate), wrap);
 
+	impl->host_widget     = wrap;
+	impl->plug            = plug;
 	instance->host_widget = wrap;
 
 	return 0;
@@ -97,10 +125,23 @@ suil_wrapper_new(SuilHost*      host,
 		gtk_init(NULL, NULL);
 	}
 
+	/* Set parent widget if given. */
+	for (unsigned i = 0; i < n_features; ++i) {
+		if (!strcmp((*features)[i]->URI, LV2_UI__parent)) {
+			impl->parent = static_cast<QWidget*>((*features)[i]->data);
+		}
+	}
+
+	/* Create wrapper implementation. */
+	SuilGtk2InQt4Wrapper* const impl = (SuilGtk2InQt4Wrapper*)
+		malloc(sizeof(SuilGtk2InQt4Wrapper));
+	impl->host_widget = NULL;
+	impl->plug        = NULL;
+
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
-	wrapper->free = NULL;
-	wrapper->impl = NULL;
+	wrapper->free = wrapper_free;
+	wrapper->impl = impl;
 
 	return wrapper;
 }
