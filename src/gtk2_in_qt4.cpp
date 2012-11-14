@@ -125,18 +125,19 @@ suil_wrapper_new(SuilHost*      host,
 		gtk_init(NULL, NULL);
 	}
 
+	/* Create wrapper implementation. */
+	SuilGtk2InQt4Wrapper* const impl = (SuilGtk2InQt4Wrapper*)
+		malloc(sizeof(SuilGtk2InQt4Wrapper));
+	impl->host_widget = NULL;
+	impl->parent      = NULL;
+	impl->plug        = NULL;
+
 	/* Set parent widget if given. */
 	for (unsigned i = 0; i < n_features; ++i) {
 		if (!strcmp((*features)[i]->URI, LV2_UI__parent)) {
 			impl->parent = static_cast<QWidget*>((*features)[i]->data);
 		}
 	}
-
-	/* Create wrapper implementation. */
-	SuilGtk2InQt4Wrapper* const impl = (SuilGtk2InQt4Wrapper*)
-		malloc(sizeof(SuilGtk2InQt4Wrapper));
-	impl->host_widget = NULL;
-	impl->plug        = NULL;
 
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
