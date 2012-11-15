@@ -1,1 +1,6 @@
 David Robillard <d@drobilla.net>
+
+Contributors:
+
+ * Devin Anderson <surfacepatterns@gmail.com>
+   * Fix reparenting of Gtk UIs in Qt
