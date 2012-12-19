@@ -27,8 +27,8 @@ def options(opt):
     opt.add_option('--no-shared', action='store_true', dest='no_shared',
                    help='Do not build shared library')
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
-                   default="libgtk-x11-2.0.so",
-                   help="Gtk2 library name [Default: libgtk-x11-2.0.so]")
+                   default="libgtk-x11-2.0.so.0",
+                   help="Gtk2 library name [Default: libgtk-x11-2.0.so.0]")
 
 def configure(conf):
     conf.load('compiler_c')

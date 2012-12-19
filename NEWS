@@ -1,3 +1,10 @@
+suil (0.6.7) unstable;
+
+  * Use libgtk-x11-2.0.so.0 (with .0 suffix) by default which is available on
+    systems without the dev package
+
+ -- David Robillard <d@drobilla.net>  Wed, 19 Dec 2012 18:25:49 -0500
+  
 suil (0.6.6) stable;
 
   * Fix embedding Gtk in Qt as a child widget (support reparenting)
