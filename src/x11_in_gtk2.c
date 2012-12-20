@@ -135,7 +135,9 @@ event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
 {
 	SuilX11Wrapper* wrap = (SuilX11Wrapper*)data;
 	XEvent*         ev   = (XEvent*)xevent;
-	if (wrap->instance->handle && (ev->type == KeyPress || ev->type == KeyRelease)) {
+	if (wrap->instance &&
+	    wrap->instance->handle &&
+	    (ev->type == KeyPress || ev->type == KeyRelease)) {
 		// Forward keyboard events to UI window
 		XSendEvent(ev->xkey.display, (Window)wrap->instance->ui_widget, 1, 0, ev);
 		XSync(ev->xkey.display, TRUE);

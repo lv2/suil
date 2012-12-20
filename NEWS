@@ -1,9 +1,10 @@
 suil (0.6.7) unstable;
 
+  * Fix crash in x11_in_gtk2 when event_filter fires before widget is realized
   * Use libgtk-x11-2.0.so.0 (with .0 suffix) by default which is available on
     systems without the dev package
 
- -- David Robillard <d@drobilla.net>  Wed, 19 Dec 2012 18:25:49 -0500
+ -- David Robillard <d@drobilla.net>  Wed, 19 Dec 2012 20:32:53 -0500
   
 suil (0.6.6) stable;
 
