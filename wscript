@@ -9,7 +9,7 @@ import waflib.extras.autowaf as autowaf
 # major increment <=> incompatible changes
 # minor increment <=> compatible changes (additions)
 # micro increment <=> no interface changes
-SUIL_VERSION       = '0.6.8'
+SUIL_VERSION       = '0.6.10'
 SUIL_MAJOR_VERSION = '0'
 
 # Mandatory waf variables
@@ -55,11 +55,11 @@ def configure(conf):
 
     autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                       atleast_version='2.18.0', mandatory=False)
-    if not conf.env.HAVE_GTK2:
+    if not conf.is_defined('HAVE_GTK2'):
         autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                           atleast_version='2.0.0', mandatory=False)
-        if conf.env.HAVE_GTK:
-            autowaf.define('SUIL_OLD_GTK', 1)
+        if conf.is_defined('HAVE_GTK2'):
+            autowaf.define(conf, 'SUIL_OLD_GTK', 1)
 
     autowaf.check_pkg(conf, 'gtk+-x11-2.0', uselib_store='GTK2_X11',
                       atleast_version='2.0.0', mandatory=False)
