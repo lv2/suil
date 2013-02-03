@@ -9,7 +9,7 @@ import waflib.extras.autowaf as autowaf
 # major increment <=> incompatible changes
 # minor increment <=> compatible changes (additions)
 # micro increment <=> no interface changes
-SUIL_VERSION       = '0.6.10'
+SUIL_VERSION       = '0.6.11'
 SUIL_MAJOR_VERSION = '0'
 
 # Mandatory waf variables
@@ -67,6 +67,10 @@ def configure(conf):
     autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
                       atleast_version='4.0.0', mandatory=False)
 
+    conf.check_cc(define_name   = 'HAVE_LIBDL',
+                  lib           = 'dl',
+                  mandatory     = False)
+
     autowaf.define(conf, 'SUIL_VERSION', SUIL_VERSION)
     autowaf.define(conf, 'SUIL_MODULE_DIR',
                    conf.env.LIBDIR + '/suil-' + SUIL_MAJOR_VERSION)
@@ -113,7 +117,8 @@ def build(bld):
         modlib += ['user32']
     else:
         cflags += ['-fvisibility=hidden']
-        lib    += ['dl']
+        if bld.is_defined('HAVE_LIBDL'):
+            lib += ['dl']
 
     module_dir = '${LIBDIR}/suil-' + SUIL_MAJOR_VERSION
 

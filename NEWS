@@ -1,3 +1,9 @@
+suil (0.6.11) unstable;
+
+  * Fix compilation on BSD
+
+ -- David Robillard <d@drobilla.net>  Sat, 02 Feb 2013 21:31:54 -0500
+
 suil (0.6.10) stable;
 
   * Downgrade to waf 1.7.5, previous version does not build modules due to
