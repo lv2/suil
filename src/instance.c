@@ -171,7 +171,9 @@ suil_instance_new(SuilHost*                 host,
 	const LV2UI_Descriptor* descriptor = NULL;
 	for (uint32_t i = 0; true; ++i) {
 		const LV2UI_Descriptor* ld = df(i);
-		if (!strcmp(ld->URI, ui_uri)) {
+		if (!ld) {
+			break;
+		} else if (!strcmp(ld->URI, ui_uri)) {
 			descriptor = ld;
 			break;
 		}
