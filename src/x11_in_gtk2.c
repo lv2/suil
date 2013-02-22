@@ -130,6 +130,7 @@ wrapper_free(SuilWrapper* wrapper)
 	}
 }
 
+#ifdef SUIL_FORWARD_KEYS
 static GdkFilterReturn
 event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
 {
@@ -144,6 +145,7 @@ event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
 	}
 	return GDK_FILTER_CONTINUE;
 }
+#endif
 
 SUIL_LIB_EXPORT
 SuilWrapper*
@@ -166,8 +168,10 @@ suil_wrapper_new(SuilHost*      host,
 	wrapper->resize.handle    = wrap;
 	wrapper->resize.ui_resize = wrapper_resize;
 
+#ifdef SUIL_FORWARD_KEYS
 	GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(wrap));
 	gdk_window_add_filter(window, event_filter, wrap);
+#endif
 
 	suil_add_feature(features, &n_features, LV2_UI__parent,
 	                 (void*)(intptr_t)gtk_plug_get_id(wrap->plug));
