@@ -26,8 +26,6 @@ def options(opt):
                    help="Build static library")
     opt.add_option('--no-shared', action='store_true', dest='no_shared',
                    help='Do not build shared library')
-    opt.add_option('--no-forward-keys', action='store_true', dest='no_forward_keys',
-                   help='Do not explicitly forward key events for X11 in Gtk')
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
                    default="libgtk-x11-2.0.so.0",
                    help="Gtk2 library name [Default: libgtk-x11-2.0.so.0]")
@@ -92,9 +90,6 @@ def configure(conf):
     autowaf.define(conf, 'SUIL_MODULE_PREFIX', module_prefix)
     autowaf.define(conf, 'SUIL_MODULE_EXT', module_ext)
 
-    if not Options.options.no_forward_keys:
-        autowaf.define(conf, 'SUIL_FORWARD_KEYS', 1)
-
     autowaf.set_lib_env(conf, 'suil', SUIL_VERSION)
     conf.write_config_header('suil_config.h', remove=False)
 
@@ -102,8 +97,6 @@ def configure(conf):
                         conf.is_defined('HAVE_GTK2'))
     autowaf.display_msg(conf, "Gtk2 Library Name",
                         conf.env.SUIL_GTK2_LIB_NAME)
-    autowaf.display_msg(conf, "Forward Gtk keys to X11 UI",
-                        conf.is_defined('SUIL_FORWARD_KEYS'))
     autowaf.display_msg(conf, "Qt4 Support",
                         conf.is_defined('HAVE_QT4'))
     print('')

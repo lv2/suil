@@ -1,7 +1,6 @@
 suil (0.6.11) unstable;
 
-  * Add compile time option to disable explicit Gtk to X11 key forwarding
-  * Fix crash on close caused by key filter for X11 in Gtk
+  * Fix key events for X11 in Gtk
   * Fix crash when a broken UI returns a NULL descriptor
   * Fix compilation on BSD
 
