@@ -42,44 +42,6 @@ GType suil_x11_wrapper_get_type(void);  // Accessor for SUIL_TYPE_X11_WRAPPER
 
 G_DEFINE_TYPE(SuilX11Wrapper, suil_x11_wrapper, GTK_TYPE_SOCKET)
 
-static void
-forward_key_event(SuilX11Wrapper* socket,
-                  GdkEvent*       gdk_event)
-{
-  GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(socket->plug));
-  GdkScreen* screen = gdk_window_get_screen(window);
-
-  XKeyEvent xev;
-  memset(&xev, 0, sizeof(xev));
-  xev.type      = (gdk_event->type == GDK_KEY_PRESS) ? KeyPress : KeyRelease;
-  xev.root      = GDK_WINDOW_XID(gdk_screen_get_root_window(screen));
-  xev.window    = GDK_WINDOW_XID(window);
-  xev.subwindow = None;
-  xev.time      = gdk_event->key.time;
-  xev.state     = gdk_event->key.state;
-  xev.keycode   = gdk_event->key.hardware_keycode;
-
-  XSendEvent (GDK_WINDOW_XDISPLAY(window),
-              (Window)socket->instance->ui_widget,
-              False,
-              NoEventMask,
-              (XEvent*)&xev);
-}
-
-static gboolean
-suil_x11_wrapper_key_event(GtkWidget*   widget,
-                           GdkEventKey* event)
-{
-	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(widget);
-
-	if (self->plug) {
-		forward_key_event(self, (GdkEvent*)event);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 static gboolean
 on_plug_removed(GtkSocket* sock, gpointer data)
 {
@@ -115,7 +77,60 @@ suil_x11_wrapper_realize(GtkWidget* w)
 	}
 
 	gtk_socket_add_id(socket, gtk_plug_get_id(wrap->plug));
+
+	gtk_widget_set_sensitive(GTK_WIDGET(wrap->plug), TRUE);
+	gtk_widget_set_can_focus(GTK_WIDGET(wrap->plug), TRUE);
+	gtk_widget_grab_focus(GTK_WIDGET(wrap->plug));
+}
+
+static void
+suil_x11_wrapper_show(GtkWidget* w)
+{
+	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(w);
+
+	if (GTK_WIDGET_CLASS(suil_x11_wrapper_parent_class)->show) {
+		GTK_WIDGET_CLASS(suil_x11_wrapper_parent_class)->show(w);
+	}
+
 	gtk_widget_show(GTK_WIDGET(wrap->plug));
+}
+
+static void
+forward_key_event(SuilX11Wrapper* socket,
+                  GdkEvent*       gdk_event)
+{
+	GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(socket->plug));
+	GdkScreen* screen = gdk_window_get_screen(window);
+
+	XKeyEvent xev;
+	memset(&xev, 0, sizeof(xev));
+	xev.type      = (gdk_event->type == GDK_KEY_PRESS) ? KeyPress : KeyRelease;
+	xev.root      = GDK_WINDOW_XID(gdk_screen_get_root_window(screen));
+	xev.window    = GDK_WINDOW_XID(window);
+	xev.subwindow = None;
+	xev.time      = gdk_event->key.time;
+	xev.state     = gdk_event->key.state;
+	xev.keycode   = gdk_event->key.hardware_keycode;
+
+	XSendEvent (GDK_WINDOW_XDISPLAY(window),
+	            (Window)socket->instance->ui_widget,
+	            False,
+	            NoEventMask,
+	            (XEvent*)&xev);
+}
+
+static gboolean
+suil_x11_wrapper_key_event(GtkWidget*   widget,
+                           GdkEventKey* event)
+{
+	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(widget);
+
+	if (self->plug) {
+		forward_key_event(self, (GdkEvent*)event);
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 static void
@@ -126,6 +141,7 @@ suil_x11_wrapper_class_init(SuilX11WrapperClass* klass)
 
 	gobject_class->finalize       = suil_x11_wrapper_finalize;
 	widget_class->realize         = suil_x11_wrapper_realize;
+	widget_class->show            = suil_x11_wrapper_show;
 	widget_class->key_press_event = suil_x11_wrapper_key_event;
 }
 
