@@ -6,3 +6,4 @@ Contributors:
    * Fix reparenting of Gtk UIs in Qt
  * Peter Nelson <peter@fuzzle.org>
    * Fix crash when a broken UI returns a NULL descriptor
+   * Fix crash on close caused by key filter for X11 in Gtk

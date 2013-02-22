@@ -42,10 +42,32 @@ GType suil_x11_wrapper_get_type(void);  // Accessor for SUIL_TYPE_X11_WRAPPER
 
 G_DEFINE_TYPE(SuilX11Wrapper, suil_x11_wrapper, GTK_TYPE_SOCKET)
 
+#ifdef SUIL_FORWARD_KEYS
+static GdkFilterReturn
+event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
+{
+	SuilX11Wrapper* wrap = (SuilX11Wrapper*)data;
+	XEvent*         ev   = (XEvent*)xevent;
+	if (wrap->instance &&
+	    wrap->instance->handle &&
+	    (ev->type == KeyPress || ev->type == KeyRelease)) {
+		// Forward keyboard events to UI window
+		XSendEvent(ev->xkey.display, (Window)wrap->instance->ui_widget, 1, 0, ev);
+		XSync(ev->xkey.display, TRUE);
+	}
+	return GDK_FILTER_CONTINUE;
+}
+#endif
+
 static gboolean
 on_plug_removed(GtkSocket* sock, gpointer data)
 {
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(sock);
+
+#ifdef SUIL_FORWARD_KEYS
+	GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(self));
+	gdk_window_remove_filter(window, event_filter, self);
+#endif
 
 	if (self->instance->handle) {
 		self->instance->descriptor->cleanup(self->instance->handle);
@@ -129,23 +151,6 @@ wrapper_free(SuilWrapper* wrapper)
 		gtk_object_destroy(GTK_OBJECT(wrap));
 	}
 }
-
-#ifdef SUIL_FORWARD_KEYS
-static GdkFilterReturn
-event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
-{
-	SuilX11Wrapper* wrap = (SuilX11Wrapper*)data;
-	XEvent*         ev   = (XEvent*)xevent;
-	if (wrap->instance &&
-	    wrap->instance->handle &&
-	    (ev->type == KeyPress || ev->type == KeyRelease)) {
-		// Forward keyboard events to UI window
-		XSendEvent(ev->xkey.display, (Window)wrap->instance->ui_widget, 1, 0, ev);
-		XSync(ev->xkey.display, TRUE);
-	}
-	return GDK_FILTER_CONTINUE;
-}
-#endif
 
 SUIL_LIB_EXPORT
 SuilWrapper*
