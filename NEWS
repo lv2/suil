@@ -1,4 +1,4 @@
-suil (0.6.11) unstable;
+suil (0.6.12) stable;
 
   * Fix key events for X11 in Gtk without using a troublesome event filter
   * Fix crash when a broken UI returns a NULL descriptor
