@@ -1,8 +1,9 @@
 suil (0.6.13) unstable;
 
-  * Print system error message if module failes to load
+  * Print system error message if module fails to load
+  * Lower dependency from Gtk 2.24 introduced in 0.6.12
 
- -- David Robillard <d@drobilla.net>  Sun, 24 Feb 2013 11:33:04 -0500
+ -- David Robillard <d@drobilla.net>  Sun, 24 Feb 2013 12:02:41 -0500
 
 suil (0.6.12) stable;
 

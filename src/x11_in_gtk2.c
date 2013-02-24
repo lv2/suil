@@ -100,7 +100,7 @@ forward_key_event(SuilX11Wrapper* socket,
                   GdkEvent*       gdk_event)
 {
 	GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(socket->plug));
-	GdkScreen* screen = gdk_window_get_screen(window);
+	GdkScreen* screen = gdk_visual_get_screen(gdk_window_get_visual(window));
 
 	XKeyEvent xev;
 	memset(&xev, 0, sizeof(xev));
@@ -112,11 +112,11 @@ forward_key_event(SuilX11Wrapper* socket,
 	xev.state     = gdk_event->key.state;
 	xev.keycode   = gdk_event->key.hardware_keycode;
 
-	XSendEvent (GDK_WINDOW_XDISPLAY(window),
-	            (Window)socket->instance->ui_widget,
-	            False,
-	            NoEventMask,
-	            (XEvent*)&xev);
+	XSendEvent(GDK_WINDOW_XDISPLAY(window),
+	           (Window)socket->instance->ui_widget,
+	           False,
+	           NoEventMask,
+	           (XEvent*)&xev);
 }
 
 static gboolean
