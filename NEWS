@@ -1,3 +1,9 @@
+suil (0.6.13) unstable;
+
+  * Print system error message if module failes to load
+
+ -- David Robillard <d@drobilla.net>  Sun, 24 Feb 2013 11:33:04 -0500
+
 suil (0.6.12) stable;
 
   * Fix key events for X11 in Gtk without using a troublesome event filter

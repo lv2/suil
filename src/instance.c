@@ -107,7 +107,7 @@ open_wrapper(SuilHost*      host,
 	dlerror();
 	void* lib = dlopen(path, RTLD_NOW);
 	if (!lib) {
-		SUIL_ERRORF("Unable to open wrap module %s\n", path);
+		SUIL_ERRORF("Unable to open wrap module %s (%s)\n", path, dlerror());
 		return NULL;
 	}
 
