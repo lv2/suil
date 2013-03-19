@@ -14,8 +14,8 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <QTimerEvent>
 #include <QX11EmbedContainer>
+#include <QtEvents>
 #undef signals
 
 #include "./suil_config.h"
@@ -31,10 +31,12 @@ class SuilQX11Container : public QX11EmbedContainer
 {
 public:
 	SuilQX11Container(SuilInstance*               instance,
-	                  const LV2UI_Idle_Interface* idle_iface)
+	                  const LV2UI_Idle_Interface* idle_iface,
+	                  QX11EmbedWidget*            widget)
 		: QX11EmbedContainer()
 		, _instance(instance)
 		, _idle_iface(idle_iface)
+		, _widget(widget)
 		, _ui_timer(0)
 	{}
 
@@ -42,6 +44,7 @@ public:
 	void showEvent(QShowEvent* event) {
 		if (_idle_iface && _ui_timer == 0) {
 			_ui_timer = this->startTimer(30);
+			_widget->embedInto(winId());
 		}
 		QX11EmbedContainer::showEvent(event);
 	}
@@ -54,9 +57,10 @@ public:
 	}
 #endif
 
-	SuilInstance*               _instance;
-	const LV2UI_Idle_Interface* _idle_iface;
-	int                         _ui_timer;
+	SuilInstance* const               _instance;
+	const LV2UI_Idle_Interface* const _idle_iface;
+	QX11EmbedWidget* const            _widget;
+	int                               _ui_timer;
 };
 
 static int
@@ -69,12 +73,10 @@ wrapper_wrap(SuilWrapper*  wrapper,
 		instance, LV2_UI__idleInterface);
 #endif
 
-	QX11EmbedWidget* const   ew   = (QX11EmbedWidget*)wrapper->impl;
-	SuilQX11Container* const wrap = new SuilQX11Container(instance, idle_iface);
+	QX11EmbedWidget* const   w = (QX11EmbedWidget*)wrapper->impl;
+	SuilQX11Container* const c = new SuilQX11Container(instance, idle_iface, w);
 
-	ew->embedInto(wrap->winId());
-
-	instance->host_widget = wrap;
+	instance->host_widget = c;
 
 	return 0;
 }

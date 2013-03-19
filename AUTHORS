@@ -6,3 +6,5 @@ Contributors:
    * Fix reparenting of Gtk UIs in Qt
  * Peter Nelson <peter@fuzzle.org>
    * Fix crash when a broken UI returns a NULL descriptor
+ * Filipe Lopes <falktx@gmail.com>
+   * Idle interface fixes for X11 in Qt4
