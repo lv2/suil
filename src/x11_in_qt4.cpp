@@ -40,7 +40,7 @@ public:
 
 #ifdef HAVE_NEW_LV2
 	void showEvent(QShowEvent* event) {
-		if (_idle_iface) {
+		if (_idle_iface && _ui_timer == 0) {
 			_ui_timer = this->startTimer(30);
 		}
 		QX11EmbedContainer::showEvent(event);
@@ -50,6 +50,7 @@ public:
 		if (event->timerId() == _ui_timer && _idle_iface) {
 			_idle_iface->idle(_instance->handle);
 		}
+		QX11EmbedContainer::timerEvent(event);
 	}
 #endif
 
