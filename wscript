@@ -52,6 +52,8 @@ def configure(conf):
         conf.env.NODELETE_FLAGS = ['-Wl,-z,nodelete']
 
     autowaf.check_pkg(conf, 'lv2', atleast_version='1.0.0', uselib_store='LV2')
+    autowaf.check_pkg(conf, 'lv2', atleast_version='1.4.1',
+                      uselib_store='NEW_LV2', mandatory=False)
 
     autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                       atleast_version='2.18.0', mandatory=False)
@@ -184,7 +186,7 @@ def build(bld):
                   cflags       = cflags,
                   lib          = modlib,
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2')
+        autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2 NEW_LV2')
 
     if bld.is_defined('HAVE_GTK2') and sys.platform == 'win32':
         obj = bld(features     = 'cxx cxxshlib',
@@ -207,7 +209,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib)
-        autowaf.use_lib(bld, obj, 'QT4 LV2')
+        autowaf.use_lib(bld, obj, 'QT4 LV2 NEW_LV2')
 
     # Documentation
     autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)

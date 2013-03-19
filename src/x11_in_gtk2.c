@@ -28,10 +28,13 @@ typedef struct _SuilX11Wrapper      SuilX11Wrapper;
 typedef struct _SuilX11WrapperClass SuilX11WrapperClass;
 
 struct _SuilX11Wrapper {
-	GtkSocket     socket;
-	GtkPlug*      plug;
-	SuilWrapper*  wrapper;
-	SuilInstance* instance;
+	GtkSocket                   socket;
+	GtkPlug*                    plug;
+	SuilWrapper*                wrapper;
+	SuilInstance*               instance;
+#ifdef HAVE_NEW_LV2
+	const LV2UI_Idle_Interface* idle_iface;
+#endif
 };
 
 struct _SuilX11WrapperClass {
@@ -46,6 +49,10 @@ static gboolean
 on_plug_removed(GtkSocket* sock, gpointer data)
 {
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(sock);
+
+#ifdef HAVE_NEW_LV2
+	g_idle_remove_by_data(self);
+#endif
 
 	if (self->instance->handle) {
 		self->instance->descriptor->cleanup(self->instance->handle);
@@ -148,9 +155,12 @@ suil_x11_wrapper_class_init(SuilX11WrapperClass* klass)
 static void
 suil_x11_wrapper_init(SuilX11Wrapper* self)
 {
-	self->plug     = GTK_PLUG(gtk_plug_new(0));
-	self->wrapper  = NULL;
-	self->instance = NULL;
+	self->plug       = GTK_PLUG(gtk_plug_new(0));
+	self->wrapper    = NULL;
+	self->instance   = NULL;
+#ifdef HAVE_NEW_LV2
+	self->idle_iface = NULL;
+#endif
 }
 
 static int
@@ -159,6 +169,18 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 	gtk_widget_set_size_request(GTK_WIDGET(handle), width, height);
 	return 0;
 }
+
+#ifdef HAVE_NEW_LV2
+static gboolean
+suil_x11_wrapper_idle(void* data)
+{
+	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(data);
+
+	wrap->idle_iface->idle(wrap->instance->handle);
+	
+	return TRUE;  // Continue calling
+}
+#endif
 
 static int
 wrapper_wrap(SuilWrapper*  wrapper,
@@ -169,6 +191,15 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	instance->host_widget = GTK_WIDGET(wrap);
 	wrap->wrapper         = wrapper;
 	wrap->instance        = instance;
+
+#ifdef HAVE_NEW_LV2
+	const LV2UI_Idle_Interface* idle_iface = suil_instance_extension_data(
+		instance, LV2_UI__idleInterface);
+	if (idle_iface) {
+		wrap->idle_iface = idle_iface;
+		g_idle_add(suil_x11_wrapper_idle, wrap);
+	}
+#endif
 
 	g_signal_connect(G_OBJECT(wrap),
 	                 "plug-removed",
@@ -214,6 +245,10 @@ suil_wrapper_new(SuilHost*      host,
 
 	suil_add_feature(features, &n_features, LV2_UI__resize,
 	                 &wrapper->resize);
+
+#ifdef HAVE_NEW_LV2
+	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
+#endif
 
 	return wrapper;
 }
