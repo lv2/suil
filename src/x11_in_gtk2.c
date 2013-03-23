@@ -197,7 +197,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 		instance, LV2_UI__idleInterface);
 	if (idle_iface) {
 		wrap->idle_iface = idle_iface;
-		g_idle_add(suil_x11_wrapper_idle, wrap);
+		g_timeout_add(1000/30, suil_x11_wrapper_idle, wrap);  // 30 Hz
 	}
 #endif
 
