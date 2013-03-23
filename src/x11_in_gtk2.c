@@ -32,7 +32,7 @@ struct _SuilX11Wrapper {
 	GtkPlug*                    plug;
 	SuilWrapper*                wrapper;
 	SuilInstance*               instance;
-#ifdef HAVE_NEW_LV2
+#ifdef HAVE_LV2_1_4_1
 	const LV2UI_Idle_Interface* idle_iface;
 #endif
 };
@@ -50,7 +50,7 @@ on_plug_removed(GtkSocket* sock, gpointer data)
 {
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(sock);
 
-#ifdef HAVE_NEW_LV2
+#ifdef HAVE_LV2_1_4_1
 	g_idle_remove_by_data(self);
 #endif
 
@@ -158,7 +158,7 @@ suil_x11_wrapper_init(SuilX11Wrapper* self)
 	self->plug       = GTK_PLUG(gtk_plug_new(0));
 	self->wrapper    = NULL;
 	self->instance   = NULL;
-#ifdef HAVE_NEW_LV2
+#ifdef HAVE_LV2_1_4_1
 	self->idle_iface = NULL;
 #endif
 }
@@ -170,7 +170,7 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 	return 0;
 }
 
-#ifdef HAVE_NEW_LV2
+#ifdef HAVE_LV2_1_4_1
 static gboolean
 suil_x11_wrapper_idle(void* data)
 {
@@ -192,7 +192,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	wrap->wrapper         = wrapper;
 	wrap->instance        = instance;
 
-#ifdef HAVE_NEW_LV2
+#ifdef HAVE_LV2_1_4_1
 	const LV2UI_Idle_Interface* idle_iface = suil_instance_extension_data(
 		instance, LV2_UI__idleInterface);
 	if (idle_iface) {
@@ -246,7 +246,7 @@ suil_wrapper_new(SuilHost*      host,
 	suil_add_feature(features, &n_features, LV2_UI__resize,
 	                 &wrapper->resize);
 
-#ifdef HAVE_NEW_LV2
+#ifdef HAVE_LV2_1_4_1
 	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
 #endif
 
