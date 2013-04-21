@@ -34,6 +34,7 @@ struct _SuilX11Wrapper {
 	SuilInstance*               instance;
 #ifdef HAVE_LV2_1_4_1
 	const LV2UI_Idle_Interface* idle_iface;
+	guint                       idle_id;
 #endif
 };
 
@@ -51,7 +52,10 @@ on_plug_removed(GtkSocket* sock, gpointer data)
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(sock);
 
 #ifdef HAVE_LV2_1_4_1
-	g_idle_remove_by_data(self);
+	if (self->idle_id) {
+		g_source_remove(self->idle_id);
+		self->idle_id = 0;
+	}
 #endif
 
 	if (self->instance->handle) {
@@ -197,7 +201,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 		instance, LV2_UI__idleInterface);
 	if (idle_iface) {
 		wrap->idle_iface = idle_iface;
-		g_timeout_add(1000/30, suil_x11_wrapper_idle, wrap);  // 30 Hz
+		wrap->idle_id    = g_timeout_add(1000/30, suil_x11_wrapper_idle, wrap);
 	}
 #endif
 
