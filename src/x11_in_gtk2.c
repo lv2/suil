@@ -21,6 +21,11 @@
 
 #include "./suil_internal.h"
 
+#ifdef HAVE_LV2_1_4_3
+#    include "lv2/lv2plug.in/ns/ext/options/options.h"
+#    include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#endif
+
 #define SUIL_TYPE_X11_WRAPPER (suil_x11_wrapper_get_type())
 #define SUIL_X11_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_X11_WRAPPER, SuilX11Wrapper))
 
@@ -32,9 +37,10 @@ struct _SuilX11Wrapper {
 	GtkPlug*                    plug;
 	SuilWrapper*                wrapper;
 	SuilInstance*               instance;
-#ifdef HAVE_LV2_1_4_1
+#ifdef HAVE_LV2_1_4_3
 	const LV2UI_Idle_Interface* idle_iface;
 	guint                       idle_id;
+	guint                       idle_ms;
 #endif
 };
 
@@ -51,7 +57,7 @@ on_plug_removed(GtkSocket* sock, gpointer data)
 {
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(sock);
 
-#ifdef HAVE_LV2_1_4_1
+#ifdef HAVE_LV2_1_4_3
 	if (self->idle_id) {
 		g_source_remove(self->idle_id);
 		self->idle_id = 0;
@@ -162,8 +168,9 @@ suil_x11_wrapper_init(SuilX11Wrapper* self)
 	self->plug       = GTK_PLUG(gtk_plug_new(0));
 	self->wrapper    = NULL;
 	self->instance   = NULL;
-#ifdef HAVE_LV2_1_4_1
+#ifdef HAVE_LV2_1_4_3
 	self->idle_iface = NULL;
+	self->idle_ms    = 1000 / 30;  // 30 Hz default
 #endif
 }
 
@@ -174,7 +181,7 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 	return 0;
 }
 
-#ifdef HAVE_LV2_1_4_1
+#ifdef HAVE_LV2_1_4_3
 static gboolean
 suil_x11_wrapper_idle(void* data)
 {
@@ -196,12 +203,13 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	wrap->wrapper         = wrapper;
 	wrap->instance        = instance;
 
-#ifdef HAVE_LV2_1_4_1
+#ifdef HAVE_LV2_1_4_3
 	const LV2UI_Idle_Interface* idle_iface = suil_instance_extension_data(
 		instance, LV2_UI__idleInterface);
 	if (idle_iface) {
 		wrap->idle_iface = idle_iface;
-		wrap->idle_id    = g_timeout_add(1000/30, suil_x11_wrapper_idle, wrap);
+		wrap->idle_id    = g_timeout_add(
+			wrap->idle_ms, suil_x11_wrapper_idle, wrap);
 	}
 #endif
 
@@ -250,8 +258,30 @@ suil_wrapper_new(SuilHost*      host,
 	suil_add_feature(features, &n_features, LV2_UI__resize,
 	                 &wrapper->resize);
 
-#ifdef HAVE_LV2_1_4_1
+#ifdef HAVE_LV2_1_4_3
 	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
+
+	// Scan for URID map and options
+	LV2_URID_Map*       map     = NULL;
+	LV2_Options_Option* options = NULL;
+	for (LV2_Feature** f = *features; *f && (!map || !options); ++f) {
+		if (!strcmp((*f)->URI, LV2_OPTIONS__options)) {
+			options = (*f)->data;
+		} else if (!strcmp((*f)->URI, LV2_URID__map)) {
+			map = (*f)->data;
+		}
+	}
+
+	if (map && options) {
+		// Set UI update rate if given
+		LV2_URID ui_updateRate = map->map(map->handle, LV2_UI__updateRate);
+		for (LV2_Options_Option* o = options; o->key; ++o) {
+			if (o->key == ui_updateRate) {
+				wrap->idle_ms = 1000.0f / *(float*)o->value;
+				break;
+			}
+		}
+	}
 #endif
 
 	return wrapper;
