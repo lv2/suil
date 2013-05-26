@@ -3,6 +3,7 @@ suil (0.6.13) unstable;
   * Print system error message if module fails to load
   * Lower dependency from Gtk 2.24 introduced in 0.6.12
   * Add support for new LV2 idle interface
+  * Support resizing for X11 in Gtk (patch from Robin Gareus)
 
  -- David Robillard <d@drobilla.net>  Sun, 24 Feb 2013 12:02:41 -0500
 

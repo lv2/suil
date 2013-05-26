@@ -8,3 +8,5 @@ Contributors:
    * Fix crash when a broken UI returns a NULL descriptor
  * Filipe Lopes <falktx@gmail.com>
    * Idle interface fixes for X11 in Qt4
+ * Robin Gareus <robin@gareus.org>
+   * Support for resizing X11 UIs in Gtk

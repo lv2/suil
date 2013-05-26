@@ -52,6 +52,33 @@ GType suil_x11_wrapper_get_type(void);  // Accessor for SUIL_TYPE_X11_WRAPPER
 
 G_DEFINE_TYPE(SuilX11Wrapper, suil_x11_wrapper, GTK_TYPE_SOCKET)
 
+/**
+   Check if 'swallowed' subwindow is known to the X server.
+
+   Gdk/GTK can mark the window as realized, mapped and visible even though there
+   is no window-ID on the X server for it, yet.  -> suil_x11_on_size_allocate()
+   will make the application crash with "BadWinow"
+*/
+static bool
+x_window_is_valid(SuilX11Wrapper* socket)
+{
+	GdkWindow* window     = gtk_widget_get_window(GTK_WIDGET(socket->plug));
+	Window     root       = 0;
+	Window     parent     = 0;
+	Window*    children   = NULL;
+	unsigned   childcount = 0;
+
+	XQueryTree(GDK_WINDOW_XDISPLAY(window),
+	           GDK_WINDOW_XID(window),
+	           &root, &parent, &children, &childcount);
+	for (unsigned i = 0; i < childcount; ++i) {
+		if (children[i] == (Window)socket->instance->ui_widget) {
+			return true;
+		}
+	}
+	return false;
+}
+
 static gboolean
 on_plug_removed(GtkSocket* sock, gpointer data)
 {
@@ -136,6 +163,18 @@ forward_key_event(SuilX11Wrapper* socket,
 	           (XEvent*)&xev);
 }
 
+static void
+forward_size_request(SuilX11Wrapper* socket,
+                     GtkAllocation*  allocation)
+{
+	GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(socket->plug));
+	if (x_window_is_valid(socket)) {
+		XResizeWindow(GDK_WINDOW_XDISPLAY(window),
+		              (Window) socket->instance->ui_widget,
+		              allocation->width, allocation->height);
+	}
+}
+
 static gboolean
 suil_x11_wrapper_key_event(GtkWidget*   widget,
                            GdkEventKey* event)
@@ -148,6 +187,20 @@ suil_x11_wrapper_key_event(GtkWidget*   widget,
 	}
 
 	return FALSE;
+}
+
+static void
+suil_x11_on_size_allocate(GtkWidget*     widget,
+                          GtkAllocation* a)
+{
+	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(widget);
+
+	if (self->plug
+	    && GTK_WIDGET_REALIZED(widget)
+	    && GTK_WIDGET_MAPPED(widget)
+	    && GTK_WIDGET_VISIBLE(widget)) {
+		forward_size_request(self, a);
+	}
 }
 
 static void
@@ -216,6 +269,11 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	g_signal_connect(G_OBJECT(wrap),
 	                 "plug-removed",
 	                 G_CALLBACK(on_plug_removed),
+	                 NULL);
+
+	g_signal_connect(G_OBJECT(wrap),
+	                 "size-allocate",
+	                 G_CALLBACK(suil_x11_on_size_allocate),
 	                 NULL);
 
 	return 0;
