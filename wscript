@@ -9,7 +9,7 @@ import waflib.extras.autowaf as autowaf
 # major increment <=> incompatible changes
 # minor increment <=> compatible changes (additions)
 # micro increment <=> no interface changes
-SUIL_VERSION       = '0.6.13'
+SUIL_VERSION       = '0.6.14'
 SUIL_MAJOR_VERSION = '0'
 
 # Mandatory waf variables
@@ -52,8 +52,8 @@ def configure(conf):
         conf.env.NODELETE_FLAGS = ['-Wl,-z,nodelete']
 
     autowaf.check_pkg(conf, 'lv2', atleast_version='1.0.0', uselib_store='LV2')
-    autowaf.check_pkg(conf, 'lv2', atleast_version='1.4.3',
-                      uselib_store='LV2_1_4_3', mandatory=False)
+    autowaf.check_pkg(conf, 'lv2', atleast_version='1.6.0',
+                      uselib_store='LV2_1_6_0', mandatory=False)
 
     autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                       atleast_version='2.18.0', mandatory=False)

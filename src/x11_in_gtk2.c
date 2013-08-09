@@ -21,7 +21,7 @@
 
 #include "./suil_internal.h"
 
-#ifdef HAVE_LV2_1_4_3
+#ifdef HAVE_LV2_1_6_0
 #    include "lv2/lv2plug.in/ns/ext/options/options.h"
 #    include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #endif
@@ -37,7 +37,7 @@ struct _SuilX11Wrapper {
 	GtkPlug*                    plug;
 	SuilWrapper*                wrapper;
 	SuilInstance*               instance;
-#ifdef HAVE_LV2_1_4_3
+#ifdef HAVE_LV2_1_6_0
 	const LV2UI_Idle_Interface* idle_iface;
 	guint                       idle_id;
 	guint                       idle_ms;
@@ -55,9 +55,9 @@ G_DEFINE_TYPE(SuilX11Wrapper, suil_x11_wrapper, GTK_TYPE_SOCKET)
 /**
    Check if 'swallowed' subwindow is known to the X server.
 
-   Gdk/GTK can mark the window as realized, mapped and visible even though there
-   is no window-ID on the X server for it, yet.  -> suil_x11_on_size_allocate()
-   will make the application crash with "BadWinow"
+   Gdk/GTK can mark the window as realized, mapped and visible even though
+   there is no window-ID on the X server for it yet.  Then,
+   suil_x11_on_size_allocate() will cause a "BadWinow" X error.
 */
 static bool
 x_window_is_valid(SuilX11Wrapper* socket)
@@ -84,7 +84,7 @@ on_plug_removed(GtkSocket* sock, gpointer data)
 {
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(sock);
 
-#ifdef HAVE_LV2_1_4_3
+#ifdef HAVE_LV2_1_6_0
 	if (self->idle_id) {
 		g_source_remove(self->idle_id);
 		self->idle_id = 0;
@@ -221,7 +221,7 @@ suil_x11_wrapper_init(SuilX11Wrapper* self)
 	self->plug       = GTK_PLUG(gtk_plug_new(0));
 	self->wrapper    = NULL;
 	self->instance   = NULL;
-#ifdef HAVE_LV2_1_4_3
+#ifdef HAVE_LV2_1_6_0
 	self->idle_iface = NULL;
 	self->idle_ms    = 1000 / 30;  // 30 Hz default
 #endif
@@ -234,7 +234,7 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 	return 0;
 }
 
-#ifdef HAVE_LV2_1_4_3
+#ifdef HAVE_LV2_1_6_0
 static gboolean
 suil_x11_wrapper_idle(void* data)
 {
@@ -256,7 +256,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	wrap->wrapper         = wrapper;
 	wrap->instance        = instance;
 
-#ifdef HAVE_LV2_1_4_3
+#ifdef HAVE_LV2_1_6_0
 	const LV2UI_Idle_Interface* idle_iface = suil_instance_extension_data(
 		instance, LV2_UI__idleInterface);
 	if (idle_iface) {
@@ -316,7 +316,7 @@ suil_wrapper_new(SuilHost*      host,
 	suil_add_feature(features, &n_features, LV2_UI__resize,
 	                 &wrapper->resize);
 
-#ifdef HAVE_LV2_1_4_3
+#ifdef HAVE_LV2_1_6_0
 	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
 
 	// Scan for URID map and options

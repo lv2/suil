@@ -1,11 +1,12 @@
-suil (0.6.13) unstable;
+suil (0.6.14) stable;
 
   * Print system error message if module fails to load
   * Lower dependency from Gtk 2.24 introduced in 0.6.12
   * Add support for new LV2 idle interface
   * Support resizing for X11 in Gtk (patch from Robin Gareus)
+  * Upgrade to waf 1.7.11
 
- -- David Robillard <d@drobilla.net>  Sun, 24 Feb 2013 12:02:41 -0500
+ -- David Robillard <d@drobilla.net>  Fri, 09 Aug 2013 00:16:48 -0400
 
 suil (0.6.12) stable;
 
