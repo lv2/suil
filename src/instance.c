@@ -324,5 +324,8 @@ const void*
 suil_instance_extension_data(SuilInstance* instance,
                              const char*   uri)
 {
-	return instance->descriptor->extension_data(uri);
+	if (instance->descriptor->extension_data) {
+		return instance->descriptor->extension_data(uri);
+	}
+	return NULL;
 }
