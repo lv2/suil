@@ -27,6 +27,11 @@ typedef struct _LV2UI_Idle_Interface LV2UI_Idle_Interface;
 
 extern "C" {
 
+typedef struct {
+	QX11EmbedContainer* host_widget;
+	QX11EmbedWidget*    parent;
+} SuilX11InQt4Wrapper;
+
 class SuilQX11Container : public QX11EmbedContainer
 {
 public:
@@ -45,6 +50,7 @@ public:
 		if (_idle_iface && _ui_timer == 0) {
 			_ui_timer = this->startTimer(30);
 			_widget->embedInto(winId());
+			resize(_widget->size());
 		}
 		QX11EmbedContainer::showEvent(event);
 	}
@@ -63,6 +69,22 @@ public:
 	int                               _ui_timer;
 };
 
+static void
+wrapper_free(SuilWrapper* wrapper)
+{
+	SuilX11InQt4Wrapper* impl = (SuilX11InQt4Wrapper*)wrapper->impl;
+
+	if (impl->parent) {
+		delete impl->parent;
+	}
+
+	if (impl->host_widget) {
+		delete impl->host_widget;
+	}
+
+	free(impl);
+}
+
 static int
 wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
@@ -73,10 +95,12 @@ wrapper_wrap(SuilWrapper*  wrapper,
 		instance, LV2_UI__idleInterface);
 #endif
 
-	QX11EmbedWidget* const   w = (QX11EmbedWidget*)wrapper->impl;
-	SuilQX11Container* const c = new SuilQX11Container(instance, idle_iface, w);
+	SuilX11InQt4Wrapper* const impl = (SuilX11InQt4Wrapper*)wrapper->impl;
+	QX11EmbedWidget* const     ew   = impl->parent;
 
-	instance->host_widget = c;
+	impl->host_widget = new SuilQX11Container(instance, idle_iface, ew);
+
+	instance->host_widget = impl->host_widget;
 
 	return 0;
 }
@@ -97,13 +121,20 @@ suil_wrapper_new(SuilHost*      host,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
+	SuilX11InQt4Wrapper* const impl = (SuilX11InQt4Wrapper*)
+		malloc(sizeof(SuilX11InQt4Wrapper));
+	impl->host_widget = NULL;
+	impl->parent      = NULL;
+
 	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
-	wrapper->free = NULL;
+	wrapper->free = wrapper_free;
 
 	QX11EmbedWidget* const ew = new QX11EmbedWidget();
 
-	wrapper->impl             = ew;
+	impl->parent = ew;
+
+	wrapper->impl             = impl;
 	wrapper->resize.handle    = ew;
 	wrapper->resize.ui_resize = wrapper_resize;
 

@@ -1,8 +1,9 @@
 suil (0.6.15) unstable;
 
   * Fix suil_instance_extension_data() for UIs with NULL extension_data
+  * Fix crashes and resizing for X11 in Qt (patch from Rui Nuno Capela)
 
- -- David Robillard <d@drobilla.net>  Fri, 09 Aug 2013 20:41:20 -0400
+ -- David Robillard <d@drobilla.net>  Mon, 16 Sep 2013 23:41:12 -0400
 
 suil (0.6.14) stable;
 
