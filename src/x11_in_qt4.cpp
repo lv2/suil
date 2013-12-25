@@ -91,8 +91,10 @@ wrapper_wrap(SuilWrapper*  wrapper,
 {
 	const LV2UI_Idle_Interface* idle_iface = NULL;
 #ifdef HAVE_LV2_1_6_0
-	idle_iface = (const LV2UI_Idle_Interface*)suil_instance_extension_data(
-		instance, LV2_UI__idleInterface);
+	if (instance->descriptor->extension_data) {
+		idle_iface = (const LV2UI_Idle_Interface*)
+			instance->descriptor->extension_data(LV2_UI__idleInterface);
+	}
 #endif
 
 	SuilX11InQt4Wrapper* const impl = (SuilX11InQt4Wrapper*)wrapper->impl;

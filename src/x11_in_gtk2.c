@@ -257,8 +257,11 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	wrap->instance        = instance;
 
 #ifdef HAVE_LV2_1_6_0
-	const LV2UI_Idle_Interface* idle_iface = suil_instance_extension_data(
-		instance, LV2_UI__idleInterface);
+	const LV2UI_Idle_Interface* idle_iface = NULL;
+	if (instance->descriptor->extension_data) {
+		idle_iface = (const LV2UI_Idle_Interface*)
+			instance->descriptor->extension_data(LV2_UI__idleInterface);
+	}
 	if (idle_iface) {
 		wrap->idle_iface = idle_iface;
 		wrap->idle_id    = g_timeout_add(

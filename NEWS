@@ -1,3 +1,10 @@
+suil 0.6.17 unstable;
+
+  * Fix compilation errors on some systems
+  * Upgrade to waf 1.7.14
+  
+ -- David Robillard <d@drobilla.net>  Wed, 25 Dec 2013 00:16:55 -0500
+
 suil (0.6.16) stable;
 
   * Fix suil_instance_extension_data() for UIs with NULL extension_data
