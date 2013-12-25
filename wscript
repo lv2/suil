@@ -31,9 +31,9 @@ def options(opt):
                    help="Gtk2 library name [Default: libgtk-x11-2.0.so.0]")
 
 def configure(conf):
+    conf.line_just = 40
     conf.load('compiler_c')
     conf.load('compiler_cxx')
-    conf.line_just = 40
     autowaf.configure(conf)
     autowaf.set_c99_mode(conf)
     autowaf.display_header('Suil Configuration')
