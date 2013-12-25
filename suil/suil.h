@@ -75,6 +75,9 @@ typedef struct SuilHostImpl SuilHost;
 /** An instance of an LV2 plugin UI. */
 typedef struct SuilInstanceImpl SuilInstance;
 
+/** Opaque pointer to a UI handle. */
+typedef void* SuilHandle;
+
 /** Opaque pointer to a UI widget. */
 typedef void* SuilWidget;
 
@@ -211,6 +214,19 @@ suil_instance_new(SuilHost*                 host,
 SUIL_API
 void
 suil_instance_free(SuilInstance* instance);
+
+/**
+   Get the handle for a UI instance.
+
+   Returns the handle to the UI instance.  The returned handle has opaque type
+   to insulate the Suil API from LV2 extensions, but in pactice it is currently
+   of type @ref LV2UI_Handle.  This should not normally be needed.
+
+   The returned handle is shared and must not be deleted.
+*/
+SUIL_API
+SuilHandle
+suil_instance_get_handle(SuilInstance* instance);
 
 /**
    Get the widget for a UI instance.

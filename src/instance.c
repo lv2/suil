@@ -296,6 +296,13 @@ suil_instance_free(SuilInstance* instance)
 }
 
 SUIL_API
+SuilHandle
+suil_instance_get_handle(SuilInstance* instance)
+{
+	return instance->handle;
+}
+
+SUIL_API
 LV2UI_Widget
 suil_instance_get_widget(SuilInstance* instance)
 {

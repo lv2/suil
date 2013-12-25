@@ -1,9 +1,10 @@
-suil 0.6.17 unstable;
+suil 0.7.0 unstable;
 
+  * Add suil_instance_get_handle (patch from Rui Nuno Capela)
   * Fix compilation errors on some systems
   * Upgrade to waf 1.7.14
   
- -- David Robillard <d@drobilla.net>  Wed, 25 Dec 2013 00:16:55 -0500
+ -- David Robillard <d@drobilla.net>  Wed, 25 Dec 2013 00:57:05 -0500
 
 suil (0.6.16) stable;
 
