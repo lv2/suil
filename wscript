@@ -9,7 +9,7 @@ import waflib.extras.autowaf as autowaf
 # major increment <=> incompatible changes
 # minor increment <=> compatible changes (additions)
 # micro increment <=> no interface changes
-SUIL_VERSION       = '0.7.0'
+SUIL_VERSION       = '0.8.0'
 SUIL_MAJOR_VERSION = '0'
 
 # Mandatory waf variables
