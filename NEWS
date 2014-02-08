@@ -1,3 +1,9 @@
+suil 0.8.1 unstable;
+
+  * Fix embedding several Qt UIs in Gtk
+  
+ -- David Robillard <d@drobilla.net>  Sat, 08 Feb 2014 13:44:47 -0500
+
 suil 0.8.0 stable;
 
   * Add suil_instance_get_handle (patch from Rui Nuno Capela)

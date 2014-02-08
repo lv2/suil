@@ -59,7 +59,6 @@ suil_qt_wrapper_finalize(GObject* gobject)
 	delete self->qembed;
 	self->qembed = NULL;
 
-	delete self->app;
 	self->app = NULL;
 
 	self->wrapper->impl = NULL;
@@ -144,8 +143,13 @@ suil_wrapper_new(SuilHost*      host,
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(
 		g_object_new(SUIL_TYPE_QT_WRAPPER, NULL));
 
-	static int argc = 0;
-	wrap->app     = new QApplication(argc, NULL, true);
+	if (qApp) {
+		wrap->app = qApp;
+	} else {
+		static int argc = 0;
+		wrap->app = new QApplication(argc, NULL, true);
+	}
+
 	wrap->wrapper = NULL;
 
 	wrapper->impl = wrap;
