@@ -62,7 +62,7 @@ open_wrapper(SuilHost*      host,
              LV2_Feature*** features,
              unsigned       n_features)
 {
-	if (!strcmp(container_type_uri, ui_type_uri)) {
+	if (!container_type_uri || !strcmp(container_type_uri, ui_type_uri)) {
 		return NULL;
 	}
 
