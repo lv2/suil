@@ -26,6 +26,10 @@ def options(opt):
                    help="Build static library")
     opt.add_option('--no-shared', action='store_true', dest='no_shared',
                    help='Do not build shared library')
+    opt.add_option('--no-gtk', action='store_true', dest='no_gtk',
+                   help='Do not build support for Gtk')
+    opt.add_option('--no-qt', action='store_true', dest='no_qt',
+                   help='Do not build support for Qt')
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
                    default="libgtk-x11-2.0.so.0",
                    help="Gtk2 library name [Default: libgtk-x11-2.0.so.0]")
@@ -55,19 +59,21 @@ def configure(conf):
     autowaf.check_pkg(conf, 'lv2', atleast_version='1.6.0',
                       uselib_store='LV2_1_6_0', mandatory=False)
 
-    autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
-                      atleast_version='2.18.0', mandatory=False)
-    if not conf.is_defined('HAVE_GTK2'):
+    if not Options.options.no_gtk:
         autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
+                          atleast_version='2.18.0', mandatory=False)
+        if not conf.is_defined('HAVE_GTK2'):
+            autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
+                              atleast_version='2.0.0', mandatory=False)
+            if conf.is_defined('HAVE_GTK2'):
+                autowaf.define(conf, 'SUIL_OLD_GTK', 1)
+
+        autowaf.check_pkg(conf, 'gtk+-x11-2.0', uselib_store='GTK2_X11',
                           atleast_version='2.0.0', mandatory=False)
-        if conf.is_defined('HAVE_GTK2'):
-            autowaf.define(conf, 'SUIL_OLD_GTK', 1)
 
-    autowaf.check_pkg(conf, 'gtk+-x11-2.0', uselib_store='GTK2_X11',
-                      atleast_version='2.0.0', mandatory=False)
-
-    autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
-                      atleast_version='4.0.0', mandatory=False)
+    if not Options.options.no_qt:
+        autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
+                          atleast_version='4.0.0', mandatory=False)
 
     conf.check_cc(define_name   = 'HAVE_LIBDL',
                   lib           = 'dl',
@@ -97,8 +103,9 @@ def configure(conf):
 
     autowaf.display_msg(conf, "Gtk2 Support",
                         conf.is_defined('HAVE_GTK2'))
-    autowaf.display_msg(conf, "Gtk2 Library Name",
-                        conf.env.SUIL_GTK2_LIB_NAME)
+    if conf.is_defined('HAVE_GTK2'):
+        autowaf.display_msg(conf, "Gtk2 Library Name",
+                            conf.env.SUIL_GTK2_LIB_NAME)
     autowaf.display_msg(conf, "Qt4 Support",
                         conf.is_defined('HAVE_QT4'))
     print('')

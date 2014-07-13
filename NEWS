@@ -1,8 +1,9 @@
 suil 0.8.1 unstable;
 
   * Fix embedding several Qt UIs in Gtk
+  * Add configure options to disable all Gtk or Qt support
   
- -- David Robillard <d@drobilla.net>  Sat, 08 Feb 2014 13:44:47 -0500
+ -- David Robillard <d@drobilla.net>  Sun, 13 Jul 2014 17:32:53 -0400
 
 suil 0.8.0 stable;
 
