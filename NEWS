@@ -1,11 +1,12 @@
-suil 0.8.1 unstable;
+suil (0.8.2) stable;
 
   * Fix embedding several Qt UIs in Gtk
   * Add configure options to disable all Gtk or Qt support
+  * Upgrade to waf 1.7.16
   
- -- David Robillard <d@drobilla.net>  Sun, 13 Jul 2014 17:32:53 -0400
+ -- David Robillard <d@drobilla.net>  Fri, 08 Aug 2014 18:18:00 -0400
 
-suil 0.8.0 stable;
+suil (0.8.0) stable;
 
   * Add suil_instance_get_handle (patch from Rui Nuno Capela)
   * Fix compilation errors on some systems
