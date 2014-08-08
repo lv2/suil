@@ -1,5 +1,5 @@
 /*
-  Copyright 2011-2012 David Robillard <http://drobilla.net>
+  Copyright 2011-2014 David Robillard <http://drobilla.net>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -67,8 +67,8 @@ extern "C" {
    UI host descriptor.
 
    This contains the various functions that a plugin UI may use to communicate
-   with the plugin.  It is passed to @ref suil_instance_new to provide
-   these functions to the UI.
+   with the plugin.  It is passed to suil_instance_new() to provide these
+   functions to the UI.
 */
 typedef struct SuilHostImpl SuilHost;
 
@@ -149,7 +149,7 @@ suil_host_set_touch_func(SuilHost*     host,
                          SuilTouchFunc touch_func);
 
 /**
-   Free @c host.
+   Free `host`.
 */
 SUIL_API
 void
@@ -158,7 +158,7 @@ suil_host_free(SuilHost* host);
 /**
    Check if suil can wrap a UI type.
    @param host_type_uri The URI of the desired widget type of the host,
-   corresponding to the @c type_uri parameter of @ref suil_instance_new.
+   corresponding to the `type_uri` parameter of suil_instance_new().
    @param ui_type_uri The URI of the UI widget type.
    @return 0 if wrapping is unsupported, otherwise the quality of the wrapping
    where 1 is the highest quality (direct native embedding with no wrapping)
@@ -220,7 +220,7 @@ suil_instance_free(SuilInstance* instance);
 
    Returns the handle to the UI instance.  The returned handle has opaque type
    to insulate the Suil API from LV2 extensions, but in pactice it is currently
-   of type @ref LV2UI_Handle.  This should not normally be needed.
+   of type `LV2UI_Handle`.  This should not normally be needed.
 
    The returned handle is shared and must not be deleted.
 */
@@ -231,8 +231,8 @@ suil_instance_get_handle(SuilInstance* instance);
 /**
    Get the widget for a UI instance.
 
-   Returns an opaque pointer to a widget, the type of which matches the @c
-   container_type_uri parameter of @ref suil_instance_new.  Note this may be a
+   Returns an opaque pointer to a widget, the type of which matches the
+   `container_type_uri` parameter of suil_instance_new().  Note this may be a
    wrapper widget created by Suil, and not necessarily the widget directly
    implemented by the UI.
 */
@@ -244,16 +244,16 @@ suil_instance_get_widget(SuilInstance* instance);
    Notify the UI about a change in a plugin port.
    @param instance UI instance.
    @param port_index Index of the port which has changed.
-   @param buffer_size Size of @p buffer in bytes.
-   @param format Format of @p buffer (mapped URI, or 0 for float).
+   @param buffer_size Size of `buffer` in bytes.
+   @param format Format of `buffer` (mapped URI, or 0 for float).
    @param buffer Change data, e.g. the new port value.
 
    This function can be used to notify the UI about any port change, but in the
    simplest case is used to set the value of lv2:ControlPort ports.  For
-   simplicity, this is a special case where @p format is 0, @p buffer_size is
-   4, and @p buffer should point to a single float.
+   simplicity, this is a special case where `format` is 0, `buffer_size` is 4,
+   and `buffer` should point to a single float.
 
-   The @p buffer must be valid only for the duration of this call, the UI must
+   The `buffer` must be valid only for the duration of this call, the UI must
    not keep a reference to it.
 */
 SUIL_API
