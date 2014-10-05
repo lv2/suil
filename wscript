@@ -9,7 +9,7 @@ import waflib.extras.autowaf as autowaf
 # major increment <=> incompatible changes
 # minor increment <=> compatible changes (additions)
 # micro increment <=> no interface changes
-SUIL_VERSION       = '0.8.2'
+SUIL_VERSION       = '0.8.3'
 SUIL_MAJOR_VERSION = '0'
 
 # Mandatory waf variables
@@ -89,7 +89,7 @@ def configure(conf):
     module_ext    = ''
     if conf.env.PARDEBUG:
         module_ext += 'D'
-    if Options.platform == 'win32':
+    if conf.env.DEST_OS == 'win32':
         module_ext += '.dll'
     else:
         module_prefix = 'lib'
@@ -122,7 +122,7 @@ def build(bld):
     cflags = []
     lib    = []
     modlib = []
-    if sys.platform == 'win32':
+    if bld.env.DEST_OS == 'win32':
         modlib += ['user32']
     else:
         cflags += ['-fvisibility=hidden']
@@ -195,7 +195,7 @@ def build(bld):
                   linkflags    = bld.env.NODELETE_FLAGS)
         autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2 LV2_1_4_3')
 
-    if bld.is_defined('HAVE_GTK2') and sys.platform == 'win32':
+    if bld.is_defined('HAVE_GTK2') and bld.env.DEST_OS == 'win32':
         obj = bld(features     = 'cxx cxxshlib',
                   source       = 'src/win_in_gtk2.cpp',
                   target       = 'suil_win_in_gtk2',

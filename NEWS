@@ -1,3 +1,9 @@
+suil (0.8.3) unstable;
+
+  * Configure based on compiler target OS for cross-compilation
+  
+ -- David Robillard <d@drobilla.net>  Sat, 04 Oct 2014 23:08:29 -0400
+
 suil (0.8.2) stable;
 
   * Fix embedding several Qt UIs in Gtk
