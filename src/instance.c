@@ -22,11 +22,11 @@
 #include "./suil_config.h"
 #include "./suil_internal.h"
 
-#define GTK2_UI_URI LV2_UI__GtkUI
-#define QT4_UI_URI  LV2_UI__Qt4UI
-#define X11_UI_URI  LV2_UI__X11UI
-#define WIN_UI_URI  LV2_UI_PREFIX "WindowsUI"
-#define COCOA_UI_URI  LV2_UI__CocoaUI
+#define GTK2_UI_URI  LV2_UI__GtkUI
+#define QT4_UI_URI   LV2_UI__Qt4UI
+#define X11_UI_URI   LV2_UI__X11UI
+#define WIN_UI_URI   LV2_UI_PREFIX "WindowsUI"
+#define COCOA_UI_URI LV2_UI__CocoaUI
 
 SUIL_API
 unsigned
