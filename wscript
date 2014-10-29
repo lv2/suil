@@ -135,7 +135,8 @@ def build(bld):
     else:
         cflags += ['-fvisibility=hidden']
         if bld.is_defined('HAVE_LIBDL'):
-            lib += ['dl']
+            lib    += ['dl']
+            modlib += ['dl']
 
     module_dir = '${LIBDIR}/suil-' + SUIL_MAJOR_VERSION
 
@@ -199,7 +200,7 @@ def build(bld):
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags,
-                  lib          = modlib,
+                  lib          = modlib + ['X11'],
                   linkflags    = bld.env.NODELETE_FLAGS)
         autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2 LV2_1_4_3')
 
