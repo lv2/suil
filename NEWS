@@ -1,8 +1,9 @@
 suil (0.8.3) unstable;
 
   * Configure based on compiler target OS for cross-compilation
+  * Add Cocoa in Gtk wrapper (patch from Robin Gareus)
   
- -- David Robillard <d@drobilla.net>  Sat, 04 Oct 2014 23:08:29 -0400
+ -- David Robillard <d@drobilla.net>  Tue, 28 Oct 2014 21:13:33 -0400
 
 suil (0.8.2) stable;
 

@@ -26,6 +26,7 @@
 #define QT4_UI_URI  LV2_UI__Qt4UI
 #define X11_UI_URI  LV2_UI__X11UI
 #define WIN_UI_URI  LV2_UI_PREFIX "WindowsUI"
+#define COCOA_UI_URI  LV2_UI__CocoaUI
 
 SUIL_API
 unsigned
@@ -47,6 +48,8 @@ suil_ui_supported(const char* container_type_uri,
 	               && !strcmp(ui_type_uri, X11_UI_URI))
 	           || (!strcmp(container_type_uri, GTK2_UI_URI)
 	               && !strcmp(ui_type_uri, WIN_UI_URI))
+	           || (!strcmp(container_type_uri, GTK2_UI_URI)
+	               && !strcmp(ui_type_uri, COCOA_UI_URI))
 	           || (!strcmp(container_type_uri, QT4_UI_URI)
 	               && !strcmp(ui_type_uri, X11_UI_URI))) {
 		return SUIL_WRAPPING_EMBEDDED;
@@ -79,6 +82,9 @@ open_wrapper(SuilHost*      host,
 	} else if (!strcmp(container_type_uri, GTK2_UI_URI)
 	           && !strcmp(ui_type_uri, WIN_UI_URI)) {
 		module_name = "suil_win_in_gtk2";
+	} else if (!strcmp(container_type_uri, GTK2_UI_URI)
+	           && !strcmp(ui_type_uri, COCOA_UI_URI)) {
+		module_name = "suil_cocoa_in_gtk2";
 	} else if (!strcmp(container_type_uri, QT4_UI_URI)
 	           && !strcmp(ui_type_uri, X11_UI_URI)) {
 		module_name = "suil_x11_in_qt4";

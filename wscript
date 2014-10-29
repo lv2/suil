@@ -4,6 +4,7 @@ import subprocess
 import sys
 import waflib.Options as Options
 import waflib.extras.autowaf as autowaf
+from waflib import TaskGen
 
 # Library and package version (UNIX style major, minor, micro)
 # major increment <=> incompatible changes
@@ -71,6 +72,9 @@ def configure(conf):
         autowaf.check_pkg(conf, 'gtk+-x11-2.0', uselib_store='GTK2_X11',
                           atleast_version='2.0.0', mandatory=False)
 
+        autowaf.check_pkg(conf, 'gtk+-quartz-2.0', uselib_store='GTK2_QUARTZ',
+                          atleast_version='2.0.0', mandatory=False)
+
     if not Options.options.no_qt:
         autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
                           atleast_version='4.0.0', mandatory=False)
@@ -91,6 +95,9 @@ def configure(conf):
         module_ext += 'D'
     if conf.env.DEST_OS == 'win32':
         module_ext += '.dll'
+    elif conf.env.DEST_OS == 'darwin':
+        module_prefix = 'lib'
+        module_ext += '.dylib'
     else:
         module_prefix = 'lib'
         module_ext += '.so'
@@ -114,6 +121,7 @@ def build(bld):
     # C Headers
     includedir = '${INCLUDEDIR}/suil-%s/suil' % SUIL_MAJOR_VERSION
     bld.install_files(includedir, bld.path.ant_glob('suil/*.h'))
+    TaskGen.task_gen.mappings['.mm'] = TaskGen.task_gen.mappings['.cc']
 
     # Pkgconfig file
     autowaf.build_pc(bld, 'SUIL', SUIL_VERSION, SUIL_MAJOR_VERSION, [],
@@ -194,6 +202,18 @@ def build(bld):
                   lib          = modlib,
                   linkflags    = bld.env.NODELETE_FLAGS)
         autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2 LV2_1_4_3')
+
+    if bld.is_defined('HAVE_GTK2') and bld.is_defined('HAVE_GTK2_QUARTZ'):
+        obj = bld(features     = 'cxx cshlib',
+                  source       = 'src/cocoa_in_gtk2.mm',
+                  target       = 'suil_cocoa_in_gtk2',
+                  includes     = ['.'],
+                  defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
+                  install_path = module_dir,
+                  cflags       = cflags,
+                  lib          = modlib,
+                  linkflags    = ['-framework', 'Cocoa'])
+        autowaf.use_lib(bld, obj, 'GTK2 LV2 LV2_1_4_3')
 
     if bld.is_defined('HAVE_GTK2') and bld.env.DEST_OS == 'win32':
         obj = bld(features     = 'cxx cxxshlib',

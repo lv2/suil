@@ -10,5 +10,6 @@ Contributors:
    * Idle interface fixes for X11 in Qt4
  * Robin Gareus <robin@gareus.org>
    * Support for resizing X11 UIs in Gtk
+   * Cocoa in Gtk wrapper
  * Rui Nuno Capela
    * Fixes for X11 in Qt4
