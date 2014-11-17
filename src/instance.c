@@ -114,6 +114,7 @@ open_wrapper(SuilHost*      host,
 	void* lib = dlopen(path, RTLD_NOW);
 	if (!lib) {
 		SUIL_ERRORF("Unable to open wrap module %s (%s)\n", path, dlerror());
+		free(path);
 		return NULL;
 	}
 
@@ -203,7 +204,7 @@ suil_instance_new(SuilHost*                 host,
 	instance->descriptor = descriptor;
 
 	// Make UI features array
-	instance->features = (LV2_Feature**)malloc(sizeof(LV2_Feature**));
+	instance->features = (LV2_Feature**)malloc(sizeof(LV2_Feature*));
 	instance->features[0] = NULL;
 
 	// Copy user provided features
