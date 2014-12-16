@@ -5,7 +5,7 @@ suil (0.8.3) unstable;
   * Fix compilation with -Wl,--no-undefined
   * Fix a few minor/unlikely memory errors
   
- -- David Robillard <d@drobilla.net>  Mon, 17 Nov 2014 01:44:25 -0500
+ -- David Robillard <d@drobilla.net>  Tue, 16 Dec 2014 12:44:44 -0500
 
 suil (0.8.2) stable;
 

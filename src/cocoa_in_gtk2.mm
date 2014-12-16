@@ -116,8 +116,8 @@ suil_cocoa_size_request(GtkWidget* widget, GtkRequisition* requisition)
 	} else {
 		NSView* view  = (NSView*)self->instance->ui_widget;
 		NSRect  frame = [view frame];
-		requisition->width  = CGRectGetWidth(frame);
-		requisition->height = CGRectGetHeight(frame);
+		requisition->width  = CGRectGetWidth(NSRectToCGRect(frame));
+		requisition->height = CGRectGetHeight(NSRectToCGRect(frame));
 	}
 }
 
