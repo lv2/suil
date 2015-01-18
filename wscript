@@ -151,7 +151,7 @@ def build(bld):
                   install_path    = '${LIBDIR}',
                   cflags          = cflags,
                   lib             = lib,
-                  uselib          = 'LV2')
+                  uselib          = 'LV2 LV2_1_6_0')
 
     # Static library
     if bld.env.BUILD_STATIC:
@@ -166,7 +166,7 @@ def build(bld):
                   install_path    = '${LIBDIR}',
                   cflags          = cflags,
                   lib             = lib,
-                  uselib          = 'LV2')
+                  uselib          = 'LV2 LV2_1_6_0')
 
     if bld.env.HAVE_GTK2 and bld.env.HAVE_QT4:
         obj = bld(features     = 'cxx cxxshlib',
@@ -177,7 +177,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib)
-        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
+        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2 LV2_1_6_0')
 
         obj = bld(features     = 'cxx cxxshlib',
                   source       = 'src/qt4_in_gtk2.cpp',
@@ -188,7 +188,7 @@ def build(bld):
                   cflags       = cflags,
                   lib          = modlib,
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
+        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2 LV2_1_6_0')
 
     if bld.env.HAVE_GTK2 and bld.env.HAVE_GTK2_X11:
         obj = bld(features     = 'c cshlib',
@@ -200,7 +200,7 @@ def build(bld):
                   cflags       = cflags,
                   lib          = modlib + ['X11'],
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2 LV2_1_4_3')
+        autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2 LV2_1_6_0')
 
     if bld.env.HAVE_GTK2 and bld.env.HAVE_GTK2_QUARTZ:
         obj = bld(features     = 'cxx cshlib',
@@ -212,7 +212,7 @@ def build(bld):
                   cflags       = cflags,
                   lib          = modlib,
                   linkflags    = ['-framework', 'Cocoa'])
-        autowaf.use_lib(bld, obj, 'GTK2 LV2 LV2_1_4_3')
+        autowaf.use_lib(bld, obj, 'GTK2 LV2 LV2_1_6_0')
 
     if bld.env.HAVE_GTK2 and bld.env.DEST_OS == 'win32':
         obj = bld(features     = 'cxx cxxshlib',
@@ -235,7 +235,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib)
-        autowaf.use_lib(bld, obj, 'QT4 LV2 LV2_1_4_3')
+        autowaf.use_lib(bld, obj, 'QT4 LV2 LV2_1_6_0')
 
     # Documentation
     autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)
