@@ -224,7 +224,7 @@ def build(bld):
                   cflags       = cflags,
                   lib          = modlib,
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK2 LV2')
+        autowaf.use_lib(bld, obj, 'GTK2 LV2 LV2_1_6_0')
 
     if bld.env.HAVE_QT4:
         obj = bld(features     = 'cxx cxxshlib',

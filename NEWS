@@ -2,10 +2,11 @@ suil (0.8.3) unstable;
 
   * Configure based on compiler target OS for cross-compilation
   * Add Cocoa in Gtk wrapper (patch from Robin Gareus)
+  * Various Windows fixes (patches from Robin Gareus)
   * Fix compilation with -Wl,--no-undefined
   * Fix a few minor/unlikely memory errors
   
- -- David Robillard <d@drobilla.net>  Tue, 16 Dec 2014 12:44:44 -0500
+ -- David Robillard <d@drobilla.net>  Fri, 13 Feb 2015 20:34:43 -0500
 
 suil (0.8.2) stable;
 

@@ -11,5 +11,6 @@ Contributors:
  * Robin Gareus <robin@gareus.org>
    * Support for resizing X11 UIs in Gtk
    * Cocoa in Gtk wrapper
+   * Numerous Windows fixes
  * Rui Nuno Capela
    * Fixes for X11 in Qt4
