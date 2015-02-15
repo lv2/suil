@@ -19,6 +19,13 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkwin32.h>
 
+#ifndef WM_MOUSEWHEEL
+#    define WM_MOUSEWHEEL 0x020A
+#endif
+#ifndef WM_MOUSEHWHEEL
+#    define WM_MOUSEHWHEEL 0x020E
+#endif
+
 #include "./suil_internal.h"
 
 #ifdef HAVE_LV2_1_6_0
@@ -159,6 +166,11 @@ event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
 		// Forward keyboard events to UI window
 		PostMessage((HWND)wrap->instance->ui_widget,
 		            msg->message, msg->wParam, msg->lParam);
+		return GDK_FILTER_REMOVE;
+	} else if (msg->message == WM_MOUSEWHEEL || msg->message == WM_MOUSEHWHEEL) {
+		PostMessage((HWND)wrap->instance->ui_widget,
+		            msg->message, msg->wParam, msg->lParam);
+		return GDK_FILTER_REMOVE;
 	}
 	return GDK_FILTER_CONTINUE;
 }
