@@ -137,8 +137,7 @@ suil_cocoa_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
 		gtk_widget_get_parent(widget), widget, 0, 0, &xx, &yy);
 
 	NSView* view = (NSView*)self->instance->ui_widget;
-	[view setFrame:NSMakeRect(xx, yy,
-	                          self->alo_width, self->alo_height)];
+	[view setFrame:NSMakeRect(xx, yy, self->alo_width, self->alo_height)];
 }
 
 static void
@@ -157,8 +156,7 @@ suil_cocoa_map(GtkWidget* widget)
 
 	NSView* view = (NSView*)self->instance->ui_widget;
 	[view setHidden:NO];
-	[view setFrame:NSMakeRect(xx, yy,
-	                          self->alo_width, self->alo_height)];
+	[view setFrame:NSMakeRect(xx, yy, self->alo_width, self->alo_height)];
 }
 
 static void
@@ -169,6 +167,32 @@ suil_cocoa_unmap(GtkWidget* widget)
 
 	self->mapped = false;
 	[view setHidden:YES];
+}
+
+static gboolean
+suil_cocoa_key_press(GtkWidget* widget, GdkEventKey* event)
+{
+	SuilCocoaWrapper* const self = SUIL_COCOA_WRAPPER(widget);
+	if (!self->instance || !self->wrapper || !self->wrapper->impl) {
+		return FALSE;
+	}
+	NSEvent* nsevent = gdk_quartz_event_get_nsevent((GdkEvent*)event);
+	NSView*  view    = (NSView*)self->instance->ui_widget;
+	[view keyDown:nsevent];
+	return TRUE;
+}
+
+static gboolean
+suil_cocoa_key_release(GtkWidget* widget, GdkEventKey* event)
+{
+	SuilCocoaWrapper* const self = SUIL_COCOA_WRAPPER(widget);
+	if (!self->instance || !self->wrapper || !self->wrapper->impl) {
+		return FALSE;
+	}
+	NSEvent* nsevent = gdk_quartz_event_get_nsevent((GdkEvent*)event);
+	NSView*  view    = (NSView*)self->instance->ui_widget;
+	[view keyUp:nsevent];
+	return TRUE;
 }
 
 static gboolean
@@ -191,12 +215,14 @@ suil_cocoa_wrapper_class_init(SuilCocoaWrapperClass* klass)
 
 	gobject_class->finalize = suil_cocoa_wrapper_finalize;
 
-	widget_class->realize       = suil_cocoa_realize;
-	widget_class->expose_event  = suil_cocoa_expose;
-	widget_class->size_request  = suil_cocoa_size_request;
-	widget_class->size_allocate = suil_cocoa_size_allocate;
-	widget_class->map           = suil_cocoa_map;
-	widget_class->unmap         = suil_cocoa_unmap;
+	widget_class->realize           = suil_cocoa_realize;
+	widget_class->expose_event      = suil_cocoa_expose;
+	widget_class->size_request      = suil_cocoa_size_request;
+	widget_class->size_allocate     = suil_cocoa_size_allocate;
+	widget_class->map               = suil_cocoa_map;
+	widget_class->unmap             = suil_cocoa_unmap;
+	widget_class->key_press_event   = suil_cocoa_key_press;
+	widget_class->key_release_event = suil_cocoa_key_release;
 }
 
 static void
@@ -222,7 +248,7 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 	wrap->req_width   = width;
 	wrap->req_height  = height;
 	wrap->custom_size = true;
-	gtk_widget_queue_resize (GTK_WIDGET (handle));
+	gtk_widget_queue_resize(GTK_WIDGET(handle));
 	return 0;
 }
 
@@ -248,12 +274,6 @@ event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
 	NSView*  view    = (NSView*)wrap->instance->ui_widget;
 	if (view && nsevent) {
 		switch([nsevent type]) {
-		case NSKeyDown:
-			[view keyDown:nsevent];
-			return GDK_FILTER_REMOVE;
-		case NSKeyUp:
-			[view keyUp:nsevent];
-			return GDK_FILTER_REMOVE;
 		case NSFlagsChanged:
 			[view flagsChanged:nsevent];
 			return GDK_FILTER_REMOVE;
@@ -311,7 +331,8 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
 	}
 	if (idle_iface) {
 		wrap->idle_iface = idle_iface;
-		wrap->idle_id    = g_timeout_add (wrap->idle_ms, suil_cocoa_wrapper_idle, wrap);
+		wrap->idle_id    = g_timeout_add(
+			wrap->idle_ms, suil_cocoa_wrapper_idle, wrap);
 	}
 #endif
 	return 0;
@@ -388,9 +409,9 @@ suil_wrapper_new(SuilHost*      host,
 	LV2_Options_Option* options = NULL;
 	for (LV2_Feature** f = *features; *f && (!map || !options); ++f) {
 		if (!strcmp((*f)->URI, LV2_OPTIONS__options)) {
-			options = (LV2_Options_Option *)(*f)->data;
+			options = (LV2_Options_Option*)(*f)->data;
 		} else if (!strcmp((*f)->URI, LV2_URID__map)) {
-			map = (LV2_URID_Map *)(*f)->data;
+			map = (LV2_URID_Map*)(*f)->data;
 		}
 	}
 
