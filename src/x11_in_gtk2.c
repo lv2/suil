@@ -170,7 +170,7 @@ forward_size_request(SuilX11Wrapper* socket,
 	GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(socket->plug));
 	if (x_window_is_valid(socket)) {
 		XResizeWindow(GDK_WINDOW_XDISPLAY(window),
-		              (Window) socket->instance->ui_widget,
+		              (Window)socket->instance->ui_widget,
 		              allocation->width, allocation->height);
 	}
 }
