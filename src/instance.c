@@ -70,25 +70,42 @@ open_wrapper(SuilHost*      host,
 	}
 
 	const char* module_name = NULL;
+#ifdef SUIL_WITH_GTK2_IN_QT4
 	if (!strcmp(container_type_uri, QT4_UI_URI)
 	    && !strcmp(ui_type_uri, GTK2_UI_URI)) {
 		module_name = "suil_gtk2_in_qt4";
-	} else if (!strcmp(container_type_uri, GTK2_UI_URI)
+	}
+#endif
+#ifdef SUIL_WITH_QT4_IN_GTK2
+	if (!strcmp(container_type_uri, GTK2_UI_URI)
 	           && !strcmp(ui_type_uri, QT4_UI_URI)) {
 		module_name = "suil_qt4_in_gtk2";
-	} else if (!strcmp(container_type_uri, GTK2_UI_URI)
+	}
+#endif
+#ifdef SUIL_WITH_X11_IN_GTK2
+	if (!strcmp(container_type_uri, GTK2_UI_URI)
 	           && !strcmp(ui_type_uri, X11_UI_URI)) {
 		module_name = "suil_x11_in_gtk2";
-	} else if (!strcmp(container_type_uri, GTK2_UI_URI)
+	}
+#endif
+#ifdef SUIL_WITH_WIN_IN_GTK2
+	if (!strcmp(container_type_uri, GTK2_UI_URI)
 	           && !strcmp(ui_type_uri, WIN_UI_URI)) {
 		module_name = "suil_win_in_gtk2";
-	} else if (!strcmp(container_type_uri, GTK2_UI_URI)
+	}
+#endif
+#ifdef SUIL_WITH_COCOA_IN_GTK2
+	if (!strcmp(container_type_uri, GTK2_UI_URI)
 	           && !strcmp(ui_type_uri, COCOA_UI_URI)) {
 		module_name = "suil_cocoa_in_gtk2";
-	} else if (!strcmp(container_type_uri, QT4_UI_URI)
+	}
+#endif
+#ifdef SUIL_WITH_X11_IN_QT4
+	if (!strcmp(container_type_uri, QT4_UI_URI)
 	           && !strcmp(ui_type_uri, X11_UI_URI)) {
 		module_name = "suil_x11_in_qt4";
 	}
+#endif
 
 	if (!module_name) {
 		SUIL_ERRORF("Unable to wrap UI type <%s> as type <%s>\n",

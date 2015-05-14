@@ -4,16 +4,17 @@ suil (0.8.3) unstable;
   * Add Cocoa in Gtk wrapper (patch from Robin Gareus)
   * Various Windows fixes (patches from Robin Gareus)
   * Fix compilation with -Wl,--no-undefined
-  * Fix a few minor/unlikely memory errors
-  
- -- David Robillard <d@drobilla.net>  Fri, 13 Feb 2015 20:34:43 -0500
+  * Fix a few minor/unlikely memory errors.
+  * Only report suil_ui_supported() if necessary wrapper is compiled in
+
+ -- David Robillard <d@drobilla.net>  Thu, 14 May 2015 01:26:31 -0400
 
 suil (0.8.2) stable;
 
   * Fix embedding several Qt UIs in Gtk
   * Add configure options to disable all Gtk or Qt support
   * Upgrade to waf 1.7.16
-  
+
  -- David Robillard <d@drobilla.net>  Fri, 08 Aug 2014 18:18:00 -0400
 
 suil (0.8.0) stable;
@@ -21,7 +22,7 @@ suil (0.8.0) stable;
   * Add suil_instance_get_handle (patch from Rui Nuno Capela)
   * Fix compilation errors on some systems
   * Upgrade to waf 1.7.14
-  
+
  -- David Robillard <d@drobilla.net>  Sat, 04 Jan 2014 16:06:56 -0500
 
 suil (0.6.16) stable;
@@ -55,7 +56,7 @@ suil (0.6.10) stable;
     package check breakage in waf 1.7.6
 
  -- David Robillard <d@drobilla.net>  Sat, 22 Dec 2012 23:08:06 -0500
-  
+
 suil (0.6.8) stable;
 
   * Fix crash in x11_in_gtk2 when event_filter fires before widget is realized
@@ -64,7 +65,7 @@ suil (0.6.8) stable;
   * Update to waf 1.7.8 and autowaf r90 (install docs to versioned directory)
 
  -- David Robillard <d@drobilla.net>  Sat, 22 Dec 2012 21:11:23 -0500
-  
+
 suil (0.6.6) stable;
 
   * Fix embedding Gtk in Qt as a child widget (support reparenting)
@@ -119,4 +120,3 @@ suil (0.4.0) stable;
   * Initial release
 
  -- David Robillard <d@drobilla.net>  Tue, 24 May 2011 23:00:00 -0400
-

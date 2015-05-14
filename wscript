@@ -89,6 +89,22 @@ def configure(conf):
     autowaf.define(conf, 'SUIL_DIR_SEP', '/')
     autowaf.define(conf, 'SUIL_GTK2_LIB_NAME', Options.options.gtk2_lib_name);
 
+    if conf.env.HAVE_GTK2 and conf.env.HAVE_QT4:
+        autowaf.define(conf, 'SUIL_WITH_GTK2_IN_QT4', 1)
+        autowaf.define(conf, 'SUIL_WITH_QT4_IN_GTK2', 1)
+
+    if conf.env.HAVE_GTK2 and conf.env.HAVE_GTK2_X11:
+        autowaf.define(conf, 'SUIL_WITH_X11_IN_GTK2', 1)
+
+    if conf.env.HAVE_GTK2 and conf.env.HAVE_GTK2_QUARTZ:
+        autowaf.define(conf, 'SUIL_WITH_COCOA_IN_GTK2', 1)
+
+    if conf.env.HAVE_GTK2 and conf.env.DEST_OS == 'win32':
+        autowaf.define(conf, 'SUIL_WITH_WIN_IN_GTK2', 1)
+
+    if conf.env.HAVE_QT4:
+        autowaf.define(conf, 'SUIL_WITH_X11_IN_QT4', 1)
+
     module_prefix = ''
     module_ext    = ''
     if conf.env.PARDEBUG:
@@ -168,7 +184,7 @@ def build(bld):
                   lib             = lib,
                   uselib          = 'LV2 LV2_1_6_0')
 
-    if bld.env.HAVE_GTK2 and bld.env.HAVE_QT4:
+    if bld.env.SUIL_WITH_GTK2_IN_QT4:
         obj = bld(features     = 'cxx cxxshlib',
                   source       = 'src/gtk2_in_qt4.cpp',
                   target       = 'suil_gtk2_in_qt4',
@@ -179,6 +195,7 @@ def build(bld):
                   lib          = modlib)
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2 LV2_1_6_0')
 
+    if bld.env.SUIL_WITH_QT4_IN_GTK2:
         obj = bld(features     = 'cxx cxxshlib',
                   source       = 'src/qt4_in_gtk2.cpp',
                   target       = 'suil_qt4_in_gtk2',
@@ -190,7 +207,7 @@ def build(bld):
                   linkflags    = bld.env.NODELETE_FLAGS)
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2 LV2_1_6_0')
 
-    if bld.env.HAVE_GTK2 and bld.env.HAVE_GTK2_X11:
+    if bld.env.SUIL_WITH_X11_IN_GTK2:
         obj = bld(features     = 'c cshlib',
                   source       = 'src/x11_in_gtk2.c',
                   target       = 'suil_x11_in_gtk2',
@@ -202,7 +219,7 @@ def build(bld):
                   linkflags    = bld.env.NODELETE_FLAGS)
         autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2 LV2_1_6_0')
 
-    if bld.env.HAVE_GTK2 and bld.env.HAVE_GTK2_QUARTZ:
+    if bld.env.SUIL_WITH_COCOA_IN_GTK2:
         obj = bld(features     = 'cxx cshlib',
                   source       = 'src/cocoa_in_gtk2.mm',
                   target       = 'suil_cocoa_in_gtk2',
@@ -214,7 +231,7 @@ def build(bld):
                   linkflags    = ['-framework', 'Cocoa'])
         autowaf.use_lib(bld, obj, 'GTK2 LV2 LV2_1_6_0')
 
-    if bld.env.HAVE_GTK2 and bld.env.DEST_OS == 'win32':
+    if bld.env.SUIL_WITH_WIN_IN_GTK2:
         obj = bld(features     = 'cxx cxxshlib',
                   source       = 'src/win_in_gtk2.cpp',
                   target       = 'suil_win_in_gtk2',
@@ -226,7 +243,7 @@ def build(bld):
                   linkflags    = bld.env.NODELETE_FLAGS)
         autowaf.use_lib(bld, obj, 'GTK2 LV2 LV2_1_6_0')
 
-    if bld.env.HAVE_QT4:
+    if bld.env.SUIL_WITH_X11_IN_QT4:
         obj = bld(features     = 'cxx cxxshlib',
                   source       = 'src/x11_in_qt4.cpp',
                   target       = 'suil_x11_in_qt4',
