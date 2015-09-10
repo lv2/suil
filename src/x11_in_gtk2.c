@@ -241,7 +241,7 @@ suil_x11_wrapper_idle(void* data)
 	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(data);
 
 	wrap->idle_iface->idle(wrap->instance->handle);
-	
+
 	return TRUE;  // Continue calling
 }
 #endif
