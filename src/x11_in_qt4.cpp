@@ -124,11 +124,9 @@ suil_wrapper_new(SuilHost*      host,
                  unsigned       n_features)
 {
 	SuilX11InQt4Wrapper* const impl = (SuilX11InQt4Wrapper*)
-		malloc(sizeof(SuilX11InQt4Wrapper));
-	impl->host_widget = NULL;
-	impl->parent      = NULL;
+		calloc(1, sizeof(SuilX11InQt4Wrapper));
 
-	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
+	SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = wrapper_free;
 

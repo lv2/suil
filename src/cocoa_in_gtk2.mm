@@ -376,7 +376,7 @@ suil_wrapper_new(SuilHost*      host,
 		return NULL;
 	}
 
-	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
+	SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = wrapper_free;
 

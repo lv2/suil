@@ -135,10 +135,9 @@ suil_wrapper_new(SuilHost*      host,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
-	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
-	wrapper->wrap    = wrapper_wrap;
-	wrapper->free    = wrapper_free;
-	wrapper->impl    = NULL;
+	SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
+	wrapper->wrap = wrapper_wrap;
+	wrapper->free = wrapper_free;
 
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(
 		g_object_new(SUIL_TYPE_QT_WRAPPER, NULL));

@@ -127,10 +127,7 @@ suil_wrapper_new(SuilHost*      host,
 
 	/* Create wrapper implementation. */
 	SuilGtk2InQt4Wrapper* const impl = (SuilGtk2InQt4Wrapper*)
-		malloc(sizeof(SuilGtk2InQt4Wrapper));
-	impl->host_widget = NULL;
-	impl->parent      = NULL;
-	impl->plug        = NULL;
+		calloc(1, sizeof(SuilGtk2InQt4Wrapper));
 
 	/* Set parent widget if given. */
 	for (unsigned i = 0; i < n_features; ++i) {
@@ -139,7 +136,7 @@ suil_wrapper_new(SuilHost*      host,
 		}
 	}
 
-	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
+	SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = wrapper_free;
 	wrapper->impl = impl;
