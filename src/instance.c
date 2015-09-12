@@ -65,10 +65,6 @@ open_wrapper(SuilHost*      host,
              LV2_Feature*** features,
              unsigned       n_features)
 {
-	if (!container_type_uri || !strcmp(container_type_uri, ui_type_uri)) {
-		return NULL;
-	}
-
 	const char* module_name = NULL;
 #ifdef SUIL_WITH_GTK2_IN_QT4
 	if (!strcmp(container_type_uri, QT4_UI_URI)
@@ -254,8 +250,15 @@ suil_instance_new(SuilHost*                 host,
 	}
 
 	// Open wrapper (this may add additional features)
-	instance->wrapper = open_wrapper(
-		host, container_type_uri, ui_type_uri, &instance->features, n_features);
+	if (container_type_uri && strcmp(container_type_uri, ui_type_uri)) {
+		instance->wrapper = open_wrapper(host,
+		                                 container_type_uri, ui_type_uri,
+		                                 &instance->features, n_features);
+		if (!instance->wrapper) {
+			suil_instance_free(instance);
+			return NULL;
+		}
+	}
 
 	// Instantiate UI
 	instance->handle = descriptor->instantiate(

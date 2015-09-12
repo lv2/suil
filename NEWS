@@ -4,10 +4,11 @@ suil (0.8.3) unstable;
   * Add Cocoa in Gtk wrapper (patch from Robin Gareus)
   * Various Windows fixes (patches from Robin Gareus)
   * Fix compilation with -Wl,--no-undefined
-  * Fix a few minor/unlikely memory errors.
+  * Fix a few minor/unlikely memory errors
+  * Gracefully handle failure to open wrapper
   * Only report suil_ui_supported() if necessary wrapper is compiled in
 
- -- David Robillard <d@drobilla.net>  Thu, 14 May 2015 01:26:31 -0400
+ -- David Robillard <d@drobilla.net>  Fri, 11 Sep 2015 17:38:26 -0400
 
 suil (0.8.2) stable;
 
