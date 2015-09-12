@@ -30,7 +30,11 @@ def options(opt):
     opt.add_option('--no-gtk', action='store_true', dest='no_gtk',
                    help='Do not build support for Gtk')
     opt.add_option('--no-qt', action='store_true', dest='no_qt',
-                   help='Do not build support for Qt')
+                   help='Do not build support for Qt (any version)')
+    opt.add_option('--no-qt4', action='store_true', dest='no_qt4',
+                   help='Do not build support for Qt4')
+    opt.add_option('--no-qt5', action='store_true', dest='no_qt5',
+                   help='Do not build support for Qt5')
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
                    default="libgtk-x11-2.0.so.0",
                    help="Gtk2 library name [Default: libgtk-x11-2.0.so.0]")
@@ -76,8 +80,13 @@ def configure(conf):
                           atleast_version='2.0.0', mandatory=False)
 
     if not Options.options.no_qt:
-        autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
-                          atleast_version='4.0.0', mandatory=False)
+        if not Options.options.no_qt4:
+            autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
+                              atleast_version='4.4.0', mandatory=False)
+
+        if not Options.options.no_qt5:
+            autowaf.check_pkg(conf, 'Qt5Widgets', uselib_store='QT5',
+                              atleast_version='5.1.0', mandatory=False)
 
     conf.check_cc(define_name   = 'HAVE_LIBDL',
                   lib           = 'dl',
@@ -93,6 +102,9 @@ def configure(conf):
         autowaf.define(conf, 'SUIL_WITH_GTK2_IN_QT4', 1)
         autowaf.define(conf, 'SUIL_WITH_QT4_IN_GTK2', 1)
 
+    if conf.env.HAVE_GTK2 and conf.env.HAVE_QT5:
+        autowaf.define(conf, 'SUIL_WITH_GTK2_IN_QT5', 1)
+
     if conf.env.HAVE_GTK2 and conf.env.HAVE_GTK2_X11:
         autowaf.define(conf, 'SUIL_WITH_X11_IN_GTK2', 1)
 
@@ -104,6 +116,9 @@ def configure(conf):
 
     if conf.env.HAVE_QT4:
         autowaf.define(conf, 'SUIL_WITH_X11_IN_QT4', 1)
+
+    if conf.env.HAVE_QT5:
+        autowaf.define(conf, 'SUIL_WITH_X11_IN_QT5', 1)
 
     module_prefix = ''
     module_ext    = ''
@@ -129,6 +144,7 @@ def configure(conf):
         autowaf.display_msg(conf, "Gtk2 Library Name",
                             conf.env.SUIL_GTK2_LIB_NAME)
     autowaf.display_msg(conf, "Qt4 Support", bool(conf.env.HAVE_QT4))
+    autowaf.display_msg(conf, "Qt5 Support", bool(conf.env.HAVE_QT5))
     print('')
 
 def build(bld):
@@ -195,6 +211,17 @@ def build(bld):
                   lib          = modlib)
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2 LV2_1_6_0')
 
+    if bld.env.SUIL_WITH_GTK2_IN_QT5:
+        obj = bld(features     = 'cxx cxxshlib',
+                  source       = 'src/gtk2_in_qt5.cpp',
+                  target       = 'suil_gtk2_in_qt5',
+                  includes     = ['.'],
+                  defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
+                  install_path = module_dir,
+                  cflags       = cflags,
+                  lib          = modlib)
+        autowaf.use_lib(bld, obj, 'GTK2 QT5 LV2 LV2_1_6_0')
+
     if bld.env.SUIL_WITH_QT4_IN_GTK2:
         obj = bld(features     = 'cxx cxxshlib',
                   source       = 'src/qt4_in_gtk2.cpp',
@@ -253,6 +280,17 @@ def build(bld):
                   cflags       = cflags,
                   lib          = modlib)
         autowaf.use_lib(bld, obj, 'QT4 LV2 LV2_1_6_0')
+
+    if bld.env.SUIL_WITH_X11_IN_QT5:
+        obj = bld(features     = 'cxx cxxshlib',
+                  source       = 'src/x11_in_qt5.cpp',
+                  target       = 'suil_x11_in_qt5',
+                  includes     = ['.'],
+                  defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
+                  install_path = module_dir,
+                  cflags       = cflags,
+                  lib          = modlib)
+        autowaf.use_lib(bld, obj, 'QT5 LV2 LV2_1_6_0')
 
     # Documentation
     autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)

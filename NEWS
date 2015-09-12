@@ -3,12 +3,13 @@ suil (0.8.3) unstable;
   * Configure based on compiler target OS for cross-compilation
   * Add Cocoa in Gtk wrapper (patch from Robin Gareus)
   * Various Windows fixes (patches from Robin Gareus)
+  * Add Gtk2 and X11 in Qt5 wrappers (patch from Rui Nuno Capela)
   * Fix compilation with -Wl,--no-undefined
   * Fix a few minor/unlikely memory errors
   * Gracefully handle failure to open wrapper
   * Only report suil_ui_supported() if necessary wrapper is compiled in
 
- -- David Robillard <d@drobilla.net>  Fri, 11 Sep 2015 17:38:26 -0400
+ -- David Robillard <d@drobilla.net>  Sat, 12 Sep 2015 10:54:09 -0400
 
 suil (0.8.2) stable;
 

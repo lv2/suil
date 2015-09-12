@@ -1,5 +1,6 @@
 /*
-  Copyright 2011-2012 David Robillard <http://drobilla.net>
+  Copyright 2011-2015 David Robillard <http://drobilla.net>
+  Copyright 2015 Rui Nuno Capela <rncbc@rncbc.org>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -14,7 +15,11 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <QX11EmbedContainer>
+#include <QWindow>
+#include <QWidget>
+
+#include <QVBoxLayout>
+
 #undef signals
 
 #include <gtk/gtk.h>
@@ -25,12 +30,12 @@
 
 extern "C" {
 
-typedef struct _SuilGtk2InQt4Wrapper SuilGtk2InQt4Wrapper;
+typedef struct _SuilGtk2InQt5Wrapper SuilGtk2InQt5Wrapper;
 
-struct _SuilGtk2InQt4Wrapper {
-	QX11EmbedContainer* host_widget;
-	QWidget*            parent;
-	GtkWidget*          plug;
+struct _SuilGtk2InQt5Wrapper {
+	QWidget*   host_widget;
+	QWidget*   parent;
+	GtkWidget* plug;
 };
 
 static void
@@ -38,7 +43,7 @@ on_size_request(GtkWidget*      widget,
                 GtkRequisition* requisition,
                 gpointer        user_data)
 {
-	QX11EmbedContainer* const wrap = (QX11EmbedContainer*)user_data;
+	QWidget* const wrap = (QWidget*)user_data;
 	wrap->setMinimumSize(requisition->width, requisition->height);
 }
 
@@ -47,14 +52,14 @@ on_size_allocate(GtkWidget*    widget,
                  GdkRectangle* allocation,
                  gpointer      user_data)
 {
-	QX11EmbedContainer* const wrap = (QX11EmbedContainer*)user_data;
+	QWidget* const wrap = (QWidget*)user_data;
 	wrap->resize(allocation->width, allocation->height);
 }
 
 static void
 wrapper_free(SuilWrapper* wrapper)
 {
-	SuilGtk2InQt4Wrapper* impl = (SuilGtk2InQt4Wrapper*)wrapper->impl;
+	SuilGtk2InQt5Wrapper* impl = (SuilGtk2InQt5Wrapper*)wrapper->impl;
 
 	if (impl->plug) {
 		gtk_widget_destroy(impl->plug);
@@ -71,14 +76,30 @@ static int
 wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
 {
-	SuilGtk2InQt4Wrapper* const impl   = (SuilGtk2InQt4Wrapper*)wrapper->impl;
-	QWidget*                    root   = static_cast<QWidget*>(impl->parent);
-	QX11EmbedContainer* const   wrap   = new QX11EmbedContainer(root);
-	GtkWidget* const            plug   = gtk_plug_new(wrap->winId());
+	Qt::WindowFlags wflags = Qt::Window
+		| Qt::CustomizeWindowHint
+		| Qt::WindowTitleHint
+		| Qt::WindowSystemMenuHint
+		| Qt::WindowMinMaxButtonsHint
+		| Qt::WindowCloseButtonHint;
+
+	SuilGtk2InQt5Wrapper* const impl   = (SuilGtk2InQt5Wrapper*)wrapper->impl;
+	QWidget*                    parent = static_cast<QWidget*>(impl->parent);
+	QWidget* const              wrap   = new QWidget(parent, wflags);
+	GtkWidget* const            plug   = gtk_plug_new(0);
 	GtkWidget* const            widget = (GtkWidget*)instance->ui_widget;
 
 	gtk_container_add(GTK_CONTAINER(plug), widget);
 	gtk_widget_show_all(plug);
+
+	const WId    wid       = gtk_plug_get_id((GtkPlug *)plug);
+	QWindow*     window    = QWindow::fromWinId(wid);
+	QWidget*     container = QWidget::createWindowContainer(window, wrap);
+	QVBoxLayout* layout    = new QVBoxLayout();
+	layout->setMargin(0);
+	layout->setSpacing(0);
+	layout->addWidget(container);
+	wrap->setLayout(layout);
 
 #ifdef SUIL_OLD_GTK
 	wrap->resize(widget->allocation.width, widget->allocation.height);
@@ -126,8 +147,8 @@ suil_wrapper_new(SuilHost*      host,
 	}
 
 	/* Create wrapper implementation. */
-	SuilGtk2InQt4Wrapper* const impl = (SuilGtk2InQt4Wrapper*)
-		calloc(1, sizeof(SuilGtk2InQt4Wrapper));
+	SuilGtk2InQt5Wrapper* const impl = (SuilGtk2InQt5Wrapper*)
+		calloc(1, sizeof(SuilGtk2InQt5Wrapper));
 
 	/* Set parent widget if given. */
 	for (unsigned i = 0; i < n_features; ++i) {
