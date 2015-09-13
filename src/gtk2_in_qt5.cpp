@@ -15,10 +15,9 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <QWindow>
-#include <QWidget>
-
 #include <QVBoxLayout>
+#include <QWidget>
+#include <QWindow>
 
 #undef signals
 
@@ -76,16 +75,8 @@ static int
 wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
 {
-	Qt::WindowFlags wflags = Qt::Window
-		| Qt::CustomizeWindowHint
-		| Qt::WindowTitleHint
-		| Qt::WindowSystemMenuHint
-		| Qt::WindowMinMaxButtonsHint
-		| Qt::WindowCloseButtonHint;
-
 	SuilGtk2InQt5Wrapper* const impl   = (SuilGtk2InQt5Wrapper*)wrapper->impl;
-	QWidget*                    parent = static_cast<QWidget*>(impl->parent);
-	QWidget* const              wrap   = new QWidget(parent, wflags);
+	QWidget* const              wrap   = new QWidget(NULL, Qt::Window);
 	GtkWidget* const            plug   = gtk_plug_new(0);
 	GtkWidget* const            widget = (GtkWidget*)instance->ui_widget;
 

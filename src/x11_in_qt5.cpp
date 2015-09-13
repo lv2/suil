@@ -18,6 +18,7 @@
 #include <QWidget>
 
 #include <QTimerEvent>
+#include <QCloseEvent>
 
 #undef signals
 
@@ -58,6 +59,14 @@ protected:
 		QWidget::timerEvent(event);
 	}
 
+	void closeEvent(QCloseEvent* event) {
+		if (_ui_timer && _idle_iface) {
+			this->killTimer(_ui_timer);
+			_ui_timer = 0;
+		}
+		QWidget::closeEvent(event);
+	}
+
 private:
 	SuilInstance*               _instance;
 	const LV2UI_Idle_Interface* _idle_iface;
@@ -69,14 +78,10 @@ wrapper_free(SuilWrapper* wrapper)
 {
 	SuilX11InQt5Wrapper* impl = (SuilX11InQt5Wrapper*)wrapper->impl;
 
-	if (impl->parent) {
-		delete impl->parent;
-	}
-/*
 	if (impl->host_widget) {
 		delete impl->host_widget;
 	}
-*/
+
 	free(impl);
 }
 
@@ -124,14 +129,7 @@ suil_wrapper_new(SuilHost*      host,
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = wrapper_free;
 
-	Qt::WindowFlags wflags = Qt::Window
-		| Qt::CustomizeWindowHint
-		| Qt::WindowTitleHint
-		| Qt::WindowSystemMenuHint
-		| Qt::WindowMinMaxButtonsHint
-		| Qt::WindowCloseButtonHint;
-
-	QWidget* const ew = new SuilQX11Widget(NULL, wflags);
+	QWidget* const ew = new SuilQX11Widget(NULL, Qt::Window);
 
 	impl->parent = ew;
 

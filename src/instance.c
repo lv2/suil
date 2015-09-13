@@ -24,7 +24,7 @@
 
 #define GTK2_UI_URI  LV2_UI__GtkUI
 #define QT4_UI_URI   LV2_UI__Qt4UI
-#define QT5_UI_URI   LV2_UI_PREFIX "Qt5UI"
+#define QT5_UI_URI   LV2_UI__Qt5UI
 #define X11_UI_URI   LV2_UI__X11UI
 #define WIN_UI_URI   LV2_UI_PREFIX "WindowsUI"
 #define COCOA_UI_URI LV2_UI__CocoaUI

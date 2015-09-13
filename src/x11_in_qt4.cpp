@@ -68,10 +68,6 @@ wrapper_free(SuilWrapper* wrapper)
 {
 	SuilX11InQt4Wrapper* impl = (SuilX11InQt4Wrapper*)wrapper->impl;
 
-	if (impl->parent) {
-		delete impl->parent;
-	}
-
 	if (impl->host_widget) {
 		delete impl->host_widget;
 	}
