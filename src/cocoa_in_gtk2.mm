@@ -1,5 +1,5 @@
 /*
-  Copyright 2011-2014 David Robillard <http://drobilla.net>
+  Copyright 2011-2015 David Robillard <http://drobilla.net>
   Copyright 2014 Robin Gareus <robin@gareus.org>
 
   Permission to use, copy, modify, and/or distribute this software for any
