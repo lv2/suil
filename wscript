@@ -60,9 +60,7 @@ def configure(conf):
                    mandatory = False)):
         conf.env.NODELETE_FLAGS = ['-Wl,-z,nodelete']
 
-    autowaf.check_pkg(conf, 'lv2', atleast_version='1.0.0', uselib_store='LV2')
-    autowaf.check_pkg(conf, 'lv2', atleast_version='1.6.0',
-                      uselib_store='LV2_1_6_0', mandatory=False)
+    autowaf.check_pkg(conf, 'lv2', atleast_version='1.6.0', uselib_store='LV2')
 
     if not Options.options.no_gtk:
         autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
@@ -183,7 +181,7 @@ def build(bld):
                   install_path    = '${LIBDIR}',
                   cflags          = cflags,
                   lib             = lib,
-                  uselib          = 'LV2 LV2_1_6_0')
+                  uselib          = 'LV2')
 
     # Static library
     if bld.env.BUILD_STATIC:
@@ -198,7 +196,7 @@ def build(bld):
                   install_path    = '${LIBDIR}',
                   cflags          = cflags,
                   lib             = lib,
-                  uselib          = 'LV2 LV2_1_6_0')
+                  uselib          = 'LV2')
 
     if bld.env.SUIL_WITH_GTK2_IN_QT4:
         obj = bld(features     = 'cxx cxxshlib',
@@ -209,7 +207,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib)
-        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2 LV2_1_6_0')
+        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
     if bld.env.SUIL_WITH_GTK2_IN_QT5:
         obj = bld(features     = 'cxx cxxshlib',
@@ -220,7 +218,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib)
-        autowaf.use_lib(bld, obj, 'GTK2 QT5 LV2 LV2_1_6_0')
+        autowaf.use_lib(bld, obj, 'GTK2 QT5 LV2')
 
     if bld.env.SUIL_WITH_QT4_IN_GTK2:
         obj = bld(features     = 'cxx cxxshlib',
@@ -232,7 +230,7 @@ def build(bld):
                   cflags       = cflags,
                   lib          = modlib,
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2 LV2_1_6_0')
+        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
     if bld.env.SUIL_WITH_X11_IN_GTK2:
         obj = bld(features     = 'c cshlib',
@@ -244,7 +242,7 @@ def build(bld):
                   cflags       = cflags,
                   lib          = modlib + ['X11'],
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2 LV2_1_6_0')
+        autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2')
 
     if bld.env.SUIL_WITH_COCOA_IN_GTK2:
         obj = bld(features     = 'cxx cshlib',
@@ -256,7 +254,7 @@ def build(bld):
                   cflags       = cflags,
                   lib          = modlib,
                   linkflags    = ['-framework', 'Cocoa'])
-        autowaf.use_lib(bld, obj, 'GTK2 LV2 LV2_1_6_0')
+        autowaf.use_lib(bld, obj, 'GTK2 LV2')
 
     if bld.env.SUIL_WITH_WIN_IN_GTK2:
         obj = bld(features     = 'cxx cxxshlib',
@@ -268,7 +266,7 @@ def build(bld):
                   cflags       = cflags,
                   lib          = modlib,
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK2 LV2 LV2_1_6_0')
+        autowaf.use_lib(bld, obj, 'GTK2 LV2')
 
     if bld.env.SUIL_WITH_X11_IN_QT4:
         obj = bld(features     = 'cxx cxxshlib',
@@ -279,7 +277,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib)
-        autowaf.use_lib(bld, obj, 'QT4 LV2 LV2_1_6_0')
+        autowaf.use_lib(bld, obj, 'QT4 LV2')
 
     if bld.env.SUIL_WITH_X11_IN_QT5:
         obj = bld(features     = 'cxx cxxshlib',
@@ -290,7 +288,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib)
-        autowaf.use_lib(bld, obj, 'QT5 LV2 LV2_1_6_0')
+        autowaf.use_lib(bld, obj, 'QT5 LV2')
 
     # Documentation
     autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)

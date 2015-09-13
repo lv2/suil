@@ -21,10 +21,8 @@
 
 #include "./suil_internal.h"
 
-#ifdef HAVE_LV2_1_6_0
-#    include "lv2/lv2plug.in/ns/ext/options/options.h"
-#    include "lv2/lv2plug.in/ns/ext/urid/urid.h"
-#endif
+#include "lv2/lv2plug.in/ns/ext/options/options.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 
 #define SUIL_TYPE_X11_WRAPPER (suil_x11_wrapper_get_type())
 #define SUIL_X11_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_X11_WRAPPER, SuilX11Wrapper))
@@ -37,11 +35,9 @@ struct _SuilX11Wrapper {
 	GtkPlug*                    plug;
 	SuilWrapper*                wrapper;
 	SuilInstance*               instance;
-#ifdef HAVE_LV2_1_6_0
 	const LV2UI_Idle_Interface* idle_iface;
 	guint                       idle_id;
 	guint                       idle_ms;
-#endif
 };
 
 struct _SuilX11WrapperClass {
@@ -84,12 +80,10 @@ on_plug_removed(GtkSocket* sock, gpointer data)
 {
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(sock);
 
-#ifdef HAVE_LV2_1_6_0
 	if (self->idle_id) {
 		g_source_remove(self->idle_id);
 		self->idle_id = 0;
 	}
-#endif
 
 	if (self->instance->handle) {
 		self->instance->descriptor->cleanup(self->instance->handle);
@@ -221,10 +215,8 @@ suil_x11_wrapper_init(SuilX11Wrapper* self)
 	self->plug       = GTK_PLUG(gtk_plug_new(0));
 	self->wrapper    = NULL;
 	self->instance   = NULL;
-#ifdef HAVE_LV2_1_6_0
 	self->idle_iface = NULL;
 	self->idle_ms    = 1000 / 30;  // 30 Hz default
-#endif
 }
 
 static int
@@ -234,7 +226,6 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 	return 0;
 }
 
-#ifdef HAVE_LV2_1_6_0
 static gboolean
 suil_x11_wrapper_idle(void* data)
 {
@@ -244,7 +235,6 @@ suil_x11_wrapper_idle(void* data)
 
 	return TRUE;  // Continue calling
 }
-#endif
 
 static int
 wrapper_wrap(SuilWrapper*  wrapper,
@@ -256,7 +246,6 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	wrap->wrapper         = wrapper;
 	wrap->instance        = instance;
 
-#ifdef HAVE_LV2_1_6_0
 	const LV2UI_Idle_Interface* idle_iface = NULL;
 	if (instance->descriptor->extension_data) {
 		idle_iface = (const LV2UI_Idle_Interface*)
@@ -267,7 +256,6 @@ wrapper_wrap(SuilWrapper*  wrapper,
 		wrap->idle_id    = g_timeout_add(
 			wrap->idle_ms, suil_x11_wrapper_idle, wrap);
 	}
-#endif
 
 	g_signal_connect(G_OBJECT(wrap),
 	                 "plug-removed",
@@ -319,7 +307,6 @@ suil_wrapper_new(SuilHost*      host,
 	suil_add_feature(features, &n_features, LV2_UI__resize,
 	                 &wrapper->resize);
 
-#ifdef HAVE_LV2_1_6_0
 	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
 
 	// Scan for URID map and options
@@ -343,7 +330,6 @@ suil_wrapper_new(SuilHost*      host,
 			}
 		}
 	}
-#endif
 
 	return wrapper;
 }

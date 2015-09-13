@@ -21,10 +21,6 @@
 #include "./suil_config.h"
 #include "./suil_internal.h"
 
-#ifndef HAVE_LV2_1_6_0
-typedef struct _LV2UI_Idle_Interface LV2UI_Idle_Interface;
-#endif
-
 extern "C" {
 
 typedef struct {
@@ -45,7 +41,6 @@ public:
 		, _ui_timer(0)
 	{}
 
-#ifdef HAVE_LV2_1_6_0
 	void showEvent(QShowEvent* event) {
 		if (_idle_iface && _ui_timer == 0) {
 			_ui_timer = this->startTimer(30);
@@ -61,7 +56,6 @@ public:
 		}
 		QX11EmbedContainer::timerEvent(event);
 	}
-#endif
 
 	SuilInstance* const               _instance;
 	const LV2UI_Idle_Interface* const _idle_iface;
@@ -90,12 +84,10 @@ wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
 {
 	const LV2UI_Idle_Interface* idle_iface = NULL;
-#ifdef HAVE_LV2_1_6_0
 	if (instance->descriptor->extension_data) {
 		idle_iface = (const LV2UI_Idle_Interface*)
 			instance->descriptor->extension_data(LV2_UI__idleInterface);
 	}
-#endif
 
 	SuilX11InQt4Wrapper* const impl = (SuilX11InQt4Wrapper*)wrapper->impl;
 	QX11EmbedWidget* const     ew   = impl->parent;
@@ -144,9 +136,7 @@ suil_wrapper_new(SuilHost*      host,
 	suil_add_feature(features, &n_features, LV2_UI__resize,
 	                 &wrapper->resize);
 
-#ifdef HAVE_LV2_1_6_0
 	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
-#endif
 
 	return wrapper;
 }

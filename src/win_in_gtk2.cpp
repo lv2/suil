@@ -28,10 +28,8 @@
 
 #include "./suil_internal.h"
 
-#ifdef HAVE_LV2_1_6_0
-#    include "lv2/lv2plug.in/ns/ext/options/options.h"
-#    include "lv2/lv2plug.in/ns/ext/urid/urid.h"
-#endif
+#include "lv2/lv2plug.in/ns/ext/options/options.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 
 extern "C" {
 
@@ -42,15 +40,13 @@ typedef struct _SuilWinWrapper      SuilWinWrapper;
 typedef struct _SuilWinWrapperClass SuilWinWrapperClass;
 
 struct _SuilWinWrapper {
-	GtkDrawingArea area;
-	SuilWrapper*   wrapper;
-	SuilInstance*  instance;
-	GdkWindow*     flt_win;
-#ifdef HAVE_LV2_1_6_0
+	GtkDrawingArea              area;
+	SuilWrapper*                wrapper;
+	SuilInstance*               instance;
+	GdkWindow*                  flt_win;
 	const LV2UI_Idle_Interface* idle_iface;
 	guint                       idle_id;
 	guint                       idle_ms;
-#endif
 };
 
 struct _SuilWinWrapperClass {
@@ -110,13 +106,10 @@ suil_win_wrapper_init(SuilWinWrapper* self)
 {
 	self->instance   = NULL;
 	self->flt_win    = NULL;
-#ifdef HAVE_LV2_1_6_0
 	self->idle_iface = NULL;
 	self->idle_ms    = 1000 / 30;  // 30 Hz default
-#endif
 }
 
-#ifdef HAVE_LV2_1_6_0
 static gboolean
 suil_win_wrapper_idle(void* data)
 {
@@ -124,7 +117,6 @@ suil_win_wrapper_idle(void* data)
 	wrap->idle_iface->idle(wrap->instance->handle);
 	return TRUE;  // Continue calling
 }
-#endif
 
 static int
 wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
@@ -143,7 +135,6 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	wrap->wrapper         = wrapper;
 	wrap->instance        = instance;
 
-#ifdef HAVE_LV2_1_6_0
 	const LV2UI_Idle_Interface* idle_iface = NULL;
 	if (instance->descriptor->extension_data) {
 		idle_iface = (const LV2UI_Idle_Interface*)
@@ -153,7 +144,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 		wrap->idle_iface = idle_iface;
 		wrap->idle_id    = g_timeout_add (wrap->idle_ms, suil_win_wrapper_idle, wrap);
 	}
-#endif
+
 	return 0;
 }
 
@@ -180,12 +171,11 @@ wrapper_free(SuilWrapper* wrapper)
 {
 	if (wrapper->impl) {
 		SuilWinWrapper* const wrap = SUIL_WIN_WRAPPER(wrapper->impl);
-#ifdef HAVE_LV2_1_6_0
 		if (wrap->idle_id) {
 			g_source_remove(wrap->idle_id);
 			wrap->idle_id = 0;
 		}
-#endif
+
 		gdk_window_remove_filter(wrap->flt_win, event_filter, wrapper->impl);
 		gtk_object_destroy(GTK_OBJECT(wrap));
 	}
@@ -241,7 +231,6 @@ suil_wrapper_new(SuilHost*      host,
 	suil_add_feature(features, &n_features, LV2_UI__resize,
 	                 &wrapper->resize);
 
-#ifdef HAVE_LV2_1_6_0
 	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
 
 	// Scan for URID map and options
@@ -265,7 +254,7 @@ suil_wrapper_new(SuilHost*      host,
 			}
 		}
 	}
-#endif
+
 	return wrapper;
 }
 

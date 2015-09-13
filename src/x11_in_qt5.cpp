@@ -24,10 +24,6 @@
 #include "./suil_config.h"
 #include "./suil_internal.h"
 
-#ifndef HAVE_LV2_1_6_0
-typedef struct _LV2UI_Idle_Interface LV2UI_Idle_Interface;
-#endif
-
 extern "C" {
 
 typedef struct {
@@ -40,14 +36,11 @@ class SuilQX11Widget : public QWidget
 public:
 	SuilQX11Widget(QWidget* parent, Qt::WindowFlags wflags)
 		: QWidget(parent, wflags)
-#ifdef HAVE_LV2_1_6_0
 		, _instance(NULL)
 		, _idle_iface(NULL)
 		, _ui_timer(0)
-#endif
 	{}
 
-#ifdef HAVE_LV2_1_6_0
 	void start_idle(SuilInstance*               instance,
 	                const LV2UI_Idle_Interface* idle_iface) {
 		_instance   = instance;
@@ -69,7 +62,6 @@ private:
 	SuilInstance*               _instance;
 	const LV2UI_Idle_Interface* _idle_iface;
 	int                         _ui_timer;
-#endif
 };
 
 static void
@@ -95,14 +87,12 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	SuilX11InQt5Wrapper* const impl = (SuilX11InQt5Wrapper*)wrapper->impl;
 	SuilQX11Widget* const      ew   = (SuilQX11Widget*)impl->parent;
 
-#ifdef HAVE_LV2_1_6_0
 	if (instance->descriptor->extension_data) {
 		const LV2UI_Idle_Interface* idle_iface
 			= (const LV2UI_Idle_Interface*)
 				instance->descriptor->extension_data(LV2_UI__idleInterface);
 		ew->start_idle(instance, idle_iface);
 	}
-#endif
 
 	impl->host_widget = ew;
 
@@ -155,9 +145,7 @@ suil_wrapper_new(SuilHost*      host,
 	suil_add_feature(features, &n_features, LV2_UI__resize,
 	                 &wrapper->resize);
 
-#ifdef HAVE_LV2_1_6_0
 	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
-#endif
 
 	return wrapper;
 }
