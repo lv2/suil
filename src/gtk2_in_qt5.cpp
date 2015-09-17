@@ -33,7 +33,7 @@ typedef struct _SuilGtk2InQt5Wrapper SuilGtk2InQt5Wrapper;
 
 struct _SuilGtk2InQt5Wrapper {
 	QWidget*   host_widget;
-	QWidget*   parent;
+	QWindow*   window;
 	GtkWidget* plug;
 };
 
@@ -59,6 +59,11 @@ static void
 wrapper_free(SuilWrapper* wrapper)
 {
 	SuilGtk2InQt5Wrapper* impl = (SuilGtk2InQt5Wrapper*)wrapper->impl;
+
+	if (impl->window) {
+		impl->window->setParent(NULL);
+		delete impl->window;
+	}
 
 	if (impl->plug) {
 		gtk_widget_destroy(impl->plug);
@@ -107,6 +112,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 		G_OBJECT(plug), "size-allocate", G_CALLBACK(on_size_allocate), wrap);
 
 	impl->host_widget     = wrap;
+	impl->window          = window;
 	impl->plug            = plug;
 	instance->host_widget = wrap;
 
@@ -140,13 +146,6 @@ suil_wrapper_new(SuilHost*      host,
 	/* Create wrapper implementation. */
 	SuilGtk2InQt5Wrapper* const impl = (SuilGtk2InQt5Wrapper*)
 		calloc(1, sizeof(SuilGtk2InQt5Wrapper));
-
-	/* Set parent widget if given. */
-	for (unsigned i = 0; i < n_features; ++i) {
-		if (!strcmp((*features)[i]->URI, LV2_UI__parent)) {
-			impl->parent = static_cast<QWidget*>((*features)[i]->data);
-		}
-	}
 
 	SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;

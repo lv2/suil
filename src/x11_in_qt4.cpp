@@ -41,6 +41,7 @@ public:
 		, _ui_timer(0)
 	{}
 
+protected:
 	void showEvent(QShowEvent* event) {
 		if (_idle_iface && _ui_timer == 0) {
 			_ui_timer = this->startTimer(30);
@@ -57,6 +58,15 @@ public:
 		QX11EmbedContainer::timerEvent(event);
 	}
 
+	void closeEvent(QCloseEvent* event) {
+		if (_ui_timer && _idle_iface) {
+			this->killTimer(_ui_timer);
+			_ui_timer = 0;
+		}
+		QX11EmbedContainer::closeEvent(event);
+	}
+
+private:
 	SuilInstance* const               _instance;
 	const LV2UI_Idle_Interface* const _idle_iface;
 	QX11EmbedWidget* const            _widget;
