@@ -157,6 +157,14 @@ forward_key_event(SuilX11Wrapper* socket,
 	           (XEvent*)&xev);
 }
 
+static gboolean
+idle_size_request(gpointer user_data)
+{
+	GtkWidget* w = GTK_WIDGET(user_data);
+	gtk_widget_queue_resize(w);
+	return FALSE;
+}
+
 static void
 forward_size_request(SuilX11Wrapper* socket,
                      GtkAllocation*  allocation)
@@ -201,6 +209,10 @@ forward_size_request(SuilX11Wrapper* socket,
 		XMoveWindow(GDK_WINDOW_XDISPLAY(window),
 		            (Window)socket->instance->ui_widget,
 		            wx, wy);
+	} else {
+		/* Child has not been realized, so unable to resize now.
+		   Queue an idle resize. */
+		g_idle_add(idle_size_request, socket->plug);
 	}
 }
 
