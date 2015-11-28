@@ -3,6 +3,7 @@ suil (0.8.3) unstable;
   * Configure based on compiler target OS for cross-compilation
   * Add Cocoa in Gtk wrapper (patch from Robin Gareus)
   * Various Windows fixes (patches from Robin Gareus)
+  * Center X11 UIs in Gtk (patch from Robin Gareus)
   * Add Gtk2 and X11 in Qt5 wrappers (patch from Rui Nuno Capela)
   * Fix compilation with -Wl,--no-undefined
   * Fix a few minor/unlikely memory errors
@@ -10,7 +11,7 @@ suil (0.8.3) unstable;
   * Only report suil_ui_supported() if necessary wrapper is compiled in
   * Upgrade to waf 1.8.14
 
- -- David Robillard <d@drobilla.net>  Fri, 02 Oct 2015 20:55:54 -0400
+ -- David Robillard <d@drobilla.net>  Sat, 28 Nov 2015 15:22:29 -0500
 
 suil (0.8.2) stable;
 
