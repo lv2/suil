@@ -133,28 +133,45 @@ suil_x11_wrapper_show(GtkWidget* w)
 	gtk_widget_show(GTK_WIDGET(wrap->plug));
 }
 
-static void
+static gboolean
 forward_key_event(SuilX11Wrapper* socket,
                   GdkEvent*       gdk_event)
 {
 	GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(socket->plug));
 	GdkScreen* screen = gdk_visual_get_screen(gdk_window_get_visual(window));
 
+	Window target_window;
+	if (gdk_event->any.window == window) {
+		// Event sent up to the plug window, forward it up to the parent
+		GtkWidget* widget = GTK_WIDGET(socket->instance->host_widget);
+		GdkWindow* parent = gtk_widget_get_parent_window(widget);
+		if (parent) {
+			target_window = GDK_WINDOW_XID(parent);
+		} else {
+			return FALSE;  // Wrapper is a top-level window, do nothing
+		}
+	} else {
+		// Event sent anywhere else, send to the plugin
+		target_window = (Window)socket->instance->ui_widget;
+	}
+
 	XKeyEvent xev;
 	memset(&xev, 0, sizeof(xev));
 	xev.type      = (gdk_event->type == GDK_KEY_PRESS) ? KeyPress : KeyRelease;
 	xev.root      = GDK_WINDOW_XID(gdk_screen_get_root_window(screen));
-	xev.window    = GDK_WINDOW_XID(window);
+	xev.window    = target_window;
 	xev.subwindow = None;
 	xev.time      = gdk_event->key.time;
 	xev.state     = gdk_event->key.state;
 	xev.keycode   = gdk_event->key.hardware_keycode;
 
 	XSendEvent(GDK_WINDOW_XDISPLAY(window),
-	           (Window)socket->instance->ui_widget,
+	           target_window,
 	           False,
 	           NoEventMask,
 	           (XEvent*)&xev);
+
+	return (gdk_event->any.window != window);
 }
 
 static gboolean
@@ -223,8 +240,7 @@ suil_x11_wrapper_key_event(GtkWidget*   widget,
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(widget);
 
 	if (self->plug) {
-		forward_key_event(self, (GdkEvent*)event);
-		return TRUE;
+		return forward_key_event(self, (GdkEvent*)event);
 	}
 
 	return FALSE;
