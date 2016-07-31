@@ -377,9 +377,9 @@ suil_wrapper_new(SuilHost*      host,
 	LV2_Options_Option* options = NULL;
 	for (LV2_Feature** f = *features; *f && (!map || !options); ++f) {
 		if (!strcmp((*f)->URI, LV2_OPTIONS__options)) {
-			options = (*f)->data;
+			options = (LV2_Options_Option*)(*f)->data;
 		} else if (!strcmp((*f)->URI, LV2_URID__map)) {
-			map = (*f)->data;
+			map = (LV2_URID_Map*)(*f)->data;
 		}
 	}
 
