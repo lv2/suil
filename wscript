@@ -306,3 +306,15 @@ def upload_docs(ctx):
 
 def lint(ctx):
     subprocess.call('cpplint.py --filter=-whitespace,+whitespace/comments,-build/header_guard,-readability/casting,-readability/todo src/* suil/*', shell=True)
+
+def posts(ctx):
+    path = str(ctx.path.abspath())
+    autowaf.news_to_posts(
+        os.path.join(path, 'NEWS'),
+        {'title'        : 'Suil',
+         'description'  : autowaf.get_blurb(os.path.join(path, 'README')),
+         'dist_pattern' : 'http://download.drobilla.net/suil-%s.tar.bz2'},
+        { 'Author' : 'drobilla',
+          'Tags'   : 'Hacking, LAD, LV2' },
+        os.path.join(out, 'posts'))
+    
