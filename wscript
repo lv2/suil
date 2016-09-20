@@ -10,7 +10,7 @@ from waflib import TaskGen
 # major increment <=> incompatible changes
 # minor increment <=> compatible changes (additions)
 # micro increment <=> no interface changes
-SUIL_VERSION       = '0.8.3'
+SUIL_VERSION       = '0.8.4'
 SUIL_MAJOR_VERSION = '0'
 
 # Mandatory waf variables
@@ -60,7 +60,7 @@ def configure(conf):
                    mandatory = False)):
         conf.env.NODELETE_FLAGS = ['-Wl,-z,nodelete']
 
-    autowaf.check_pkg(conf, 'lv2', atleast_version='1.6.0', uselib_store='LV2')
+    autowaf.check_pkg(conf, 'lv2', atleast_version='1.12.0', uselib_store='LV2')
 
     if not Options.options.no_gtk:
         autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',

@@ -1,4 +1,4 @@
-suil (0.8.3) unstable;
+suil (0.8.4) unstable;
 
   * Configure based on compiler target OS for cross-compilation
   * Add Cocoa in Gtk wrapper (patch from Robin Gareus)
@@ -13,7 +13,7 @@ suil (0.8.3) unstable;
   * Only report suil_ui_supported() if necessary wrapper is compiled in
   * Upgrade to waf 1.8.14
 
- -- David Robillard <d@drobilla.net>  Sat, 28 Nov 2015 17:50:49 -0500
+ -- David Robillard <d@drobilla.net>  Mon, 19 Sep 2016 22:47:44 -0400
 
 suil (0.8.2) stable;
 
