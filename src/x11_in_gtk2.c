@@ -266,10 +266,11 @@ suil_x11_wrapper_class_init(SuilX11WrapperClass* klass)
 	GObjectClass* const   gobject_class = G_OBJECT_CLASS(klass);
 	GtkWidgetClass* const widget_class  = GTK_WIDGET_CLASS(klass);
 
-	gobject_class->finalize       = suil_x11_wrapper_finalize;
-	widget_class->realize         = suil_x11_wrapper_realize;
-	widget_class->show            = suil_x11_wrapper_show;
-	widget_class->key_press_event = suil_x11_wrapper_key_event;
+	gobject_class->finalize         = suil_x11_wrapper_finalize;
+	widget_class->realize           = suil_x11_wrapper_realize;
+	widget_class->show              = suil_x11_wrapper_show;
+	widget_class->key_press_event   = suil_x11_wrapper_key_event;
+	widget_class->key_release_event = suil_x11_wrapper_key_event;
 }
 
 static void
