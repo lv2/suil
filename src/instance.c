@@ -23,6 +23,7 @@
 #include "./suil_internal.h"
 
 #define GTK2_UI_URI  LV2_UI__GtkUI
+#define GTK3_UI_URI  LV2_UI__Gtk3UI
 #define QT4_UI_URI   LV2_UI__Qt4UI
 #define QT5_UI_URI   LV2_UI__Qt5UI
 #define X11_UI_URI   LV2_UI__X11UI
@@ -48,6 +49,8 @@ suil_ui_supported(const char* container_type_uri,
 	           || (!strcmp(container_type_uri, QT5_UI_URI)
 	               && !strcmp(ui_type_uri, GTK2_UI_URI))
 	           || (!strcmp(container_type_uri, GTK2_UI_URI)
+	               && !strcmp(ui_type_uri, X11_UI_URI))
+	           || (!strcmp(container_type_uri, GTK3_UI_URI)
 	               && !strcmp(ui_type_uri, X11_UI_URI))
 	           || (!strcmp(container_type_uri, GTK2_UI_URI)
 	               && !strcmp(ui_type_uri, WIN_UI_URI))
@@ -93,6 +96,12 @@ open_wrapper(SuilHost*      host,
 	if (!strcmp(container_type_uri, GTK2_UI_URI)
 	    && !strcmp(ui_type_uri, X11_UI_URI)) {
 		module_name = "suil_x11_in_gtk2";
+	}
+#endif
+#ifdef SUIL_WITH_X11_IN_GTK3
+	if (!strcmp(container_type_uri, GTK3_UI_URI)
+	    && !strcmp(ui_type_uri, X11_UI_URI)) {
+		module_name = "suil_x11_in_gtk3";
 	}
 #endif
 #ifdef SUIL_WITH_WIN_IN_GTK2

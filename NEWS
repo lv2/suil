@@ -1,4 +1,10 @@
-suil (0.8.4) unstable;
+suil (0.8.5) unstable;
+
+  * Add support for X11 in Gtk3
+
+ -- David Robillard <d@drobilla.net>  Sat, 10 Dec 2016 10:08:03 -0500
+
+suil (0.8.4) stable;
 
   * Configure based on compiler target OS for cross-compilation
   * Add Cocoa in Gtk wrapper (patch from Robin Gareus)

@@ -10,7 +10,7 @@ from waflib import TaskGen
 # major increment <=> incompatible changes
 # minor increment <=> compatible changes (additions)
 # micro increment <=> no interface changes
-SUIL_VERSION       = '0.8.4'
+SUIL_VERSION       = '0.8.5'
 SUIL_MAJOR_VERSION = '0'
 
 # Mandatory waf variables
@@ -38,6 +38,9 @@ def options(opt):
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
                    default="libgtk-x11-2.0.so.0",
                    help="Gtk2 library name [Default: libgtk-x11-2.0.so.0]")
+    opt.add_option('--gtk3-lib-name', type='string', dest='gtk3_lib_name',
+                   default="libgtk-x11-3.0.so.0",
+                   help="Gtk3 library name [Default: libgtk-x11-3.0.so.0]")
 
 def configure(conf):
     conf.line_just = 40
@@ -77,6 +80,12 @@ def configure(conf):
         autowaf.check_pkg(conf, 'gtk+-quartz-2.0', uselib_store='GTK2_QUARTZ',
                           atleast_version='2.0.0', mandatory=False)
 
+        autowaf.check_pkg(conf, 'gtk+-3.0', uselib_store='GTK3',
+                          atleast_version='3.14.0', mandatory=False)
+
+        autowaf.check_pkg(conf, 'gtk+-x11-3.0', uselib_store='GTK3_X11',
+                          atleast_version='3.14.0', mandatory=False)
+
     if not Options.options.no_qt:
         if not Options.options.no_qt4:
             autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
@@ -95,6 +104,7 @@ def configure(conf):
                    conf.env.LIBDIR + '/suil-' + SUIL_MAJOR_VERSION)
     autowaf.define(conf, 'SUIL_DIR_SEP', '/')
     autowaf.define(conf, 'SUIL_GTK2_LIB_NAME', Options.options.gtk2_lib_name);
+    autowaf.define(conf, 'SUIL_GTK3_LIB_NAME', Options.options.gtk3_lib_name);
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_QT4:
         autowaf.define(conf, 'SUIL_WITH_GTK2_IN_QT4', 1)
@@ -105,6 +115,9 @@ def configure(conf):
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_GTK2_X11:
         autowaf.define(conf, 'SUIL_WITH_X11_IN_GTK2', 1)
+
+    if conf.env.HAVE_GTK3 and conf.env.HAVE_GTK3_X11:
+        autowaf.define(conf, 'SUIL_WITH_X11_IN_GTK3', 1)
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_GTK2_QUARTZ:
         autowaf.define(conf, 'SUIL_WITH_COCOA_IN_GTK2', 1)
@@ -141,6 +154,10 @@ def configure(conf):
     if conf.env.HAVE_GTK2:
         autowaf.display_msg(conf, "Gtk2 Library Name",
                             conf.env.SUIL_GTK2_LIB_NAME)
+    autowaf.display_msg(conf, "Gtk3 Support", bool(conf.env.HAVE_GTK3))
+    if conf.env.HAVE_GTK3:
+        autowaf.display_msg(conf, "Gtk3 Library Name",
+                            conf.env.SUIL_GTK3_LIB_NAME)
     autowaf.display_msg(conf, "Qt4 Support", bool(conf.env.HAVE_QT4))
     autowaf.display_msg(conf, "Qt5 Support", bool(conf.env.HAVE_QT5))
     print('')
@@ -243,6 +260,18 @@ def build(bld):
                   lib          = modlib + ['X11'],
                   linkflags    = bld.env.NODELETE_FLAGS)
         autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2')
+
+    if bld.env.SUIL_WITH_X11_IN_GTK3:
+        obj = bld(features     = 'c cshlib',
+                  source       = 'src/x11_in_gtk3.c',
+                  target       = 'suil_x11_in_gtk3',
+                  includes     = ['.'],
+                  defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
+                  install_path = module_dir,
+                  cflags       = cflags,
+                  lib          = modlib + ['X11'],
+                  linkflags    = bld.env.NODELETE_FLAGS)
+        autowaf.use_lib(bld, obj, 'GTK3 GTK3_X11 LV2')
 
     if bld.env.SUIL_WITH_COCOA_IN_GTK2:
         obj = bld(features     = 'cxx cshlib',
