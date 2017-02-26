@@ -50,6 +50,9 @@ def configure(conf):
     autowaf.set_c99_mode(conf)
     autowaf.display_header('Suil Configuration')
 
+    if conf.check_cxx(cxxflags=["-std=c++0x"]):
+        conf.env.append_unique('CXXFLAGS', ['-std=c++0x'])  # for Qt
+
     conf.env.BUILD_SHARED = not Options.options.no_shared
     conf.env.BUILD_STATIC = Options.options.static
 
@@ -94,6 +97,8 @@ def configure(conf):
         if not Options.options.no_qt5:
             autowaf.check_pkg(conf, 'Qt5Widgets', uselib_store='QT5',
                               atleast_version='5.1.0', mandatory=False)
+            autowaf.check_pkg(conf, 'Qt5X11Extras', uselib_store='QT5_X11',
+                              atleast_version='5.1.0', mandatory=False)
 
     conf.check_cc(define_name   = 'HAVE_LIBDL',
                   lib           = 'dl',
@@ -112,6 +117,9 @@ def configure(conf):
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_QT5:
         autowaf.define(conf, 'SUIL_WITH_GTK2_IN_QT5', 1)
+
+    if conf.env.HAVE_GTK2 and conf.env.HAVE_QT5_X11:
+        autowaf.define(conf, 'SUIL_WITH_QT5_IN_GTK2', 1)
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_GTK2_X11:
         autowaf.define(conf, 'SUIL_WITH_X11_IN_GTK2', 1)
@@ -150,16 +158,29 @@ def configure(conf):
     autowaf.set_lib_env(conf, 'suil', SUIL_VERSION)
     conf.write_config_header('suil_config.h', remove=False)
 
-    autowaf.display_msg(conf, "Gtk2 Support", bool(conf.env.HAVE_GTK2))
     if conf.env.HAVE_GTK2:
         autowaf.display_msg(conf, "Gtk2 Library Name",
                             conf.env.SUIL_GTK2_LIB_NAME)
-    autowaf.display_msg(conf, "Gtk3 Support", bool(conf.env.HAVE_GTK3))
     if conf.env.HAVE_GTK3:
         autowaf.display_msg(conf, "Gtk3 Library Name",
                             conf.env.SUIL_GTK3_LIB_NAME)
-    autowaf.display_msg(conf, "Qt4 Support", bool(conf.env.HAVE_QT4))
-    autowaf.display_msg(conf, "Qt5 Support", bool(conf.env.HAVE_QT5))
+
+    # Print summary message for every potentially supported wrapper
+    wrappers = [('cocoa', 'gtk2'),
+                ('gtk2', 'qt4'),
+                ('gtk2', 'qt5'),
+                ('qt4', 'gtk2'),
+                ('qt5', 'gtk2'),
+                ('win', 'gtk2'),
+                ('x11', 'gtk2'),
+                ('x11', 'gtk3'),
+                ('x11', 'qt4'),
+                ('x11', 'qt5')]
+    for w in wrappers:
+        var = 'SUIL_WITH_%s_IN_%s' % (w[0].upper(), w[1].upper())
+        autowaf.display_msg(conf, 'Support for %s in %s' % (w[0], w[1]),
+                            bool(conf.env[var]))
+
     print('')
 
 def build(bld):
@@ -222,7 +243,7 @@ def build(bld):
                   includes     = ['.'],
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
-                  cflags       = cflags,
+                  cxxflags     = cflags,
                   lib          = modlib)
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
@@ -233,7 +254,7 @@ def build(bld):
                   includes     = ['.'],
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
-                  cflags       = cflags,
+                  cxxflags     = cflags,
                   lib          = modlib)
         autowaf.use_lib(bld, obj, 'GTK2 QT5 LV2')
 
@@ -244,10 +265,22 @@ def build(bld):
                   includes     = ['.'],
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
-                  cflags       = cflags,
+                  cxxflags     = cflags,
                   lib          = modlib,
                   linkflags    = bld.env.NODELETE_FLAGS)
         autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
+
+    if bld.env.SUIL_WITH_QT5_IN_GTK2:
+        obj = bld(features     = 'cxx cxxshlib',
+                  source       = 'src/qt5_in_gtk2.cpp',
+                  target       = 'suil_qt5_in_gtk2',
+                  includes     = ['.'],
+                  defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
+                  install_path = module_dir,
+                  cxxflags     = cflags,
+                  lib          = modlib + ['X11'],
+                  linkflags    = bld.env.NODELETE_FLAGS)
+        autowaf.use_lib(bld, obj, 'GTK2 QT5 QT5_X11 LV2')
 
     if bld.env.SUIL_WITH_X11_IN_GTK2:
         obj = bld(features     = 'c cshlib',
@@ -346,4 +379,3 @@ def posts(ctx):
         { 'Author' : 'drobilla',
           'Tags'   : 'Hacking, LAD, LV2, Suil' },
         os.path.join(out, 'posts'))
-    

@@ -1,5 +1,5 @@
 /*
-  Copyright 2007-2015 David Robillard <http://drobilla.net>
+  Copyright 2007-2017 David Robillard <http://drobilla.net>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -44,6 +44,8 @@ suil_ui_supported(const char* container_type_uri,
 		return SUIL_WRAPPING_NATIVE;
 	} else if ((!strcmp(container_type_uri, GTK2_UI_URI)
 	            && !strcmp(ui_type_uri, QT4_UI_URI))
+	           || (!strcmp(container_type_uri, GTK2_UI_URI)
+	               && !strcmp(ui_type_uri, QT5_UI_URI))
 	           || (!strcmp(container_type_uri, QT4_UI_URI)
 	               && !strcmp(ui_type_uri, GTK2_UI_URI))
 	           || (!strcmp(container_type_uri, QT5_UI_URI)
@@ -90,6 +92,12 @@ open_wrapper(SuilHost*      host,
 	if (!strcmp(container_type_uri, GTK2_UI_URI)
 	    && !strcmp(ui_type_uri, QT4_UI_URI)) {
 		module_name = "suil_qt4_in_gtk2";
+	}
+#endif
+#ifdef SUIL_WITH_QT5_IN_GTK2
+	if (!strcmp(container_type_uri, GTK2_UI_URI)
+	    && !strcmp(ui_type_uri, QT5_UI_URI)) {
+		module_name = "suil_qt5_in_gtk2";
 	}
 #endif
 #ifdef SUIL_WITH_X11_IN_GTK2

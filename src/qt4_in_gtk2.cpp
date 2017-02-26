@@ -1,5 +1,5 @@
 /*
-  Copyright 2011-2015 David Robillard <http://drobilla.net>
+  Copyright 2011-2017 David Robillard <http://drobilla.net>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -17,8 +17,8 @@
 #include <gtk/gtk.h>
 
 #include <QApplication>
-#include <QX11EmbedWidget>
 #include <QVBoxLayout>
+#include <QX11EmbedWidget>
 
 #include "./suil_internal.h"
 
@@ -57,10 +57,9 @@ suil_qt_wrapper_finalize(GObject* gobject)
 	}
 
 	delete self->qembed;
-	self->qembed = NULL;
 
-	self->app = NULL;
-
+	self->qembed        = NULL;
+	self->app           = NULL;
 	self->wrapper->impl = NULL;
 
 	G_OBJECT_CLASS(suil_qt_wrapper_parent_class)->finalize(gobject);
@@ -108,10 +107,8 @@ wrapper_wrap(SuilWrapper*  wrapper,
 
 	qwidget->setParent(wrap->qembed);
 
-	g_signal_connect_after(G_OBJECT(wrap),
-	                       "realize",
-	                       G_CALLBACK(suil_qt_wrapper_realize),
-	                       NULL);
+	g_signal_connect_after(G_OBJECT(wrap), "realize",
+	                       G_CALLBACK(suil_qt_wrapper_realize), NULL);
 
 	instance->host_widget = GTK_WIDGET(wrap);
 
@@ -150,7 +147,6 @@ suil_wrapper_new(SuilHost*      host,
 	}
 
 	wrap->wrapper = NULL;
-
 	wrapper->impl = wrap;
 
 	return wrapper;
