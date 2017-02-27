@@ -47,11 +47,9 @@ def configure(conf):
     conf.load('compiler_c')
     conf.load('compiler_cxx')
     autowaf.configure(conf)
-    autowaf.set_c99_mode(conf)
     autowaf.display_header('Suil Configuration')
-
-    if conf.check_cxx(cxxflags=["-std=c++0x"]):
-        conf.env.append_unique('CXXFLAGS', ['-std=c++0x'])  # for Qt
+    autowaf.set_c99_mode(conf)
+    autowaf.set_cxx11_mode(conf)
 
     conf.env.BUILD_SHARED = not Options.options.no_shared
     conf.env.BUILD_STATIC = Options.options.static
