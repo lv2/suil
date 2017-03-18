@@ -18,3 +18,4 @@ Contributors:
    * Qt5 wrappers
  * Stefan Westerfeld
    * Qt5 in Gtk2 support
+   * Initialization API

@@ -1,5 +1,5 @@
 /*
-  Copyright 2011-2014 David Robillard <http://drobilla.net>
+  Copyright 2011-2017 David Robillard <http://drobilla.net>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -123,6 +123,23 @@ typedef void (*SuilTouchFunc)(
 	SuilController controller,
 	uint32_t       port_index,
 	bool           grabbed);
+
+/** Initialization argument. */
+typedef enum {
+	SUIL_ARG_NONE
+} SuilArg;
+
+/**
+   Initialize suil.
+
+   This function should be called as early as possible, before any other GUI
+   toolkit functions.  The variable argument list is a sequence of SuilArg keys
+   and corresponding value pairs for passing any necessary platform-specific
+   information.  It must be terminated with SUIL_ARG_NONE.
+*/
+SUIL_API
+void
+suil_init(int* argc, char*** argv, SuilArg key, ...);
 
 /**
    Create a new UI host descriptor.

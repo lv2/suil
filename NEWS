@@ -1,8 +1,11 @@
-suil (0.8.5) unstable;
+suil (0.8.7) unstable;
 
   * Add support for X11 in Gtk3
+  * Add support for Qt5 in Gtk2
+  * Add suil_init() to support early initialization and passing any necessary
+    information that may be needed in the future (thanks Stefan Westerfeld)
 
- -- David Robillard <d@drobilla.net>  Sat, 10 Dec 2016 10:08:03 -0500
+ -- David Robillard <d@drobilla.net>  Sat, 18 Mar 2017 12:01:55 +0100
 
 suil (0.8.4) stable;
 

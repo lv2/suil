@@ -142,8 +142,7 @@ suil_wrapper_new(SuilHost*      host,
 	if (qApp) {
 		wrap->app = qApp;
 	} else {
-		static int argc = 0;
-		wrap->app = new QApplication(argc, NULL, true);
+		wrap->app = new QApplication(host->argc, host->argv, true);
 	}
 
 	wrap->wrapper = NULL;
