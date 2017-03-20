@@ -65,7 +65,7 @@ def configure(conf):
         conf.env.NODELETE_FLAGS = ['-Wl,-z,nodelete']
 
     autowaf.check_pkg(conf, 'lv2', atleast_version='1.12.0', uselib_store='LV2')
-    autowaf.check_pkg(conf, 'x11', uselib_store='X11')
+    autowaf.check_pkg(conf, 'x11', uselib_store='X11', mandatory=False)
 
     if not Options.options.no_gtk:
         autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
