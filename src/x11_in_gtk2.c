@@ -193,6 +193,7 @@ forward_size_request(SuilX11Wrapper* socket,
 		int        width  = allocation->width;
 		int        height = allocation->height;
 		XSizeHints hints;
+		memset(&hints, 0, sizeof(hints));
 		XGetNormalHints(GDK_WINDOW_XDISPLAY(window),
 		                (Window)socket->instance->ui_widget,
 		                &hints);
