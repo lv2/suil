@@ -4,8 +4,9 @@ suil (0.8.7) unstable;
   * Add support for Qt5 in Gtk2
   * Add suil_init() to support early initialization and passing any necessary
     information that may be needed in the future (thanks Stefan Westerfeld)
+  * Fix memory leaks
 
- -- David Robillard <d@drobilla.net>  Sat, 18 Mar 2017 12:01:55 +0100
+ -- David Robillard <d@drobilla.net>  Sun, 07 May 2017 13:23:10 +0200
 
 suil (0.8.4) stable;
 

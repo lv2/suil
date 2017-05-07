@@ -73,6 +73,7 @@ x_window_is_valid(SuilX11Wrapper* socket)
 			return true;
 		}
 	}
+	XFree(children);
 	return false;
 }
 
