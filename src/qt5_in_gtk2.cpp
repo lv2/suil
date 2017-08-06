@@ -89,7 +89,7 @@ suil_qt_wrapper_realize(GtkWidget* w, gpointer data)
 {
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(w);
 	GtkSocket* const     s    = GTK_SOCKET(w);
-	const WId            id   = gtk_socket_get_id(s);
+	const WId            id   = (const WId)gtk_socket_get_id(s);
 
 	wrap->qembed->winId();
 	wrap->qembed->windowHandle()->setParent(QWindow::fromWinId(id));

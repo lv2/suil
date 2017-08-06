@@ -88,7 +88,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	gtk_container_add(GTK_CONTAINER(plug), widget);
 	gtk_widget_show_all(plug);
 
-	const WId    wid       = gtk_plug_get_id((GtkPlug *)plug);
+	const WId    wid       = (const WId)gtk_plug_get_id((GtkPlug*)plug);
 	QWindow*     window    = QWindow::fromWinId(wid);
 	QWidget*     container = QWidget::createWindowContainer(window, wrap);
 	QVBoxLayout* layout    = new QVBoxLayout();
