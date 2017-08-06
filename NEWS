@@ -5,8 +5,9 @@ suil (0.8.7) unstable;
   * Add suil_init() to support early initialization and passing any necessary
     information that may be needed in the future (thanks Stefan Westerfeld)
   * Fix minor memory errors
+  * Fix building with X11 against custom LV2 install path (thanks Robin Gareus)
 
- -- David Robillard <d@drobilla.net>  Sun, 07 May 2017 13:26:59 +0200
+ -- David Robillard <d@drobilla.net>  Sun, 06 Aug 2017 15:20:06 +0200
 
 suil (0.8.4) stable;
 

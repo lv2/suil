@@ -359,7 +359,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib)
-        autowaf.use_lib(bld, obj, 'X11')
+        autowaf.use_lib(bld, obj, 'X11 LV2')
 
     # Documentation
     autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)
