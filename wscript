@@ -133,6 +133,7 @@ def configure(conf):
 
     if conf.env.HAVE_QT5:
         autowaf.define(conf, 'SUIL_WITH_X11_IN_QT5', 1)
+        autowaf.set_cxx11_mode(conf)
 
     if conf.env.HAVE_X11:
         autowaf.define(conf, 'SUIL_WITH_X11', 1)
