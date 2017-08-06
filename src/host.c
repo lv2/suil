@@ -82,7 +82,7 @@ suil_init(int* argc, char*** argv, SuilArg key, ...)
 	suil_argc = argc ? *argc : 0;
 	suil_argv = argv ? *argv : NULL;
 
-#if SUIL_WITH_X11
+#ifdef SUIL_WITH_X11
 	suil_load_init_module("suil_x11");
 #endif
 }
