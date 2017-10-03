@@ -1,17 +1,12 @@
 #!/usr/bin/env python
 import os
 import subprocess
-import sys
-import waflib.Options as Options
+import waflib.TaskGen as TaskGen
 import waflib.extras.autowaf as autowaf
-from waflib import TaskGen
 
-# Library and package version (UNIX style major, minor, micro)
-# major increment <=> incompatible changes
-# minor increment <=> compatible changes (additions)
-# micro increment <=> no interface changes
+# Semver package/library version
 SUIL_VERSION       = '0.8.7'
-SUIL_MAJOR_VERSION = '0'
+SUIL_MAJOR_VERSION = SUIL_VERSION[0:SUIL_VERSION.find('.')]
 
 # Mandatory waf variables
 APPNAME = 'suil'        # Package name for waf dist
@@ -19,22 +14,23 @@ VERSION = SUIL_VERSION  # Package version for waf dist
 top     = '.'           # Source directory
 out     = 'build'       # Build directory
 
-def options(opt):
-    opt.load('compiler_c')
-    opt.load('compiler_cxx')
-    autowaf.set_options(opt)
+def options(ctx):
+    ctx.load('compiler_c')
+    ctx.load('compiler_cxx')
+    autowaf.set_options(ctx)
+    opt = ctx.get_option_group('Configuration options')
     opt.add_option('--static', action='store_true', dest='static',
-                   help="Build static library")
+                   help='build static library')
     opt.add_option('--no-shared', action='store_true', dest='no_shared',
-                   help='Do not build shared library')
+                   help='do not build shared library')
     opt.add_option('--no-gtk', action='store_true', dest='no_gtk',
-                   help='Do not build support for Gtk')
+                   help='do not build support for Gtk')
     opt.add_option('--no-qt', action='store_true', dest='no_qt',
-                   help='Do not build support for Qt (any version)')
+                   help='do not build support for Qt (any version)')
     opt.add_option('--no-qt4', action='store_true', dest='no_qt4',
-                   help='Do not build support for Qt4')
+                   help='do not build support for Qt4')
     opt.add_option('--no-qt5', action='store_true', dest='no_qt5',
-                   help='Do not build support for Qt5')
+                   help='do not build support for Qt5')
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
                    default="libgtk-x11-2.0.so.0",
                    help="Gtk2 library name [Default: libgtk-x11-2.0.so.0]")
@@ -51,8 +47,8 @@ def configure(conf):
     autowaf.set_c99_mode(conf)
     autowaf.set_cxx11_mode(conf)
 
-    conf.env.BUILD_SHARED = not Options.options.no_shared
-    conf.env.BUILD_STATIC = Options.options.static
+    conf.env.BUILD_SHARED = not conf.options.no_shared
+    conf.env.BUILD_STATIC = conf.options.static
 
     if not conf.env.BUILD_SHARED and not conf.env.BUILD_STATIC:
         conf.fatal('Neither a shared nor a static build requested')
@@ -67,7 +63,7 @@ def configure(conf):
     autowaf.check_pkg(conf, 'lv2', atleast_version='1.12.0', uselib_store='LV2')
     autowaf.check_pkg(conf, 'x11', uselib_store='X11', mandatory=False)
 
-    if not Options.options.no_gtk:
+    if not conf.options.no_gtk:
         autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                           atleast_version='2.18.0', mandatory=False)
         if not conf.env.HAVE_GTK2:
@@ -88,12 +84,12 @@ def configure(conf):
         autowaf.check_pkg(conf, 'gtk+-x11-3.0', uselib_store='GTK3_X11',
                           atleast_version='3.14.0', mandatory=False)
 
-    if not Options.options.no_qt:
-        if not Options.options.no_qt4:
+    if not conf.options.no_qt:
+        if not conf.options.no_qt4:
             autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
                               atleast_version='4.4.0', mandatory=False)
 
-        if not Options.options.no_qt5:
+        if not conf.options.no_qt5:
             autowaf.check_pkg(conf, 'Qt5Widgets', uselib_store='QT5',
                               atleast_version='5.1.0', mandatory=False)
 
@@ -105,8 +101,8 @@ def configure(conf):
     autowaf.define(conf, 'SUIL_MODULE_DIR',
                    conf.env.LIBDIR + '/suil-' + SUIL_MAJOR_VERSION)
     autowaf.define(conf, 'SUIL_DIR_SEP', '/')
-    autowaf.define(conf, 'SUIL_GTK2_LIB_NAME', Options.options.gtk2_lib_name);
-    autowaf.define(conf, 'SUIL_GTK3_LIB_NAME', Options.options.gtk3_lib_name);
+    autowaf.define(conf, 'SUIL_GTK2_LIB_NAME', conf.options.gtk2_lib_name);
+    autowaf.define(conf, 'SUIL_GTK3_LIB_NAME', conf.options.gtk3_lib_name);
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_QT4:
         autowaf.define(conf, 'SUIL_WITH_GTK2_IN_QT4', 1)
@@ -367,11 +363,7 @@ def build(bld):
 
     bld.add_post_fun(autowaf.run_ldconfig)
     if bld.env.DOCS:
-        bld.add_post_fun(fix_docs)
-
-def fix_docs(ctx):
-    if ctx.cmd == 'build':
-        autowaf.make_simple_dox(APPNAME)
+        bld.add_post_fun(lambda ctx: autowaf.make_simple_dox(APPNAME))
 
 def upload_docs(ctx):
     os.system("rsync -ravz --delete -e ssh build/doc/html/ drobilla@drobilla.net:~/drobilla.net/docs/suil/")
