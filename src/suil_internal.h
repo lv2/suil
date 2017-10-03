@@ -36,6 +36,7 @@ static inline char* dlerror(void) { return "Unknown error"; }
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 #include "suil/suil.h"
+#include "./suil_config.h"
 
 #ifdef __cplusplus
 extern "C" {

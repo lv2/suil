@@ -45,7 +45,7 @@ struct _SuilQtWrapperClass
 	GtkSocketClass parent_class;
 };
 
-GType suil_qt_wrapper_get_type(void); // Accessor for SUIL_TYPE_QT_WRAPPER
+GType suil_qt_wrapper_get_type(void);  // Accessor for SUIL_TYPE_QT_WRAPPER
 
 G_DEFINE_TYPE(SuilQtWrapper, suil_qt_wrapper, GTK_TYPE_SOCKET)
 
@@ -155,4 +155,4 @@ suil_wrapper_new(SuilHost*      host,
 	return wrapper;
 }
 
-} // extern "C"
+}  // extern "C"

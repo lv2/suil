@@ -65,7 +65,7 @@ suil_load_init_module(const char* module_name)
 		return;
 	}
 
-	SuilVoidFunc init_func = (SuilVoidFunc)suil_dlfunc(lib, "suil_host_init");
+	SuilVoidFunc init_func = suil_dlfunc(lib, "suil_host_init");
 	if (init_func) {
 		(*init_func)();
 	} else {

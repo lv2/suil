@@ -14,15 +14,14 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <string.h>
-
-#include <gtk/gtk.h>
 #include <gdk/gdkx.h>
-
-#include "./suil_internal.h"
+#include <gtk/gtk.h>
+#include <string.h>
 
 #include "lv2/lv2plug.in/ns/ext/options/options.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+
+#include "./suil_internal.h"
 
 #define SUIL_TYPE_X11_WRAPPER (suil_x11_wrapper_get_type())
 #define SUIL_X11_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_X11_WRAPPER, SuilX11Wrapper))

@@ -32,7 +32,7 @@
 
 SUIL_API
 unsigned
-suil_ui_supported(const char* container_type_uri,
+suil_ui_supported(const char* host_type_uri,
                   const char* ui_type_uri)
 {
 	enum {
@@ -40,27 +40,27 @@ suil_ui_supported(const char* container_type_uri,
 		SUIL_WRAPPING_NATIVE      = 1,
 		SUIL_WRAPPING_EMBEDDED    = 2
 	};
-	if (!strcmp(container_type_uri, ui_type_uri)) {
+	if (!strcmp(host_type_uri, ui_type_uri)) {
 		return SUIL_WRAPPING_NATIVE;
-	} else if ((!strcmp(container_type_uri, GTK2_UI_URI)
+	} else if ((!strcmp(host_type_uri, GTK2_UI_URI)
 	            && !strcmp(ui_type_uri, QT4_UI_URI))
-	           || (!strcmp(container_type_uri, GTK2_UI_URI)
+	           || (!strcmp(host_type_uri, GTK2_UI_URI)
 	               && !strcmp(ui_type_uri, QT5_UI_URI))
-	           || (!strcmp(container_type_uri, QT4_UI_URI)
+	           || (!strcmp(host_type_uri, QT4_UI_URI)
 	               && !strcmp(ui_type_uri, GTK2_UI_URI))
-	           || (!strcmp(container_type_uri, QT5_UI_URI)
+	           || (!strcmp(host_type_uri, QT5_UI_URI)
 	               && !strcmp(ui_type_uri, GTK2_UI_URI))
-	           || (!strcmp(container_type_uri, GTK2_UI_URI)
+	           || (!strcmp(host_type_uri, GTK2_UI_URI)
 	               && !strcmp(ui_type_uri, X11_UI_URI))
-	           || (!strcmp(container_type_uri, GTK3_UI_URI)
+	           || (!strcmp(host_type_uri, GTK3_UI_URI)
 	               && !strcmp(ui_type_uri, X11_UI_URI))
-	           || (!strcmp(container_type_uri, GTK2_UI_URI)
+	           || (!strcmp(host_type_uri, GTK2_UI_URI)
 	               && !strcmp(ui_type_uri, WIN_UI_URI))
-	           || (!strcmp(container_type_uri, GTK2_UI_URI)
+	           || (!strcmp(host_type_uri, GTK2_UI_URI)
 	               && !strcmp(ui_type_uri, COCOA_UI_URI))
-	           || (!strcmp(container_type_uri, QT4_UI_URI)
+	           || (!strcmp(host_type_uri, QT4_UI_URI)
 	               && !strcmp(ui_type_uri, X11_UI_URI))
-	           || (!strcmp(container_type_uri, QT5_UI_URI)
+	           || (!strcmp(host_type_uri, QT5_UI_URI)
 	               && !strcmp(ui_type_uri, X11_UI_URI))) {
 		return SUIL_WRAPPING_EMBEDDED;
 	} else {
