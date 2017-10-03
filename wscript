@@ -105,8 +105,9 @@ def configure(conf):
     autowaf.define(conf, 'SUIL_GTK3_LIB_NAME', conf.options.gtk3_lib_name);
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_QT4:
-        autowaf.define(conf, 'SUIL_WITH_GTK2_IN_QT4', 1)
         autowaf.define(conf, 'SUIL_WITH_QT4_IN_GTK2', 1)
+        if conf.env.HAVE_GTK2_X11:
+            autowaf.define(conf, 'SUIL_WITH_GTK2_IN_QT4', 1)
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_QT5:
         autowaf.define(conf, 'SUIL_WITH_GTK2_IN_QT5', 1)

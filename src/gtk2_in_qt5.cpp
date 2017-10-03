@@ -22,7 +22,6 @@
 #undef signals
 
 #include <gtk/gtk.h>
-#include <gdk/gdkx.h>
 
 #include "./suil_config.h"
 #include "./suil_internal.h"
