@@ -1,4 +1,4 @@
-suil (0.8.7) unstable;
+suil (0.10.0) stable;
 
   * Add support for X11 in Gtk3
   * Add support for Qt5 in Gtk2
@@ -7,7 +7,7 @@ suil (0.8.7) unstable;
   * Fix minor memory errors
   * Fix building with X11 against custom LV2 install path (thanks Robin Gareus)
 
- -- David Robillard <d@drobilla.net>  Sun, 06 Aug 2017 15:20:06 +0200
+ -- David Robillard <d@drobilla.net>  Tue, 03 Oct 2017 22:11:49 +0200
 
 suil (0.8.4) stable;
 
