@@ -61,7 +61,9 @@ suil_ui_supported(const char* host_type_uri,
 	           || (!strcmp(host_type_uri, QT4_UI_URI)
 	               && !strcmp(ui_type_uri, X11_UI_URI))
 	           || (!strcmp(host_type_uri, QT5_UI_URI)
-	               && !strcmp(ui_type_uri, X11_UI_URI))) {
+	               && !strcmp(ui_type_uri, X11_UI_URI))
+	           || (!strcmp(host_type_uri, QT5_UI_URI)
+	               && !strcmp(ui_type_uri, COCOA_UI_URI))) {
 		return SUIL_WRAPPING_EMBEDDED;
 	} else {
 		return SUIL_WRAPPING_UNSUPPORTED;
@@ -134,6 +136,12 @@ open_wrapper(SuilHost*      host,
 	if (!strcmp(container_type_uri, QT5_UI_URI)
 	    && !strcmp(ui_type_uri, X11_UI_URI)) {
 		module_name = "suil_x11_in_qt5";
+	}
+#endif
+#ifdef SUIL_WITH_COCOA_IN_QT5
+	if (!strcmp(container_type_uri, QT5_UI_URI)
+	    && !strcmp(ui_type_uri, COCOA_UI_URI)) {
+		module_name = "suil_cocoa_in_qt5";
 	}
 #endif
 

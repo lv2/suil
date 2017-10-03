@@ -92,6 +92,10 @@ def configure(conf):
         if not conf.options.no_qt5:
             autowaf.check_pkg(conf, 'Qt5Widgets', uselib_store='QT5',
                               atleast_version='5.1.0', mandatory=False)
+            if conf.check_cxx(header_name = 'QMacCocoaViewContainer',
+                              uselib      = 'QT5',
+                              mandatory   = False):
+                autowaf.define(conf, 'SUIL_WITH_COCOA_IN_QT5', 1)
 
     conf.check_cc(define_name   = 'HAVE_LIBDL',
                   lib           = 'dl',
@@ -174,7 +178,8 @@ def configure(conf):
                 ('x11', 'gtk2'),
                 ('x11', 'gtk3'),
                 ('x11', 'qt4'),
-                ('x11', 'qt5')]
+                ('x11', 'qt5'),
+                ('cocoa', 'qt5')]
     for w in wrappers:
         var = 'SUIL_WITH_%s_IN_%s' % (w[0].upper(), w[1].upper())
         autowaf.display_msg(conf, 'Support for %s in %s' % (w[0], w[1]),
@@ -350,6 +355,18 @@ def build(bld):
                   cflags       = cflags,
                   lib          = modlib)
         autowaf.use_lib(bld, obj, 'QT5 LV2')
+
+    if bld.env.SUIL_WITH_COCOA_IN_QT5:
+        obj = bld(features     = 'cxx cxxshlib',
+                  source       = 'src/cocoa_in_qt5.mm',
+                  target       = 'suil_cocoa_in_qt5',
+                  includes     = ['.'],
+                  defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
+                  install_path = module_dir,
+                  cflags       = cflags,
+                  lib          = modlib,
+                  linkflags    = ['-framework', 'Cocoa'])
+        autowaf.use_lib(bld, obj, 'QT5 QT5_MAC_EXTRAS LV2')
 
     if bld.env.SUIL_WITH_X11:
         obj = bld(features     = 'c cshlib',

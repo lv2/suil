@@ -1,3 +1,9 @@
+suil (0.10.1) unstable;
+
+  * Add support for Cocoa in Qt5
+
+ -- David Robillard <d@drobilla.net>  Tue, 03 Oct 2017 22:11:49 +0200
+
 suil (0.10.0) stable;
 
   * Add support for X11 in Gtk3
