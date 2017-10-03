@@ -365,11 +365,16 @@ def build(bld):
     if bld.env.DOCS:
         bld.add_post_fun(lambda ctx: autowaf.make_simple_dox(APPNAME))
 
-def upload_docs(ctx):
-    os.system("rsync -ravz --delete -e ssh build/doc/html/ drobilla@drobilla.net:~/drobilla.net/docs/suil/")
-
 def lint(ctx):
     subprocess.call('cpplint.py --filter=-whitespace,+whitespace/comments,-build/header_guard,-readability/casting,-readability/todo src/* suil/*', shell=True)
+
+def release(ctx):
+    autowaf.release(APPNAME.title(), VERSION)
+
+def upload(ctx):
+    autowaf.run_script(
+        ['scp suil-%s.tar* drobilla@drobilla.net:~/download.drobilla.net/' % VERSION,
+         'rsync -ravz --delete -e ssh build/doc/html/ drobilla@drobilla.net:~/drobilla.net/docs/suil/'])
 
 def posts(ctx):
     path = str(ctx.path.abspath())
