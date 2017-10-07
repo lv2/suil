@@ -44,8 +44,6 @@ def configure(conf):
     conf.load('compiler_cxx')
     autowaf.configure(conf)
     autowaf.display_header('Suil Configuration')
-    autowaf.set_c99_mode(conf)
-    autowaf.set_cxx11_mode(conf)
 
     conf.env.BUILD_SHARED = not conf.options.no_shared
     conf.env.BUILD_STATIC = conf.options.static
@@ -134,7 +132,6 @@ def configure(conf):
 
     if conf.env.HAVE_QT5:
         autowaf.define(conf, 'SUIL_WITH_X11_IN_QT5', 1)
-        autowaf.set_cxx11_mode(conf)
 
     if conf.env.HAVE_X11:
         autowaf.define(conf, 'SUIL_WITH_X11', 1)
