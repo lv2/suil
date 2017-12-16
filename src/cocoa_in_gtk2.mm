@@ -1,5 +1,5 @@
 /*
-  Copyright 2011-2015 David Robillard <http://drobilla.net>
+  Copyright 2011-2017 David Robillard <http://drobilla.net>
   Copyright 2014 Robin Gareus <robin@gareus.org>
 
   Permission to use, copy, modify, and/or distribute this software for any
@@ -24,6 +24,19 @@
 
 #include "lv2/lv2plug.in/ns/ext/options/options.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+#define NSEventTypeFlagsChanged     NSFlagsChanged
+#define NSEventTypeLeftMouseDown    NSLeftMouseDown
+#define NSEventTypeLeftMouseDragged NSLeftMouseDragged
+#define NSEventTypeLeftMouseUp      NSLeftMouseUp
+#define NSEventTypeMouseEntered     NSMouseEntered
+#define NSEventTypeMouseExited      NSMouseExited
+#define NSEventTypeMouseMoved       NSMouseMoved
+#define NSEventTypeRightMouseDown   NSRightMouseDown
+#define NSEventTypeRightMouseUp     NSRightMouseUp
+#define NSEventTypeScrollWheel      NSScrollWheel
+#endif
 
 extern "C" {
 
@@ -267,37 +280,37 @@ event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
 	NSView*  view    = (NSView*)wrap->instance->ui_widget;
 	if (view && nsevent) {
 		switch([nsevent type]) {
-		case NSFlagsChanged:
+		case NSEventTypeFlagsChanged:
 			[view flagsChanged:nsevent];
 			return GDK_FILTER_REMOVE;
-		case NSMouseEntered:
+		case NSEventTypeMouseEntered:
 			[view mouseEntered:nsevent];
 			return GDK_FILTER_REMOVE;
-		case NSMouseExited:
+		case NSEventTypeMouseExited:
 			[view mouseExited:nsevent];
 			return GDK_FILTER_REMOVE;
 
 		/* Explicitly pass though mouse events.  Needed for mouse-drags leaving
 		   the window, and mouse-up after that. */
-		case NSMouseMoved:
+		case NSEventTypeMouseMoved:
 			[view mouseMoved:nsevent];
 			break;
-		case NSLeftMouseDragged:
+		case NSEventTypeLeftMouseDragged:
 			[view mouseDragged:nsevent];
 			break;
-		case NSLeftMouseDown:
+		case NSEventTypeLeftMouseDown:
 			[view mouseDown:nsevent];
 			break;
-		case NSLeftMouseUp:
+		case NSEventTypeLeftMouseUp:
 			[view mouseUp:nsevent];
 			break;
-		case NSRightMouseDown:
+		case NSEventTypeRightMouseDown:
 			[view rightMouseDown:nsevent];
 			break;
-		case NSRightMouseUp:
+		case NSEventTypeRightMouseUp:
 			[view rightMouseUp:nsevent];
 			break;
-		case NSScrollWheel:
+		case NSEventTypeScrollWheel:
 			[view scrollWheel:nsevent];
 			break;
 		default:
