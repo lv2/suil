@@ -371,12 +371,9 @@ suil_wrapper_new(SuilHost*      host,
 	gtk_widget_set_sensitive(GTK_WIDGET(wrap), TRUE);
 	gtk_widget_set_can_focus(GTK_WIDGET(wrap), TRUE);
 
-	suil_add_feature(features, &n_features, LV2_UI__parent,
-	                 (void*)(intptr_t)gtk_plug_get_id(wrap->plug));
-
-	suil_add_feature(features, &n_features, LV2_UI__resize,
-	                 &wrapper->resize);
-
+	const intptr_t parent_id = (intptr_t)gtk_plug_get_id(wrap->plug);
+	suil_add_feature(features, &n_features, LV2_UI__parent, (void*)parent_id);
+	suil_add_feature(features, &n_features, LV2_UI__resize, &wrapper->resize);
 	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
 
 	// Scan for URID map and options

@@ -387,12 +387,9 @@ suil_wrapper_new(SuilHost*      host,
 	wrap->flt_win = gtk_widget_get_window(parent);
 	gdk_window_add_filter(wrap->flt_win, event_filter, wrap);
 
-	suil_add_feature(features, &n_features, LV2_UI__parent,
-	                 gdk_quartz_window_get_nsview(window));
-
-	suil_add_feature(features, &n_features, LV2_UI__resize,
-	                 &wrapper->resize);
-
+	NSView* parent_view = gdk_quartz_window_get_nsview(window);
+	suil_add_feature(features, &n_features, LV2_UI__parent, parent_view);
+	suil_add_feature(features, &n_features, LV2_UI__resize, &wrapper->resize);
 	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
 
 	// Scan for URID map and options
