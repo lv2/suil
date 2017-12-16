@@ -57,6 +57,7 @@ suil_host_free(SuilHost* host)
 	}
 }
 
+#ifdef SUIL_WITH_X11
 static void
 suil_load_init_module(const char* module_name)
 {
@@ -74,6 +75,7 @@ suil_load_init_module(const char* module_name)
 
 	dlclose(lib);
 }
+#endif
 
 SUIL_API
 void
