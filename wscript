@@ -39,11 +39,11 @@ def options(ctx):
                    help="Gtk3 library name [Default: libgtk-x11-3.0.so.0]")
 
 def configure(conf):
-    conf.line_just = 42
-    conf.load('compiler_c')
-    conf.load('compiler_cxx')
-    autowaf.configure(conf)
     autowaf.display_header('Suil Configuration')
+    autowaf.set_line_just(conf, 42)
+    conf.load('compiler_c', cache=True)
+    conf.load('compiler_cxx', cache=True)
+    conf.load('autowaf', cache=True)
 
     conf.env.BUILD_SHARED = not conf.options.no_shared
     conf.env.BUILD_STATIC = conf.options.static
@@ -155,6 +155,7 @@ def configure(conf):
     autowaf.set_lib_env(conf, 'suil', SUIL_VERSION)
     conf.write_config_header('suil_config.h', remove=False)
 
+    autowaf.display_summary(conf)
     autowaf.display_msg(conf, 'Static library', bool(conf.env.BUILD_STATIC))
     autowaf.display_msg(conf, 'Shared library', bool(conf.env.BUILD_SHARED))
 
