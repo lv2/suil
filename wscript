@@ -385,7 +385,22 @@ def build(bld):
         bld.add_post_fun(lambda ctx: autowaf.make_simple_dox(APPNAME))
 
 def lint(ctx):
-    subprocess.call('cpplint.py --filter=-whitespace,+whitespace/comments,-build/header_guard,-readability/casting,-readability/todo src/* suil/*', shell=True)
+    "checks code for style issues"
+    import subprocess
+    cmd = ("clang-tidy -p=. -header-filter=suil/ -checks=\"*," +
+           "-clang-analyzer-alpha.*," +
+           "-cppcoreguidelines-*," +
+           "-google-readability-todo," +
+           "-llvm-header-guard," +
+           "-llvm-include-order," +
+           "-misc-unused-parameters," +
+           "-misc-unused-parameters," +
+           "-modernize-*," +
+           "-readability-else-after-return," +
+           "-readability-implicit-bool-cast\" " +
+           "$(find .. -name '*.c' -or -name '*.cpp' -or -name '*.mm')")
+    print cmd
+    subprocess.call(cmd, cwd='build', shell=True)
 
 def release(ctx):
     autowaf.release(APPNAME.title(), VERSION)
