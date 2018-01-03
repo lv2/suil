@@ -399,7 +399,6 @@ def lint(ctx):
            "-readability-else-after-return," +
            "-readability-implicit-bool-cast\" " +
            "$(find .. -name '*.c' -or -name '*.cpp' -or -name '*.mm')")
-    print cmd
     subprocess.call(cmd, cwd='build', shell=True)
 
 def release(ctx):
