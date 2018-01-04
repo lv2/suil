@@ -225,7 +225,7 @@ suil_wrapper_new(SuilHost*      host,
 	wrap->flt_win = gtk_widget_get_window(parent);
 	gdk_window_add_filter(wrap->flt_win, event_filter, wrap);
 
-	HWND parent_window = GDK_WINDOW_HWND;
+	HWND parent_window = (HWND)GDK_WINDOW_HWND(window);
 	suil_add_feature(features, &n_features, LV2_UI__parent, parent_window);
 	suil_add_feature(features, &n_features, LV2_UI__resize, &wrapper->resize);
 	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
