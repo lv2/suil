@@ -1,8 +1,10 @@
 #!/usr/bin/env python
+
 import os
 import subprocess
-import waflib.TaskGen as TaskGen
-import waflib.extras.autowaf as autowaf
+
+from waflib import TaskGen
+from waflib.extras import autowaf
 
 # Semver package/library version
 SUIL_VERSION       = '0.10.0'
@@ -19,24 +21,22 @@ def options(ctx):
     ctx.load('compiler_cxx')
     autowaf.set_options(ctx)
     opt = ctx.get_option_group('Configuration options')
-    opt.add_option('--static', action='store_true', dest='static',
-                   help='build static library')
-    opt.add_option('--no-shared', action='store_true', dest='no_shared',
-                   help='do not build shared library')
-    opt.add_option('--no-gtk', action='store_true', dest='no_gtk',
-                   help='do not build support for Gtk')
-    opt.add_option('--no-qt', action='store_true', dest='no_qt',
-                   help='do not build support for Qt (any version)')
-    opt.add_option('--no-qt4', action='store_true', dest='no_qt4',
-                   help='do not build support for Qt4')
-    opt.add_option('--no-qt5', action='store_true', dest='no_qt5',
-                   help='do not build support for Qt5')
+
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
                    default="libgtk-x11-2.0.so.0",
                    help="Gtk2 library name [Default: libgtk-x11-2.0.so.0]")
     opt.add_option('--gtk3-lib-name', type='string', dest='gtk3_lib_name',
                    default="libgtk-x11-3.0.so.0",
                    help="Gtk3 library name [Default: libgtk-x11-3.0.so.0]")
+
+    autowaf.add_flags(
+        opt,
+        {'static':    'build static library',
+         'no-shared': 'do not build shared library',
+         'no-gtk':    'do not build support for Gtk',
+         'no-qt':     'do not build support for Qt (any version)',
+         'no-qt4':    'do not build support for Qt4',
+         'no-qt5':    'do not build support for Qt5'})
 
 def configure(conf):
     autowaf.display_header('Suil Configuration')
@@ -100,9 +100,8 @@ def configure(conf):
                   lib           = 'dl',
                   mandatory     = False)
 
-    autowaf.define(conf, 'SUIL_VERSION', SUIL_VERSION)
     autowaf.define(conf, 'SUIL_MODULE_DIR',
-                   conf.env.LIBDIR + '/suil-' + SUIL_MAJOR_VERSION)
+                   os.path.join(conf.env.LIBDIR, 'suil-' + SUIL_MAJOR_VERSION))
     autowaf.define(conf, 'SUIL_DIR_SEP', '/')
     autowaf.define(conf, 'SUIL_GTK2_LIB_NAME', conf.options.gtk2_lib_name);
     autowaf.define(conf, 'SUIL_GTK3_LIB_NAME', conf.options.gtk3_lib_name);
@@ -156,9 +155,10 @@ def configure(conf):
     autowaf.set_lib_env(conf, 'suil', SUIL_VERSION)
     conf.write_config_header('suil_config.h', remove=False)
 
-    autowaf.display_summary(conf)
-    autowaf.display_msg(conf, 'Static library', bool(conf.env.BUILD_STATIC))
-    autowaf.display_msg(conf, 'Shared library', bool(conf.env.BUILD_SHARED))
+    autowaf.display_summary(
+        conf,
+        {'Static library': bool(conf.env.BUILD_STATIC),
+         'Shared library': bool(conf.env.BUILD_SHARED)})
 
     if conf.env.HAVE_GTK2:
         autowaf.display_msg(conf, "Gtk2 Library Name",
@@ -183,8 +183,6 @@ def configure(conf):
         var = 'SUIL_WITH_%s_IN_%s' % (w[0].upper(), w[1].upper())
         autowaf.display_msg(conf, 'Support for %s in %s' % (w[0], w[1]),
                             bool(conf.env[var]))
-
-    print('')
 
 def build(bld):
     # C Headers
