@@ -2,8 +2,9 @@ suil (0.10.1) unstable;
 
   * Add support for Cocoa in Qt5
   * Fix resizing and add idle and update rate support for Qt5 in Gtk2
+  * Fix various issues with Qt5 in Gtk2
 
- -- David Robillard <d@drobilla.net>  Tue, 03 Oct 2017 22:11:49 +0200
+ -- David Robillard <d@drobilla.net>  Wed, 19 Dec 2018 20:24:50 -0500
 
 suil (0.10.0) stable;
 

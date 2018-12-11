@@ -17,7 +17,6 @@
 
 #include <gtk/gtk.h>
 
-#include <QApplication>
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QWindow>
@@ -37,7 +36,6 @@ typedef struct _SuilQtWrapperClass SuilQtWrapperClass;
 
 struct _SuilQtWrapper {
 	GtkSocket                   socket;
-	QApplication*               app;
 	QWidget*                    qembed;
 	SuilWrapper*                wrapper;
 	SuilInstance*               instance;
@@ -69,10 +67,11 @@ suil_qt_wrapper_finalize(GObject* gobject)
 		self->instance->handle = NULL;
 	}
 
-	delete self->qembed;
+	if (self->qembed) {
+		self->qembed->deleteLater();
+	}
 
 	self->qembed        = NULL;
-	self->app           = NULL;
 	self->idle_iface    = NULL;
 	self->wrapper->impl = NULL;
 
@@ -90,7 +89,6 @@ suil_qt_wrapper_class_init(SuilQtWrapperClass* klass)
 static void
 suil_qt_wrapper_init(SuilQtWrapper* self)
 {
-	self->app        = NULL;
 	self->qembed     = NULL;
 	self->wrapper    = NULL;
 	self->instance   = NULL;
@@ -193,12 +191,6 @@ suil_wrapper_new(SuilHost*      host,
 
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(
 		g_object_new(SUIL_TYPE_QT_WRAPPER, NULL));
-
-	if (qApp) {
-		wrap->app = qApp;
-	} else {
-		wrap->app = new QApplication(host->argc, host->argv, true);
-	}
 
 	wrap->wrapper = NULL;
 	wrapper->impl = wrap;
