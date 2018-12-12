@@ -1,3 +1,9 @@
+suil (0.10.3) unstable;
+
+  * Add support for min/base size hints for X11 in Gtk (thanks Hermann Meyer)
+
+ -- David Robillard <d@drobilla.net>  Tue, 19 Feb 2019 08:34:31 +0100
+
 suil (0.10.2) stable;
 
   * Add support for Cocoa in Qt5
