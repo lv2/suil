@@ -37,6 +37,9 @@ struct _SuilX11Wrapper {
 	const LV2UI_Idle_Interface* idle_iface;
 	guint                       idle_id;
 	guint                       idle_ms;
+	bool                        is_resized;
+	guint                       min_width;
+	guint                       min_height;
 };
 
 struct _SuilX11WrapperClass {
@@ -204,6 +207,8 @@ forward_size_request(SuilX11Wrapper* socket,
 		if (hints.flags & PMinSize) {
 			width  = MAX(width, hints.min_width);
 			height = MAX(height, hints.min_height);
+			socket->min_width = hints.min_width;
+			socket->min_height = hints.min_height;
 		}
 
 		// Resize widget window
@@ -283,11 +288,16 @@ suil_x11_wrapper_init(SuilX11Wrapper* self)
 	self->instance   = NULL;
 	self->idle_iface = NULL;
 	self->idle_ms    = 1000 / 30;  // 30 Hz default
+	self->is_resized = false;
+	self->min_width  = -1;
+	self->min_height = -1;
 }
 
 static int
 wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 {
+	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(handle);
+	self->is_resized = true;
 	gtk_widget_set_size_request(GTK_WIDGET(handle), width, height);
 	return 0;
 }
@@ -298,6 +308,11 @@ suil_x11_wrapper_idle(void* data)
 	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(data);
 
 	wrap->idle_iface->idle(wrap->instance->handle);
+
+	if (wrap->is_resized) {
+		gtk_widget_set_size_request(GTK_WIDGET(wrap), wrap->min_width, wrap->min_height);
+		wrap->is_resized = false;
+	}
 
 	return TRUE;  // Continue calling
 }
