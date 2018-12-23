@@ -297,12 +297,25 @@ suil_x11_wrapper_init(SuilX11Wrapper* self)
 	self->min_height = -1;
 }
 
+static gboolean
+wrapper_set_min_size(void* data)
+{
+	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(data);
+
+	gtk_widget_set_size_request(GTK_WIDGET(wrap), wrap->min_width, wrap->min_height);
+
+	return FALSE;  // One run only
+}
+
 static int
 wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 {
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(handle);
-	self->is_resized = true;
+
 	gtk_widget_set_size_request(GTK_WIDGET(handle), width, height);
+
+	g_timeout_add(self->idle_ms * 2, wrapper_set_min_size, self);
+
 	return 0;
 }
 
@@ -312,11 +325,6 @@ suil_x11_wrapper_idle(void* data)
 	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(data);
 
 	wrap->idle_iface->idle(wrap->instance->handle);
-
-	if (wrap->is_resized) {
-		gtk_widget_set_size_request(GTK_WIDGET(wrap), wrap->min_width, wrap->min_height);
-		wrap->is_resized = false;
-	}
 
 	return TRUE;  // Continue calling
 }
