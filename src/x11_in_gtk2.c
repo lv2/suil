@@ -38,8 +38,6 @@ struct _SuilX11Wrapper {
 	const LV2UI_Idle_Interface* idle_iface;
 	guint                       idle_id;
 	guint                       idle_ms;
-	guint                       min_width;
-	guint                       min_height;
 };
 
 struct _SuilX11WrapperClass {
