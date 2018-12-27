@@ -40,7 +40,6 @@ struct _SuilX11Wrapper {
 	const LV2UI_Idle_Interface* idle_iface;
 	guint                       idle_id;
 	guint                       idle_ms;
-	bool                        is_resized;
 };
 
 struct _SuilX11WrapperClass {
@@ -303,7 +302,6 @@ suil_x11_wrapper_init(SuilX11Wrapper* self)
 	self->instance   = NULL;
 	self->idle_iface = NULL;
 	self->idle_ms    = 1000 / 30;  // 30 Hz default
-	self->is_resized = false;
 	self->hints.min_width  = -1;
 	self->hints.min_height = -1;
 }
