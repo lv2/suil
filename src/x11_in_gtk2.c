@@ -32,6 +32,7 @@ typedef struct _SuilX11WrapperClass SuilX11WrapperClass;
 struct _SuilX11Wrapper {
 	GtkSocket                   socket;
 	GtkPlug*                    plug;
+	GdkGeometry                 hints;
 	SuilWrapper*                wrapper;
 	SuilInstance*               instance;
 	const LV2UI_Idle_Interface* idle_iface;
@@ -206,8 +207,20 @@ forward_size_request(SuilX11Wrapper* socket,
 		if (hints.flags & PMinSize) {
 			width  = MAX(width, hints.min_width);
 			height = MAX(height, hints.min_height);
-			socket->min_width = hints.min_width;
-			socket->min_height = hints.min_height;
+			socket->hints.min_width = hints.min_width;
+			socket->hints.min_height = hints.min_height;
+		}
+		if (hints.flags & PAspect) {
+			socket->hints.min_aspect = hints.min_aspect.x/hints.min_aspect.y;
+			socket->hints.max_aspect = hints.max_aspect.x/hints.max_aspect.y;
+
+			GtkWidget * top = gtk_widget_get_toplevel(GTK_WIDGET(socket->plug));
+			if (gtk_widget_is_toplevel(top)) {
+				gtk_window_set_geometry_hints(GTK_WINDOW(top),
+				            GTK_WIDGET(socket->plug),
+				            &socket->hints,
+				            GDK_HINT_ASPECT);
+			}
 		}
 
 		// Resize widget window
@@ -287,8 +300,8 @@ suil_x11_wrapper_init(SuilX11Wrapper* self)
 	self->instance   = NULL;
 	self->idle_iface = NULL;
 	self->idle_ms    = 1000 / 30;  // 30 Hz default
-	self->min_width  = -1;
-	self->min_height = -1;
+	self->hints.min_width  = -1;
+	self->hints.min_height = -1;
 }
 
 static gboolean
@@ -296,7 +309,9 @@ wrapper_set_min_size(void* data)
 {
 	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(data);
 
-	gtk_widget_set_size_request(GTK_WIDGET(wrap), wrap->min_width, wrap->min_height);
+	gtk_widget_set_size_request(GTK_WIDGET(wrap),
+	                       wrap->hints.min_width,
+	                       wrap->hints.min_height);
 
 	return FALSE;  // One run only
 }
