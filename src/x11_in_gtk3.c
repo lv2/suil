@@ -211,6 +211,9 @@ forward_size_request(SuilX11Wrapper* socket,
 			height = MAX(height, hints.min_height);
 			socket->hints.min_width = hints.min_width;
 			socket->hints.min_height = hints.min_height;
+			gtk_widget_set_size_request(GTK_WIDGET(&socket->socket),
+			                            socket->hints.min_width,
+			                            socket->hints.min_height);
 		}
 		if (hints.flags & PAspect) {
 			socket->hints.min_aspect = hints.min_aspect.x/hints.min_aspect.y;
@@ -302,30 +305,12 @@ suil_x11_wrapper_init(SuilX11Wrapper* self)
 	self->instance   = NULL;
 	self->idle_iface = NULL;
 	self->idle_ms    = 1000 / 30;  // 30 Hz default
-	self->hints.min_width  = -1;
-	self->hints.min_height = -1;
-}
-
-static gboolean
-wrapper_set_min_size(void* data)
-{
-	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(data);
-
-	gtk_widget_set_size_request(GTK_WIDGET(wrap),
-	                       wrap->hints.min_width,
-	                       wrap->hints.min_height);
-
-	return FALSE;  // One run only
 }
 
 static int
 wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 {
-	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(handle);
-
 	gtk_widget_set_size_request(GTK_WIDGET(handle), width, height);
-
-	g_timeout_add(self->idle_ms * 2, wrapper_set_min_size, self);
 
 	return 0;
 }
