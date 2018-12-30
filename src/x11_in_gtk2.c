@@ -372,9 +372,9 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	                 NULL);
 
 	g_signal_connect(G_OBJECT(wrap),
-					"size-request",
-					G_CALLBACK(suil_x11_on_size_request),
-					NULL);
+	                "size-request",
+	                G_CALLBACK(suil_x11_on_size_request),
+	                NULL);
 
 	g_signal_connect(G_OBJECT(wrap),
 	                 "size-allocate",
