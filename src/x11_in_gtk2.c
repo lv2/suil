@@ -40,6 +40,7 @@ struct _SuilX11Wrapper {
 	bool                        custom_size;
 	int                         req_width;
 	int                         req_height;
+	int                         o;
 };
 
 struct _SuilX11WrapperClass {
@@ -256,8 +257,7 @@ suil_x11_on_size_request(GtkWidget*     widget,
                          GtkRequisition* requisition)
 {
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(widget);
-	static int o = 1;
-	if (self->custom_size && o) {
+	if (self->custom_size && self->o) {
 		requisition->width  = self->req_width;
 		requisition->height = self->req_height;
 	} else if (x_window_is_valid(self)) {
@@ -268,7 +268,7 @@ suil_x11_on_size_request(GtkWidget*     widget,
 		XGetWMNormalHints(GDK_WINDOW_XDISPLAY(window),
 			(Window)self->instance->ui_widget,
 			&hints, &supplied);
-		if (o && hints.flags & PBaseSize) {
+		if (self->o && hints.flags & PBaseSize) {
 			requisition->width  = hints.base_width;
 			requisition->height = hints.base_height;
 		} else if (hints.flags & PMinSize) {
@@ -279,7 +279,7 @@ suil_x11_on_size_request(GtkWidget*     widget,
 			requisition->height = self->req_height;
 		}
 	}
-	o ^= 1;
+	self->o ^= 1;
 }
 
 static void
@@ -320,6 +320,7 @@ suil_x11_wrapper_init(SuilX11Wrapper* self)
 	self->req_width  = 0;
 	self->req_height = 0;
 	self->custom_size = false;
+	self->o           = 1;
 }
 
 static int
@@ -328,9 +329,7 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(handle);
 	wrap->req_width   = width;
 	wrap->req_height  = height;
-	if (width > 0 && height > 0) {
-		wrap->custom_size = true;
-	}
+	wrap->custom_size = width > 0 && height > 0;
 	gtk_widget_queue_resize(GTK_WIDGET(handle));
 	return 0;
 }
