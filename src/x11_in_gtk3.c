@@ -360,6 +360,7 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(handle);
 	wrap->req_width   = width;
 	wrap->req_height  = height;
+	gtk_widget_queue_resize(GTK_WIDGET(handle));
 	return 0;
 }
 
