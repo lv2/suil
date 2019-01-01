@@ -286,7 +286,6 @@ suil_x11_on_size_allocate(GtkWidget*     widget,
 	    && GTK_WIDGET_VISIBLE(widget)) {
 		forward_size_request(self, a);
 	}
-
 }
 
 static void
@@ -298,7 +297,7 @@ suil_x11_on_map_event(GtkWidget*     widget,
 	if ((self->set_custom || self->set_base) && self->set_min) {
 		g_object_set(G_OBJECT(GTK_WIDGET(self)),
 		                      "width-request",self->min_width,
-	                          "height-request",self->min_height,NULL);
+		                      "height-request",self->min_height,NULL);
 	}
 }
 
