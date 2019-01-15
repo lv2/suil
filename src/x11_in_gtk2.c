@@ -28,6 +28,13 @@
 
 typedef struct _SuilX11Wrapper      SuilX11Wrapper;
 typedef struct _SuilX11WrapperClass SuilX11WrapperClass;
+typedef struct _SuilX11SizeHints    SuilX11SizeHints;
+
+struct _SuilX11SizeHints {
+	bool                        is_set;
+	int                         width;
+	int                         height;
+};
 
 struct _SuilX11Wrapper {
 	GtkSocket                   socket;
@@ -37,18 +44,10 @@ struct _SuilX11Wrapper {
 	const LV2UI_Idle_Interface* idle_iface;
 	guint                       idle_id;
 	guint                       idle_ms;
-	bool                        set_max;
-	int                         max_width;
-	int                         max_height;
-	bool                        set_custom;
-	int                         custom_width;
-	int                         custom_height;
-	bool                        set_base;
-	int                         base_width;
-	int                         base_height;
-	bool                        set_min;
-	int                         min_width;
-	int                         min_height;
+	SuilX11SizeHints            max_size;
+	SuilX11SizeHints            custom_size;
+	SuilX11SizeHints            base_size;
+	SuilX11SizeHints            min_size;
 };
 
 struct _SuilX11WrapperClass {
@@ -205,13 +204,13 @@ forward_size_request(SuilX11Wrapper* socket,
 		int        width  = allocation->width;
 		int        height = allocation->height;
 
-		if (socket->set_max) {
-			width  = MIN(width, socket->max_width);
-			height = MIN(height, socket->max_height);
+		if (socket->max_size.is_set) {
+			width  = MIN(width, socket->max_size.width);
+			height = MIN(height, socket->max_size.height);
 		}
-		if (socket->set_min) {
-			width  = MAX(width, socket->min_width);
-			height = MAX(height, socket->min_height);
+		if (socket->min_size.is_set) {
+			width  = MAX(width, socket->min_size.width);
+			height = MAX(height, socket->min_size.height);
 		}
 
 		// Resize widget window
@@ -262,15 +261,15 @@ suil_x11_on_size_request(GtkWidget*     widget,
 {
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(widget);
 
-	if (self->set_custom ) {
-		requisition->width  = self->custom_width;
-		requisition->height = self->custom_height;
-	} else if (self->set_base) {
-		requisition->width  = self->base_width;
-		requisition->height = self->base_height;
-	} else if (self->set_min) {
-		requisition->width  = self->min_width;
-		requisition->height = self->min_height;
+	if (self->custom_size.is_set ) {
+		requisition->width  = self->custom_size.width;
+		requisition->height = self->custom_size.height;
+	} else if (self->base_size.is_set) {
+		requisition->width  = self->base_size.width;
+		requisition->height = self->base_size.height;
+	} else if (self->min_size.is_set) {
+		requisition->width  = self->min_size.width;
+		requisition->height = self->min_size.height;
 	}
 }
 
@@ -294,10 +293,10 @@ suil_x11_on_map_event(GtkWidget*     widget,
 {
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(widget);
 	// reset size request to min size, if the plug provided different size settings
-	if ((self->set_custom || self->set_base) && self->set_min) {
+	if ((self->custom_size.is_set || self->base_size.is_set) && self->min_size.is_set) {
 		g_object_set(G_OBJECT(GTK_WIDGET(self)),
-		                      "width-request",self->min_width,
-		                      "height-request",self->min_height,NULL);
+		                      "width-request",self->min_size.width,
+		                      "height-request",self->min_size.height,NULL);
 	}
 }
 
@@ -322,27 +321,19 @@ suil_x11_wrapper_init(SuilX11Wrapper* self)
 	self->instance      = NULL;
 	self->idle_iface    = NULL;
 	self->idle_ms       = 1000 / 30;  // 30 Hz default
-	self->max_width     = 0;
-	self->max_height    = 0;
-	self->custom_width  = 0;
-	self->custom_height = 0;
-	self->base_width    = 0;
-	self->base_height   = 0;
-	self->min_width     = 0;
-	self->min_height    = 0;
-	self->set_max       = false;
-	self->set_custom    = false;
-	self->set_base      = false;
-	self->set_min       = false;
+	self->max_size      = (SuilX11SizeHints) {false, 0, 0 };
+	self->custom_size   = (SuilX11SizeHints) {false, 0, 0 };
+	self->base_size     = (SuilX11SizeHints) {false, 0, 0 };
+	self->min_size      = (SuilX11SizeHints) {false, 0, 0 };
 }
 
 static int
 wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 {
 	SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(handle);
-	wrap->custom_width   = width;
-	wrap->custom_height  = height;
-	wrap->set_custom = width > 0 && height > 0;
+	wrap->custom_size.width   = width;
+	wrap->custom_size.height  = height;
+	wrap->custom_size.is_set = width > 0 && height > 0;
 	gtk_widget_queue_resize(GTK_WIDGET(handle));
 	return 0;
 }
@@ -378,19 +369,19 @@ wrapper_wrap(SuilWrapper*  wrapper,
 			(Window)wrap->instance->ui_widget,
 			&hints, &supplied);
 		if (hints.flags & PMaxSize) {
-			wrap->max_width  = hints.max_width;
-			wrap->max_height = hints.max_height;
-			wrap->set_max = true;
+			wrap->max_size.width  = hints.max_width;
+			wrap->max_size.height = hints.max_height;
+			wrap->max_size.is_set = true;
 		}
 		if (hints.flags & PBaseSize) {
-			wrap->base_width  = hints.base_width;
-			wrap->base_height = hints.base_height;
-			wrap->set_base = true;
+			wrap->base_size.width  = hints.base_width;
+			wrap->base_size.height = hints.base_height;
+			wrap->base_size.is_set = true;
 		} 
 		if (hints.flags & PMinSize) {
-			wrap->min_width  = hints.min_width;
-			wrap->min_height = hints.min_height;
-			wrap->set_min = true;
+			wrap->min_size.width  = hints.min_width;
+			wrap->min_size.height = hints.min_height;
+			wrap->min_size.is_set = true;
 		}
 	}
 
