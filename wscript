@@ -19,8 +19,7 @@ out     = 'build'       # Build directory
 def options(ctx):
     ctx.load('compiler_c')
     ctx.load('compiler_cxx')
-    autowaf.set_options(ctx)
-    opt = ctx.get_option_group('Configuration options')
+    opt = ctx.configuration_options()
 
     opt.add_option('--gtk2-lib-name', type='string', dest='gtk2_lib_name',
                    default="libgtk-x11-2.0.so.0",
@@ -29,7 +28,7 @@ def options(ctx):
                    default="libgtk-x11-3.0.so.0",
                    help="Gtk3 library name [Default: libgtk-x11-3.0.so.0]")
 
-    autowaf.add_flags(
+    ctx.add_flags(
         opt,
         {'static':    'build static library',
          'no-shared': 'do not build shared library',
@@ -39,8 +38,6 @@ def options(ctx):
          'no-qt5':    'do not build support for Qt5'})
 
 def configure(conf):
-    autowaf.display_header('Suil Configuration')
-    autowaf.set_line_just(conf, 42)
     conf.load('compiler_c', cache=True)
     conf.load('compiler_cxx', cache=True)
     conf.load('autowaf', cache=True)
@@ -152,6 +149,7 @@ def configure(conf):
     autowaf.define(conf, 'SUIL_MODULE_PREFIX', module_prefix)
     autowaf.define(conf, 'SUIL_MODULE_EXT', module_ext)
 
+    conf.run_env.append_unique('SUIL_MODULE_DIR', conf.build_path())
     autowaf.set_lib_env(conf, 'suil', SUIL_VERSION)
     conf.write_config_header('suil_config.h', remove=False)
 
