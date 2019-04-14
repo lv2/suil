@@ -21,8 +21,8 @@
 #include <QWidget>
 #include <QWindow>
 
-#include "lv2/lv2plug.in/ns/ext/options/options.h"
-#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/options/options.h"
+#include "lv2/urid/urid.h"
 
 #include "./suil_internal.h"
 

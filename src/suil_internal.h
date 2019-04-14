@@ -33,7 +33,7 @@ static inline char* dlerror(void) { return "Unknown error"; }
 #include <dlfcn.h>
 #endif
 
-#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+#include "lv2/ui/ui.h"
 
 #include "suil/suil.h"
 #include "./suil_config.h"

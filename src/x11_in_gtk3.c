@@ -22,8 +22,8 @@
 
 #include "./suil_internal.h"
 
-#include "lv2/lv2plug.in/ns/ext/options/options.h"
-#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/options/options.h"
+#include "lv2/urid/urid.h"
 
 #define SUIL_TYPE_X11_WRAPPER (suil_x11_wrapper_get_type())
 #define SUIL_X11_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_X11_WRAPPER, SuilX11Wrapper))

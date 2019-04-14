@@ -22,8 +22,8 @@
 
 #include "./suil_internal.h"
 
-#include "lv2/lv2plug.in/ns/ext/options/options.h"
-#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/options/options.h"
+#include "lv2/urid/urid.h"
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 #define NSEventTypeFlagsChanged     NSFlagsChanged
