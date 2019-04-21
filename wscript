@@ -243,8 +243,8 @@ def build(bld):
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cxxflags     = cflags,
-                  lib          = modlib)
-        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
+                  lib          = modlib,
+                  uselib       = 'GTK2 QT4 LV2')
 
     if bld.env.SUIL_WITH_GTK2_IN_QT5:
         obj = bld(features     = 'cxx cxxshlib',
@@ -254,8 +254,8 @@ def build(bld):
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cxxflags     = cflags,
-                  lib          = modlib)
-        autowaf.use_lib(bld, obj, 'GTK2 QT5 LV2')
+                  lib          = modlib,
+                  uselib       = 'GTK2 QT5 LV2')
 
     if bld.env.SUIL_WITH_QT4_IN_GTK2:
         obj = bld(features     = 'cxx cxxshlib',
@@ -266,8 +266,8 @@ def build(bld):
                   install_path = module_dir,
                   cxxflags     = cflags,
                   lib          = modlib,
+                  uselib       = 'GTK2 QT4 LV2',
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK2 QT4 LV2')
 
     if bld.env.SUIL_WITH_QT5_IN_GTK2:
         obj = bld(features     = 'cxx cxxshlib',
@@ -278,8 +278,8 @@ def build(bld):
                   install_path = module_dir,
                   cxxflags     = cflags,
                   lib          = modlib,
+                  uselib       = 'GTK2 QT5 LV2',
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK2 QT5 LV2')
 
     if bld.env.SUIL_WITH_X11_IN_GTK2:
         obj = bld(features     = 'c cshlib',
@@ -290,8 +290,8 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib + ['X11'],
+                  uselib       = 'GTK2 GTK2_X11 LV2',
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK2 GTK2_X11 LV2')
 
     if bld.env.SUIL_WITH_X11_IN_GTK3:
         obj = bld(features     = 'c cshlib',
@@ -302,8 +302,8 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib + ['X11'],
+                  uselib       = 'GTK3 GTK3_X11 LV2',
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK3 GTK3_X11 LV2')
 
     if bld.env.SUIL_WITH_COCOA_IN_GTK2:
         obj = bld(features     = 'cxx cshlib',
@@ -314,8 +314,8 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib,
+                  uselib       = 'GTK2 LV2',
                   linkflags    = ['-framework', 'Cocoa'])
-        autowaf.use_lib(bld, obj, 'GTK2 LV2')
 
     if bld.env.SUIL_WITH_WIN_IN_GTK2:
         obj = bld(features     = 'cxx cxxshlib',
@@ -326,8 +326,8 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib,
+                  uselib       = 'GTK2 LV2',
                   linkflags    = bld.env.NODELETE_FLAGS)
-        autowaf.use_lib(bld, obj, 'GTK2 LV2')
 
     if bld.env.SUIL_WITH_X11_IN_QT4:
         obj = bld(features     = 'cxx cxxshlib',
@@ -337,8 +337,8 @@ def build(bld):
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags,
-                  lib          = modlib)
-        autowaf.use_lib(bld, obj, 'QT4 LV2')
+                  lib          = modlib,
+                  uselib       = 'QT4 LV2')
 
     if bld.env.SUIL_WITH_X11_IN_QT5:
         obj = bld(features     = 'cxx cxxshlib',
@@ -348,8 +348,8 @@ def build(bld):
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags,
-                  lib          = modlib)
-        autowaf.use_lib(bld, obj, 'QT5 LV2')
+                  lib          = modlib,
+                  uselib       = 'QT5 LV2')
 
     if bld.env.SUIL_WITH_COCOA_IN_QT5:
         obj = bld(features     = 'cxx cxxshlib',
@@ -360,8 +360,8 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib,
+                  uselib       = 'QT5 QT5_MAC_EXTRAS LV2',
                   linkflags    = ['-framework', 'Cocoa'])
-        autowaf.use_lib(bld, obj, 'QT5 QT5_MAC_EXTRAS LV2')
 
     if bld.env.SUIL_WITH_X11:
         obj = bld(features     = 'c cshlib',
@@ -371,15 +371,13 @@ def build(bld):
                   defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
                   install_path = module_dir,
                   cflags       = cflags,
-                  lib          = modlib)
-        autowaf.use_lib(bld, obj, 'X11 LV2')
+                  lib          = modlib,
+                  uselib       = 'X11 LV2')
 
     # Documentation
     autowaf.build_dox(bld, 'SUIL', SUIL_VERSION, top, out)
 
     bld.add_post_fun(autowaf.run_ldconfig)
-    if bld.env.DOCS:
-        bld.add_post_fun(lambda ctx: autowaf.make_simple_dox(APPNAME))
 
 def lint(ctx):
     "checks code for style issues"
