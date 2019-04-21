@@ -149,7 +149,7 @@ def configure(conf):
     autowaf.define(conf, 'SUIL_MODULE_PREFIX', module_prefix)
     autowaf.define(conf, 'SUIL_MODULE_EXT', module_ext)
 
-    conf.run_env.append_unique('SUIL_MODULE_DIR', conf.build_path())
+    conf.run_env.append_unique('SUIL_MODULE_DIR', [conf.build_path()])
     autowaf.set_lib_env(conf, 'suil', SUIL_VERSION)
     conf.write_config_header('suil_config.h', remove=False)
 
