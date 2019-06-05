@@ -98,7 +98,7 @@ def configure(conf):
                   mandatory     = False)
 
     autowaf.define(conf, 'SUIL_MODULE_DIR',
-                   os.path.join(conf.env.LIBDIR, 'suil-' + SUIL_MAJOR_VERSION))
+                   conf.env.LIBDIR + '/suil-' + SUIL_MAJOR_VERSION)
     autowaf.define(conf, 'SUIL_DIR_SEP', '/')
     autowaf.define(conf, 'SUIL_GTK2_LIB_NAME', conf.options.gtk2_lib_name);
     autowaf.define(conf, 'SUIL_GTK3_LIB_NAME', conf.options.gtk3_lib_name);
