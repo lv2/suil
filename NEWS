@@ -1,4 +1,4 @@
-suil (0.10.3) unstable;
+suil (0.10.4) stable;
 
   * Add support for min/base size hints for X11 in Gtk (thanks Hermann Meyer)
   * Add support for Qt5 in Gtk3
