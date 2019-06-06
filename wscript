@@ -430,3 +430,7 @@ def posts(ctx):
         { 'Author' : 'drobilla',
           'Tags'   : 'Hacking, LAD, LV2, Suil' },
         os.path.join(out, 'posts'))
+
+def dist(ctx):
+    ctx.base_path = ctx.path
+    ctx.excl = ctx.get_excl() + ' .gitmodules'
