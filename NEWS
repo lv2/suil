@@ -1,8 +1,9 @@
 suil (0.10.3) unstable;
 
   * Add support for min/base size hints for X11 in Gtk (thanks Hermann Meyer)
+  * Add support for Qt5 in Gtk3
 
- -- David Robillard <d@drobilla.net>  Tue, 19 Feb 2019 08:34:31 +0100
+ -- David Robillard <d@drobilla.net>  Thu, 06 Jun 2019 21:02:47 +0200
 
 suil (0.10.2) stable;
 

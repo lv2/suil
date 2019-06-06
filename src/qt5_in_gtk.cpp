@@ -21,6 +21,10 @@
 #include <QWidget>
 #include <QWindow>
 
+#if GTK_MAJOR_VERSION == 3
+#include <gtk/gtkx.h>
+#endif
+
 #include "lv2/options/options.h"
 #include "lv2/urid/urid.h"
 
@@ -173,7 +177,7 @@ wrapper_free(SuilWrapper* wrapper)
 {
 	if (wrapper->impl) {
 		SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(wrapper->impl);
-		gtk_object_destroy(GTK_OBJECT(wrap));
+		gtk_widget_destroy(GTK_WIDGET(wrap));
 	}
 }
 
