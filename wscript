@@ -32,6 +32,7 @@ def options(ctx):
         opt,
         {'static':    'build static library',
          'no-shared': 'do not build shared library',
+         'no-cocoa':  'do not build support for Cocoa/Quartz',
          'no-gtk':    'do not build support for Gtk',
          'no-qt':     'do not build support for Qt (any version)',
          'no-qt4':    'do not build support for Qt4',
@@ -71,8 +72,9 @@ def configure(conf):
         autowaf.check_pkg(conf, 'gtk+-x11-2.0', uselib_store='GTK2_X11',
                           atleast_version='2.0.0', mandatory=False)
 
-        autowaf.check_pkg(conf, 'gtk+-quartz-2.0', uselib_store='GTK2_QUARTZ',
-                          atleast_version='2.0.0', mandatory=False)
+        if not conf.options.no_cocoa:
+            autowaf.check_pkg(conf, 'gtk+-quartz-2.0', uselib_store='GTK2_QUARTZ',
+                              atleast_version='2.0.0', mandatory=False)
 
         autowaf.check_pkg(conf, 'gtk+-3.0', uselib_store='GTK3',
                           atleast_version='3.14.0', mandatory=False)
@@ -85,7 +87,7 @@ def configure(conf):
             autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
                               atleast_version='4.4.0', mandatory=False)
 
-        if not conf.options.no_qt5:
+        if not conf.options.no_qt5 and not conf.options.no_cocoa:
             autowaf.check_pkg(conf, 'Qt5Widgets', uselib_store='QT5',
                               atleast_version='5.1.0', mandatory=False)
             if conf.check_cxx(header_name = 'QMacCocoaViewContainer',
