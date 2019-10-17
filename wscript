@@ -57,43 +57,47 @@ def configure(conf):
                    mandatory = False)):
         conf.env.NODELETE_FLAGS = ['-Wl,-z,nodelete']
 
-    autowaf.check_pkg(conf, 'lv2', atleast_version='1.16.0', uselib_store='LV2')
-    autowaf.check_pkg(conf, 'x11', uselib_store='X11', mandatory=False)
+    conf.check_pkg('lv2 >= 1.16.0', uselib_store='LV2')
+    conf.check_pkg('x11', uselib_store='X11', mandatory=False)
 
     def enable_module(var_name):
         conf.define(var_name, 1)
         conf.env[var_name] = 1
 
     if not conf.options.no_gtk:
-        autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
-                          atleast_version='2.18.0', mandatory=False)
+        conf.check_pkg('gtk+-2.0 >= 2.18.0',
+                       uselib_store='GTK2',
+                       mandatory=False)
         if not conf.env.HAVE_GTK2:
-            autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
-                              atleast_version='2.0.0', mandatory=False)
+            conf.check_pkg('gtk+-2.0', uselib_store='GTK2', mandatory=False)
             if conf.env.HAVE_GTK2:
                 conf.define('SUIL_OLD_GTK', 1)
 
-        autowaf.check_pkg(conf, 'gtk+-x11-2.0', uselib_store='GTK2_X11',
-                          atleast_version='2.0.0', mandatory=False)
+        conf.check_pkg('gtk+-x11-2.0', uselib_store='GTK2_X11', mandatory=False)
 
         if not conf.options.no_cocoa:
-            autowaf.check_pkg(conf, 'gtk+-quartz-2.0', uselib_store='GTK2_QUARTZ',
-                              atleast_version='2.0.0', mandatory=False)
+            conf.check_pkg('gtk+-quartz-2.0',
+                           uselib_store='GTK2_QUARTZ',
+                           mandatory=False)
 
-        autowaf.check_pkg(conf, 'gtk+-3.0', uselib_store='GTK3',
-                          atleast_version='3.14.0', mandatory=False)
+        conf.check_pkg('gtk+-3.0 >= 3.14.0',
+                       uselib_store='GTK3',
+                       mandatory=False)
 
-        autowaf.check_pkg(conf, 'gtk+-x11-3.0', uselib_store='GTK3_X11',
-                          atleast_version='3.14.0', mandatory=False)
+        conf.check_pkg('gtk+-x11-3.0 >= 3.14.0',
+                       uselib_store='GTK3_X11',
+                       mandatory=False)
 
     if not conf.options.no_qt:
         if not conf.options.no_qt4:
-            autowaf.check_pkg(conf, 'QtGui', uselib_store='QT4',
-                              atleast_version='4.4.0', mandatory=False)
+            conf.check_pkg('QtGui >= 4.4.0',
+                           uselib_store='QT4',
+                           mandatory=False)
 
         if not conf.options.no_qt5 and not conf.options.no_cocoa:
-            autowaf.check_pkg(conf, 'Qt5Widgets', uselib_store='QT5',
-                              atleast_version='5.1.0', mandatory=False)
+            conf.check_pkg('Qt5Widgets >= 5.1.0',
+                           uselib_store='QT5',
+                           mandatory=False)
             if conf.check_cxx(header_name = 'QMacCocoaViewContainer',
                               uselib      = 'QT5_COCOA',
                               mandatory   = False):
