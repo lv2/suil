@@ -67,9 +67,13 @@ def configure(conf):
     if not conf.options.no_gtk:
         conf.check_pkg('gtk+-2.0 >= 2.18.0',
                        uselib_store='GTK2',
+                       system=True,
                        mandatory=False)
         if not conf.env.HAVE_GTK2:
-            conf.check_pkg('gtk+-2.0', uselib_store='GTK2', mandatory=False)
+            conf.check_pkg('gtk+-2.0',
+                           uselib_store='GTK2',
+                           system=True,
+                           mandatory=False)
             if conf.env.HAVE_GTK2:
                 conf.define('SUIL_OLD_GTK', 1)
 
