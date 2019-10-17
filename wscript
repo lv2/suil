@@ -60,6 +60,10 @@ def configure(conf):
     autowaf.check_pkg(conf, 'lv2', atleast_version='1.16.0', uselib_store='LV2')
     autowaf.check_pkg(conf, 'x11', uselib_store='X11', mandatory=False)
 
+    def enable_module(var_name):
+        conf.define(var_name, 1)
+        conf.env[var_name] = 1
+
     if not conf.options.no_gtk:
         autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                           atleast_version='2.18.0', mandatory=False)
@@ -67,7 +71,7 @@ def configure(conf):
             autowaf.check_pkg(conf, 'gtk+-2.0', uselib_store='GTK2',
                               atleast_version='2.0.0', mandatory=False)
             if conf.env.HAVE_GTK2:
-                autowaf.define(conf, 'SUIL_OLD_GTK', 1)
+                conf.define('SUIL_OLD_GTK', 1)
 
         autowaf.check_pkg(conf, 'gtk+-x11-2.0', uselib_store='GTK2_X11',
                           atleast_version='2.0.0', mandatory=False)
@@ -93,50 +97,51 @@ def configure(conf):
             if conf.check_cxx(header_name = 'QMacCocoaViewContainer',
                               uselib      = 'QT5_COCOA',
                               mandatory   = False):
-                autowaf.define(conf, 'SUIL_WITH_COCOA_IN_QT5', 1)
+                enable_module('SUIL_WITH_COCOA_IN_QT5')
 
     conf.check_cc(define_name   = 'HAVE_LIBDL',
                   lib           = 'dl',
                   mandatory     = False)
 
-    autowaf.define(conf, 'SUIL_MODULE_DIR',
-                   conf.env.LIBDIR + '/suil-' + SUIL_MAJOR_VERSION)
-    autowaf.define(conf, 'SUIL_DIR_SEP', '/')
-    autowaf.define(conf, 'SUIL_GTK2_LIB_NAME', conf.options.gtk2_lib_name);
-    autowaf.define(conf, 'SUIL_GTK3_LIB_NAME', conf.options.gtk3_lib_name);
+    conf.define('SUIL_MODULE_DIR',
+                conf.env.LIBDIR + '/suil-' + SUIL_MAJOR_VERSION)
+
+    conf.define('SUIL_DIR_SEP', '/')
+    conf.define('SUIL_GTK2_LIB_NAME', conf.options.gtk2_lib_name);
+    conf.define('SUIL_GTK3_LIB_NAME', conf.options.gtk3_lib_name);
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_QT4:
-        autowaf.define(conf, 'SUIL_WITH_QT4_IN_GTK2', 1)
+        enable_module('SUIL_WITH_QT4_IN_GTK2')
         if conf.env.HAVE_GTK2_X11:
-            autowaf.define(conf, 'SUIL_WITH_GTK2_IN_QT4', 1)
+            enable_module('SUIL_WITH_GTK2_IN_QT4')
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_QT5:
-        autowaf.define(conf, 'SUIL_WITH_GTK2_IN_QT5', 1)
-        autowaf.define(conf, 'SUIL_WITH_QT5_IN_GTK2', 1)
+        enable_module('SUIL_WITH_GTK2_IN_QT5')
+        enable_module('SUIL_WITH_QT5_IN_GTK2')
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_GTK2_X11:
-        autowaf.define(conf, 'SUIL_WITH_X11_IN_GTK2', 1)
+        enable_module('SUIL_WITH_X11_IN_GTK2')
 
     if conf.env.HAVE_GTK3 and conf.env.HAVE_GTK3_X11:
-        autowaf.define(conf, 'SUIL_WITH_X11_IN_GTK3', 1)
+        enable_module('SUIL_WITH_X11_IN_GTK3')
 
     if conf.env.HAVE_GTK3 and conf.env.HAVE_QT5:
-        autowaf.define(conf, 'SUIL_WITH_QT5_IN_GTK3', 1)
+        enable_module('SUIL_WITH_QT5_IN_GTK3')
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_GTK2_QUARTZ:
-        autowaf.define(conf, 'SUIL_WITH_COCOA_IN_GTK2', 1)
+        enable_module('SUIL_WITH_COCOA_IN_GTK2')
 
     if conf.env.HAVE_GTK2 and conf.env.DEST_OS == 'win32':
-        autowaf.define(conf, 'SUIL_WITH_WIN_IN_GTK2', 1)
+        enable_module('SUIL_WITH_WIN_IN_GTK2')
 
     if conf.env.HAVE_QT4:
-        autowaf.define(conf, 'SUIL_WITH_X11_IN_QT4', 1)
+        enable_module('SUIL_WITH_X11_IN_QT4')
 
     if conf.env.HAVE_QT5:
-        autowaf.define(conf, 'SUIL_WITH_X11_IN_QT5', 1)
+        enable_module('SUIL_WITH_X11_IN_QT5')
 
     if conf.env.HAVE_X11:
-        autowaf.define(conf, 'SUIL_WITH_X11', 1)
+        enable_module('SUIL_WITH_X11')
 
     module_prefix = ''
     module_ext    = ''
@@ -151,8 +156,8 @@ def configure(conf):
         module_prefix = 'lib'
         module_ext += '.so'
 
-    autowaf.define(conf, 'SUIL_MODULE_PREFIX', module_prefix)
-    autowaf.define(conf, 'SUIL_MODULE_EXT', module_ext)
+    conf.define('SUIL_MODULE_PREFIX', module_prefix)
+    conf.define('SUIL_MODULE_EXT', module_ext)
 
     conf.run_env.append_unique('SUIL_MODULE_DIR', [conf.build_path()])
     autowaf.set_lib_env(conf, 'suil', SUIL_VERSION)
@@ -165,10 +170,10 @@ def configure(conf):
 
     if conf.env.HAVE_GTK2:
         autowaf.display_msg(conf, "Gtk2 Library Name",
-                            conf.env.SUIL_GTK2_LIB_NAME)
+                            conf.get_define('SUIL_GTK2_LIB_NAME'))
     if conf.env.HAVE_GTK3:
         autowaf.display_msg(conf, "Gtk3 Library Name",
-                            conf.env.SUIL_GTK3_LIB_NAME)
+                            conf.get_define('SUIL_GTK3_LIB_NAME'))
 
     # Print summary message for every potentially supported wrapper
     wrappers = [('cocoa', 'gtk2'),
