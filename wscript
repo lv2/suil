@@ -16,6 +16,11 @@ VERSION = SUIL_VERSION  # Package version for waf dist
 top     = '.'           # Source directory
 out     = 'build'       # Build directory
 
+# Release variables
+uri          = 'http://drobilla.net/sw/sratom'
+dist_pattern = 'http://download.drobilla.net/sratom-%d.%d.%d.tar.bz2'
+post_tags    = ['Hacking', 'LAD', 'LV2', 'Suil']
+
 def options(ctx):
     ctx.load('compiler_c')
     ctx.load('compiler_cxx')
