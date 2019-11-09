@@ -214,7 +214,8 @@ def build(bld):
 
     # Pkgconfig file
     autowaf.build_pc(bld, 'SUIL', SUIL_VERSION, SUIL_MAJOR_VERSION, [],
-                     {'SUIL_MAJOR_VERSION' : SUIL_MAJOR_VERSION})
+                     {'SUIL_MAJOR_VERSION' : SUIL_MAJOR_VERSION,
+                      'SUIL_PKG_DEPS' : 'lv2'})
 
     cflags = []
     lib    = []
