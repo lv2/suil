@@ -1,3 +1,10 @@
+suil (0.10.6) stable;
+
+  * Add no-cocoa configure flag
+  * Update build system
+
+ -- David Robillard <d@drobilla.net>  Sun, 10 Nov 2019 21:35:59 +0000
+
 suil (0.10.4) stable;
 
   * Add support for Qt5 in Gtk3
