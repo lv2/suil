@@ -103,14 +103,16 @@ def configure(conf):
                            uselib_store='QT4',
                            mandatory=False)
 
-        if not conf.options.no_qt5 and not conf.options.no_cocoa:
+        if not conf.options.no_qt5:
             conf.check_pkg('Qt5Widgets >= 5.1.0',
                            uselib_store='QT5',
                            mandatory=False)
-            if conf.check_cxx(header_name = 'QMacCocoaViewContainer',
-                              uselib      = 'QT5_COCOA',
-                              mandatory   = False):
-                enable_module('SUIL_WITH_COCOA_IN_QT5')
+
+            if not conf.options.no_cocoa:
+                if conf.check_cxx(header_name = 'QMacCocoaViewContainer',
+                                  uselib      = 'QT5_COCOA',
+                                  mandatory   = False):
+                    enable_module('SUIL_WITH_COCOA_IN_QT5')
 
     conf.check_cc(define_name   = 'HAVE_LIBDL',
                   lib           = 'dl',
