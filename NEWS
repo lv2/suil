@@ -1,3 +1,9 @@
+suil (0.10.7) unstable;
+
+  * Fix compilation on MacOS older than 10.12
+
+ -- David Robillard <d@drobilla.net>  Mon, 06 Jan 2020 15:12:38 +0000
+
 suil (0.10.6) stable;
 
   * Add no-cocoa configure flag

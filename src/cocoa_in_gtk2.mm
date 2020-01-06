@@ -25,6 +25,10 @@
 #include "lv2/options/options.h"
 #include "lv2/urid/urid.h"
 
+#ifndef MAC_OS_X_VERSION_10_12
+#define MAC_OS_X_VERSION_10_12 101200
+#endif
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 #define NSEventTypeFlagsChanged     NSFlagsChanged
 #define NSEventTypeLeftMouseDown    NSLeftMouseDown
