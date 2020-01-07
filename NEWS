@@ -1,8 +1,9 @@
 suil (0.10.7) unstable;
 
   * Fix compilation on MacOS older than 10.12
+  * Fix drag and drop for X11 in Gtk
 
- -- David Robillard <d@drobilla.net>  Mon, 06 Jan 2020 15:12:38 +0000
+ -- David Robillard <d@drobilla.net>  Wed, 12 Feb 2020 19:12:01 +0000
 
 suil (0.10.6) stable;
 
