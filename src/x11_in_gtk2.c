@@ -17,6 +17,7 @@
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <string.h>
+#include <X11/Xatom.h>
 
 #include "lv2/options/options.h"
 #include "lv2/urid/urid.h"
@@ -89,6 +90,30 @@ x_window_is_valid(SuilX11Wrapper* socket)
 	return false;
 }
 
+static Window
+get_parent_window(Display* display, Window child)
+{
+	Window   root       = 0;
+	Window   parent     = 0;
+	Window*  children   = NULL;
+	unsigned childcount = 0;
+
+	if (!child) {
+		return 0;
+	}
+
+	if (0 != XQueryTree(display, child,
+	                    &root, &parent,
+	                    &children, &childcount))
+	{
+		if (children) {
+			XFree(children);
+		}
+	}
+
+	return (parent == root) ? 0 : parent;
+}
+
 static gboolean
 on_plug_removed(GtkSocket* sock, gpointer data)
 {
@@ -133,6 +158,20 @@ suil_x11_wrapper_realize(GtkWidget* w)
 	gtk_widget_set_sensitive(GTK_WIDGET(wrap->plug), TRUE);
 	gtk_widget_set_can_focus(GTK_WIDGET(wrap->plug), TRUE);
 	gtk_widget_grab_focus(GTK_WIDGET(wrap->plug));
+
+	// Setup drag/drop proxy from parent/grandparent window
+	Atom xdnd_proxy_atom = gdk_x11_get_xatom_by_name_for_display(gdk_display_get_default(), "XdndProxy");
+	GdkWindow* g_window  = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
+
+	Window window = GDK_WINDOW_XID(g_window);
+	Window plugin = (Window)wrap->instance->ui_widget;
+
+	while (window) {
+		XChangeProperty(GDK_WINDOW_XDISPLAY(g_window), window,
+		                xdnd_proxy_atom, XA_WINDOW, 32, PropModeReplace,
+		                (unsigned char *)&plugin, 1);
+		window = get_parent_window(GDK_WINDOW_XDISPLAY(g_window), window);
+	};
 }
 
 static void
