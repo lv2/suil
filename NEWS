@@ -1,5 +1,6 @@
 suil (0.10.7) unstable;
 
+  * Fix X11 in Gtk size regressions (thanks Robin Gareus)
   * Fix compilation on MacOS older than 10.12
   * Fix drag and drop for X11 in Gtk
 
