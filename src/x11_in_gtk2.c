@@ -364,20 +364,6 @@ suil_x11_on_size_allocate(GtkWidget*     widget,
 }
 
 static void
-suil_x11_on_map_event(GtkWidget* widget, GdkEvent* event)
-{
-	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(widget);
-	// Reset size request to min size, if the plug provided different size settings
-	if ((self->custom_size.is_set || self->base_size.is_set) &&
-	    self->min_size.is_set) {
-		g_object_set(G_OBJECT(GTK_WIDGET(self)),
-		             "width-request", self->min_size.width,
-		             "height-request", self->min_size.height,
-		             NULL);
-	}
-}
-
-static void
 suil_x11_wrapper_class_init(SuilX11WrapperClass* klass)
 {
 	GObjectClass* const   gobject_class = G_OBJECT_CLASS(klass);
@@ -469,11 +455,6 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	g_signal_connect(G_OBJECT(wrap),
 	                 "size-allocate",
 	                 G_CALLBACK(suil_x11_on_size_allocate),
-	                 NULL);
-
-	g_signal_connect(G_OBJECT(wrap),
-	                 "map-event",
-	                 G_CALLBACK(suil_x11_on_map_event),
 	                 NULL);
 
 	return 0;
