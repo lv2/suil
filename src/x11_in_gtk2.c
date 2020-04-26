@@ -1,5 +1,5 @@
 /*
-  Copyright 2011-2016 David Robillard <http://drobilla.net>
+  Copyright 2011-2020 David Robillard <http://drobilla.net>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -366,6 +366,30 @@ suil_x11_on_size_allocate(GtkWidget*     widget,
 }
 
 static void
+suil_x11_on_map_event(GtkWidget* widget, GdkEvent* event)
+{
+	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(widget);
+
+	/* Reset the size request to the minimum sizes.  This is called after the
+	   initial size negotiation, where Gtk called suil_x11_on_size_request() to
+	   get the size request, which might be bigger than the minimum size.
+	   However, the Gtk2 size model has no proper way to handle minimum and
+	   default sizes, so hack around this by setting the size request
+	   properties (which really mean minimum size) back to the minimum after
+	   the widget is mapped.  This makes it possible for the initial mapping to
+	   use the default size, but still allow the user to resize the widget
+	   smaller, down to the minimum size. */
+
+	if ((self->custom_size.is_set || self->base_size.is_set) &&
+	    self->min_size.is_set) {
+		g_object_set(G_OBJECT(GTK_WIDGET(self)),
+		             "width-request", self->min_size.width,
+		             "height-request", self->min_size.height,
+		             NULL);
+	}
+}
+
+static void
 suil_x11_wrapper_class_init(SuilX11WrapperClass* klass)
 {
 	GObjectClass* const   gobject_class = G_OBJECT_CLASS(klass);
@@ -429,8 +453,24 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	wrap->wrapper         = wrapper;
 	wrap->instance        = instance;
 
+	GdkWindow*  window   = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
+	GdkDisplay* display  = gdk_window_get_display(window);
+	Display*    xdisplay = GDK_WINDOW_XDISPLAY(window);
+	Window      xwindow  = (Window)instance->ui_widget;
+
+	gdk_display_sync(display);
 	if (x_window_is_valid(wrap)) {
+		XWindowAttributes attrs;
+		XGetWindowAttributes(xdisplay, xwindow, &attrs);
+
 		query_wm_hints(wrap);
+
+		if (!wrap->base_size.is_set) {
+			// Fall back to using initial size as base size
+			wrap->base_size.is_set = true;
+			wrap->base_size.width  = attrs.width;
+			wrap->base_size.height = attrs.height;
+		}
 	}
 
 	const LV2UI_Idle_Interface* idle_iface = NULL;
@@ -457,6 +497,11 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	g_signal_connect(G_OBJECT(wrap),
 	                 "size-allocate",
 	                 G_CALLBACK(suil_x11_on_size_allocate),
+	                 NULL);
+
+	g_signal_connect(G_OBJECT(wrap),
+	                 "map-event",
+	                 G_CALLBACK(suil_x11_on_map_event),
 	                 NULL);
 
 	return 0;
