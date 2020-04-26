@@ -16,6 +16,7 @@
 */
 
 #include <QCloseEvent>
+#include <QResizeEvent>
 #include <QTimerEvent>
 #include <QWidget>
 #include <QX11Info>
@@ -81,6 +82,18 @@ public:
 	}
 
 protected:
+	void resizeEvent(QResizeEvent* event) override
+	{
+		QWidget::resizeEvent(event);
+
+		if (_window) {
+			XResizeWindow(QX11Info::display(),
+			              _window,
+			              event->size().width(),
+			              event->size().height());
+		}
+	}
+
 	void timerEvent(QTimerEvent* event) override
 	{
 		if (event->timerId() == _ui_timer && _idle_iface) {
