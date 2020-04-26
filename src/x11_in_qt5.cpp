@@ -15,10 +15,9 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <QWidget>
-
-#include <QTimerEvent>
 #include <QCloseEvent>
+#include <QTimerEvent>
+#include <QWidget>
 
 #undef signals
 
