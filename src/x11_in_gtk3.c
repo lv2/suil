@@ -1,5 +1,5 @@
 /*
-  Copyright 2011-2016 David Robillard <http://drobilla.net>
+  Copyright 2011-2020 David Robillard <http://drobilla.net>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -39,6 +39,8 @@ struct _SuilX11Wrapper {
 	const LV2UI_Idle_Interface* idle_iface;
 	guint                       idle_id;
 	guint                       idle_ms;
+	int                         initial_width;
+	int                         initial_height;
 	int                         req_width;
 	int                         req_height;
 };
@@ -271,7 +273,7 @@ suil_x11_wrapper_get_preferred_width(GtkWidget* widget,
 		                  &hints,
 		                  &supplied);
 		*natural_width = ((hints.flags & PBaseSize) ? hints.base_width
-		                                            : self->req_width);
+		                                            : self->initial_width);
 		*minimum_width = ((hints.flags & PMinSize) ? hints.min_width
 		                                           : self->req_width);
 	} else {
@@ -295,7 +297,7 @@ suil_x11_wrapper_get_preferred_height(GtkWidget* widget,
 		                  &hints,
 		                  &supplied);
 		*natural_height = ((hints.flags & PBaseSize) ? hints.base_height
-		                                             : self->req_height);
+		                                             : self->initial_height);
 		*minimum_height = ((hints.flags & PMinSize) ? hints.min_height
 		                                            : self->req_height);
 	} else {
@@ -375,6 +377,18 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	instance->host_widget = GTK_WIDGET(wrap);
 	wrap->wrapper         = wrapper;
 	wrap->instance        = instance;
+
+	GdkWindow*  window   = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
+	GdkDisplay* display  = gdk_window_get_display(window);
+	Display*    xdisplay = GDK_WINDOW_XDISPLAY(window);
+	Window      xwindow  = (Window)instance->ui_widget;
+
+	gdk_display_sync(display);
+
+	XWindowAttributes attrs;
+	XGetWindowAttributes(xdisplay, xwindow, &attrs);
+	wrap->initial_width  = attrs.width;
+	wrap->initial_height = attrs.height;
 
 	const LV2UI_Idle_Interface* idle_iface = NULL;
 	if (instance->descriptor->extension_data) {
