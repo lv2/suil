@@ -107,6 +107,9 @@ def configure(conf):
             conf.check_pkg('Qt5Widgets >= 5.1.0',
                            uselib_store='QT5',
                            mandatory=False)
+            conf.check_pkg('Qt5X11Extras >= 5.1.0',
+                           uselib_store='QT5_X11',
+                           mandatory=False)
 
             if not conf.options.no_cocoa:
                 if conf.check_cxx(header_name = 'QMacCocoaViewContainer',
@@ -152,7 +155,7 @@ def configure(conf):
     if conf.env.HAVE_QT4:
         enable_module('SUIL_WITH_X11_IN_QT4')
 
-    if conf.env.HAVE_QT5:
+    if conf.env.HAVE_QT5 and conf.env.HAVE_QT5_X11:
         enable_module('SUIL_WITH_X11_IN_QT5')
 
     if conf.env.HAVE_X11:
@@ -388,7 +391,7 @@ def build(bld):
                   install_path = module_dir,
                   cflags       = cflags,
                   lib          = modlib,
-                  uselib       = 'QT5 LV2')
+                  uselib       = 'QT5 QT5_X11 LV2 X11')
 
     if bld.env.SUIL_WITH_COCOA_IN_QT5:
         obj = bld(features     = 'cxx cxxshlib',

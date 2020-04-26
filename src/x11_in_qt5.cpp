@@ -1,5 +1,5 @@
 /*
-  Copyright 2011-2015 David Robillard <http://drobilla.net>
+  Copyright 2011-2020 David Robillard <http://drobilla.net>
   Copyright 2015 Rui Nuno Capela <rncbc@rncbc.org>
 
   Permission to use, copy, modify, and/or distribute this software for any
@@ -18,6 +18,9 @@
 #include <QCloseEvent>
 #include <QTimerEvent>
 #include <QWidget>
+#include <QX11Info>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 #undef signals
 
@@ -26,11 +29,6 @@
 
 extern "C" {
 
-typedef struct {
-	QWidget* host_widget;
-	QWidget* parent;
-} SuilX11InQt5Wrapper;
-
 class SuilQX11Widget : public QWidget
 {
 public:
@@ -38,6 +36,7 @@ public:
 		: QWidget(parent, wflags)
 		, _instance(NULL)
 		, _idle_iface(NULL)
+		, _window(0)
 		, _ui_timer(0)
 	{}
 
@@ -49,6 +48,36 @@ public:
 		if (_idle_iface && _ui_timer == 0) {
 			_ui_timer = this->startTimer(30);
 		}
+	}
+
+	void set_window(Window window)
+	{
+		_window = window;
+	}
+
+	QSize sizeHint() const override
+	{
+		if (_window) {
+			XWindowAttributes attrs{};
+			XGetWindowAttributes(QX11Info::display(), _window, &attrs);
+			return {attrs.width, attrs.height};
+		}
+
+		return {0, 0};
+	}
+
+	QSize minimumSizeHint() const override
+	{
+		if (_window) {
+			XSizeHints hints{};
+			long       supplied{};
+			XGetWMNormalHints(QX11Info::display(), _window, &hints, &supplied);
+			if ((hints.flags & PMinSize)) {
+				return {hints.min_width, hints.min_height};
+			}
+		}
+
+		return {0, 0};
 	}
 
 protected:
@@ -72,8 +101,14 @@ protected:
 private:
 	SuilInstance*               _instance;
 	const LV2UI_Idle_Interface* _idle_iface;
+	Window                      _window;
 	int                         _ui_timer;
 };
+
+typedef struct {
+	QWidget*        host_widget;
+	SuilQX11Widget* parent;
+} SuilX11InQt5Wrapper;
 
 static void
 wrapper_free(SuilWrapper* wrapper)
@@ -91,8 +126,31 @@ static int
 wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
 {
-	SuilX11InQt5Wrapper* const impl = (SuilX11InQt5Wrapper*)wrapper->impl;
-	SuilQX11Widget* const      ew   = (SuilQX11Widget*)impl->parent;
+	SuilX11InQt5Wrapper* const impl    = (SuilX11InQt5Wrapper*)wrapper->impl;
+	SuilQX11Widget* const      ew      = (SuilQX11Widget*)impl->parent;
+	Display* const             display = QX11Info::display();
+	const Window               window  = (Window)instance->ui_widget;
+
+	XWindowAttributes attrs{};
+	XSizeHints        hints{};
+	long              supplied{};
+	XSync(display, False);
+	XGetWindowAttributes(display, window, &attrs);
+	XGetWMNormalHints(display, window, &hints, &supplied);
+
+	impl->parent->set_window(window);
+
+	if ((hints.flags & PBaseSize)) {
+		impl->parent->setBaseSize(hints.base_width, hints.base_height);
+	}
+
+	if ((hints.flags & PMinSize)) {
+		impl->parent->setMinimumSize(hints.min_width, hints.min_height);
+	}
+
+	if ((hints.flags & PMaxSize)) {
+		impl->parent->setMaximumSize(hints.max_width, hints.max_height);
+	}
 
 	if (instance->descriptor->extension_data) {
 		const LV2UI_Idle_Interface* idle_iface
@@ -131,7 +189,7 @@ suil_wrapper_new(SuilHost*      host,
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = wrapper_free;
 
-	QWidget* const ew = new SuilQX11Widget(NULL, Qt::Window);
+	SuilQX11Widget* const ew = new SuilQX11Widget(NULL, Qt::Window);
 
 	impl->parent = ew;
 
