@@ -43,7 +43,8 @@ public:
 	{}
 
 	void start_idle(SuilInstance*               instance,
-	                const LV2UI_Idle_Interface* idle_iface) {
+	                const LV2UI_Idle_Interface* idle_iface)
+	{
 		_instance   = instance;
 		_idle_iface = idle_iface;
 		if (_idle_iface && _ui_timer == 0) {
@@ -52,14 +53,16 @@ public:
 	}
 
 protected:
-	void timerEvent(QTimerEvent* event) {
+	void timerEvent(QTimerEvent* event) override
+	{
 		if (event->timerId() == _ui_timer && _idle_iface) {
 			_idle_iface->idle(_instance->handle);
 		}
 		QWidget::timerEvent(event);
 	}
 
-	void closeEvent(QCloseEvent* event) {
+    void closeEvent(QCloseEvent* event) override
+	{
 		if (_ui_timer && _idle_iface) {
 			this->killTimer(_ui_timer);
 			_ui_timer = 0;
