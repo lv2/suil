@@ -3,7 +3,7 @@
 import os
 import subprocess
 
-from waflib import TaskGen
+from waflib import Options, TaskGen
 from waflib.extras import autowaf
 
 # Semver package/library version
@@ -55,6 +55,48 @@ def configure(conf):
     if not conf.env.BUILD_SHARED and not conf.env.BUILD_STATIC:
         conf.fatal('Neither a shared nor a static build requested')
 
+    if Options.options.ultra_strict:
+        autowaf.add_compiler_flags(conf.env, '*', {
+            'gcc': [
+                '-Wno-padded',
+                '-Wno-unused-parameter',
+            ],
+            'clang': [
+                '-Wno-cast-qual',
+                '-Wno-disabled-macro-expansion',
+                '-Wno-float-conversion',
+                '-Wno-padded',
+                '-Wno-sign-conversion',
+                '-Wno-unused-parameter',
+            ]
+        })
+
+        autowaf.add_compiler_flags(conf.env, 'c', {
+            'gcc': [
+                '-Wno-float-conversion',
+                '-Wno-sign-conversion',
+            ],
+            'msvc': [
+                '/wd4514',  # unreferenced inline function has been removed
+                '/wd4820',  # padding added after construct
+                '/wd4191',  # unsafe function conversion
+                '/wd5045',  # will insert Spectre mitigation for memory load
+            ],
+        })
+
+        autowaf.add_compiler_flags(conf.env, 'cxx', {
+            'clang': [
+                '-Wno-old-style-cast',
+                '-Wno-weak-vtables',
+                '-Wno-zero-as-null-pointer-constant',
+            ],
+            'gcc': [
+                '-Wno-effc++',
+                '-Wno-float-conversion',
+                '-Wno-useless-cast',
+            ],
+        })
+
     conf.env.NODELETE_FLAGS = []
     if (not conf.env.MSVC_COMPILER and
         conf.check(linkflags = ['-Wl,-z,nodelete'],
@@ -63,7 +105,7 @@ def configure(conf):
         conf.env.NODELETE_FLAGS = ['-Wl,-z,nodelete']
 
     conf.check_pkg('lv2 >= 1.16.0', uselib_store='LV2')
-    conf.check_pkg('x11', uselib_store='X11', mandatory=False)
+    conf.check_pkg('x11', uselib_store='X11', system=True, mandatory=False)
 
     def enable_module(var_name):
         conf.define(var_name, 1)
@@ -82,38 +124,48 @@ def configure(conf):
             if conf.env.HAVE_GTK2:
                 conf.define('SUIL_OLD_GTK', 1)
 
-        conf.check_pkg('gtk+-x11-2.0', uselib_store='GTK2_X11', mandatory=False)
+        conf.check_pkg('gtk+-x11-2.0',
+                       uselib_store='GTK2_X11',
+                       system=True,
+                       mandatory=False)
 
         if not conf.options.no_cocoa:
             conf.check_pkg('gtk+-quartz-2.0',
                            uselib_store='GTK2_QUARTZ',
+                           system=True,
                            mandatory=False)
 
         conf.check_pkg('gtk+-3.0 >= 3.14.0',
                        uselib_store='GTK3',
+                       system=True,
                        mandatory=False)
 
         conf.check_pkg('gtk+-x11-3.0 >= 3.14.0',
                        uselib_store='GTK3_X11',
+                       system=True,
                        mandatory=False)
 
     if not conf.options.no_qt:
         if not conf.options.no_qt4:
             conf.check_pkg('QtGui >= 4.4.0',
                            uselib_store='QT4',
+                           system=True,
                            mandatory=False)
 
         if not conf.options.no_qt5:
             conf.check_pkg('Qt5Widgets >= 5.1.0',
                            uselib_store='QT5',
+                           system=True,
                            mandatory=False)
             conf.check_pkg('Qt5X11Extras >= 5.1.0',
                            uselib_store='QT5_X11',
+                           system=True,
                            mandatory=False)
 
             if not conf.options.no_cocoa:
                 if conf.check_cxx(header_name = 'QMacCocoaViewContainer',
                                   uselib      = 'QT5_COCOA',
+                                  system=True,
                                   mandatory   = False):
                     enable_module('SUIL_WITH_COCOA_IN_QT5')
 
