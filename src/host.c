@@ -81,6 +81,8 @@ SUIL_API
 void
 suil_init(int* argc, char*** argv, SuilArg key, ...)
 {
+	(void)key;
+
 	suil_argc = argc ? *argc : 0;
 	suil_argv = argv ? *argv : NULL;
 

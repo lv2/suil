@@ -59,13 +59,11 @@ def configure(conf):
         autowaf.add_compiler_flags(conf.env, '*', {
             'gcc': [
                 '-Wno-padded',
-                '-Wno-unused-parameter',
             ],
             'clang': [
                 '-Wno-cast-qual',
                 '-Wno-disabled-macro-expansion',
                 '-Wno-padded',
-                '-Wno-unused-parameter',
             ]
         })
 

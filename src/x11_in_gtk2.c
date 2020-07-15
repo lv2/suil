@@ -113,6 +113,8 @@ get_parent_window(Display* display, Window child)
 static gboolean
 on_plug_removed(GtkSocket* sock, gpointer data)
 {
+	(void)data;
+
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(sock);
 
 	if (self->idle_id) {
@@ -368,6 +370,8 @@ suil_x11_on_size_allocate(GtkWidget*     widget,
 static void
 suil_x11_on_map_event(GtkWidget* widget, GdkEvent* event)
 {
+	(void)event;
+
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(widget);
 
 	/* Reset the size request to the minimum sizes.  This is called after the
@@ -524,6 +528,10 @@ suil_wrapper_new(SuilHost*      host,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
+	(void)host;
+	(void)host_type_uri;
+	(void)ui_type_uri;
+
 	SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = wrapper_free;

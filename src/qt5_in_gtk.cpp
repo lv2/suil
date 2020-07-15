@@ -102,7 +102,7 @@ suil_qt_wrapper_init(SuilQtWrapper* self)
 }
 
 static void
-suil_qt_wrapper_realize(GtkWidget* w, gpointer data)
+suil_qt_wrapper_realize(GtkWidget* w, gpointer)
 {
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(w);
 	GtkSocket* const     s    = GTK_SOCKET(w);
@@ -183,9 +183,9 @@ wrapper_free(SuilWrapper* wrapper)
 
 SUIL_LIB_EXPORT
 SuilWrapper*
-suil_wrapper_new(SuilHost*      host,
-                 const char*    host_type_uri,
-                 const char*    ui_type_uri,
+suil_wrapper_new(SuilHost*,
+                 const char*,
+                 const char*,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {

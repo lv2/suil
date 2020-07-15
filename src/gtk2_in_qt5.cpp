@@ -37,18 +37,14 @@ struct _SuilGtk2InQt5Wrapper {
 };
 
 static void
-on_size_request(GtkWidget*      widget,
-                GtkRequisition* requisition,
-                gpointer        user_data)
+on_size_request(GtkWidget*, GtkRequisition* requisition, gpointer user_data)
 {
 	QWidget* const wrap = (QWidget*)user_data;
 	wrap->setMinimumSize(requisition->width, requisition->height);
 }
 
 static void
-on_size_allocate(GtkWidget*    widget,
-                 GdkRectangle* allocation,
-                 gpointer      user_data)
+on_size_allocate(GtkWidget*, GdkRectangle* allocation, gpointer user_data)
 {
 	QWidget* const wrap = (QWidget*)user_data;
 	wrap->resize(allocation->width, allocation->height);
@@ -120,11 +116,11 @@ wrapper_wrap(SuilWrapper*  wrapper,
 
 SUIL_LIB_EXPORT
 SuilWrapper*
-suil_wrapper_new(SuilHost*      host,
-                 const char*    host_type_uri,
-                 const char*    ui_type_uri,
-                 LV2_Feature*** features,
-                 unsigned       n_features)
+suil_wrapper_new(SuilHost* host,
+                 const char*,
+                 const char*,
+                 LV2_Feature***,
+                 unsigned)
 {
 	/* We have to open libgtk here, so Gtk type symbols are present and will be
 	   found by the introspection stuff.  This is required at least to make

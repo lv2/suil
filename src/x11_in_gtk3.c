@@ -85,6 +85,8 @@ x_window_is_valid(SuilX11Wrapper* socket)
 static gboolean
 on_plug_removed(GtkSocket* sock, gpointer data)
 {
+	(void)data;
+
 	SuilX11Wrapper* const self = SUIL_X11_WRAPPER(sock);
 
 	if (self->idle_id) {
@@ -431,6 +433,10 @@ suil_wrapper_new(SuilHost*      host,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
+	(void)host;
+	(void)host_type_uri;
+	(void)ui_type_uri;
+
 	SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = wrapper_free;

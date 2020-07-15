@@ -198,9 +198,9 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 
 SUIL_LIB_EXPORT
 SuilWrapper*
-suil_wrapper_new(SuilHost*      host,
-                 const char*    host_type_uri,
-                 const char*    ui_type_uri,
+suil_wrapper_new(SuilHost*,
+                 const char*,
+                 const char*,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
