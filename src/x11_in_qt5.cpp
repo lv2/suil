@@ -41,6 +41,9 @@ public:
 		, _ui_timer(0)
 	{}
 
+	SuilQX11Widget(const SuilQX11Widget&) = delete;
+	SuilQX11Widget& operator=(const SuilQX11Widget&) = delete;
+
 	~SuilQX11Widget() override;
 
 	void start_idle(SuilInstance*               instance,

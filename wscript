@@ -83,9 +83,6 @@ def configure(conf):
                 '-Wno-old-style-cast',
                 '-Wno-zero-as-null-pointer-constant',
             ],
-            'gcc': [
-                '-Wno-effc++',
-            ],
         })
 
     conf.env.NODELETE_FLAGS = []
