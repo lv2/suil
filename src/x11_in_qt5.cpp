@@ -140,7 +140,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
 {
 	SuilX11InQt5Wrapper* const impl    = (SuilX11InQt5Wrapper*)wrapper->impl;
-	SuilQX11Widget* const      ew      = (SuilQX11Widget*)impl->parent;
+	SuilQX11Widget* const      ew      = impl->parent;
 	Display* const             display = QX11Info::display();
 	const Window               window  = (Window)instance->ui_widget;
 

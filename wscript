@@ -93,7 +93,6 @@ def configure(conf):
             'gcc': [
                 '-Wno-effc++',
                 '-Wno-float-conversion',
-                '-Wno-useless-cast',
             ],
         })
 
