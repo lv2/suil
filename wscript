@@ -81,7 +81,6 @@ def configure(conf):
         autowaf.add_compiler_flags(conf.env, 'cxx', {
             'clang': [
                 '-Wno-old-style-cast',
-                '-Wno-weak-vtables',
                 '-Wno-zero-as-null-pointer-constant',
             ],
             'gcc': [

@@ -41,6 +41,8 @@ public:
 		, _ui_timer(0)
 	{}
 
+	~SuilQX11Widget() override;
+
 	void start_idle(SuilInstance*               instance,
 	                const LV2UI_Idle_Interface* idle_iface)
 	{
@@ -117,6 +119,10 @@ private:
 	Window                      _window;
 	int                         _ui_timer;
 };
+
+SuilQX11Widget::~SuilQX11Widget()
+{
+}
 
 typedef struct {
 	QWidget*        host_widget;
