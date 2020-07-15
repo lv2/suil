@@ -89,8 +89,8 @@ protected:
 		if (_window) {
 			XResizeWindow(QX11Info::display(),
 			              _window,
-			              event->size().width(),
-			              event->size().height());
+			              (unsigned)event->size().width(),
+			              (unsigned)event->size().height());
 		}
 	}
 

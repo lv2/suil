@@ -64,18 +64,12 @@ def configure(conf):
             'clang': [
                 '-Wno-cast-qual',
                 '-Wno-disabled-macro-expansion',
-                '-Wno-float-conversion',
                 '-Wno-padded',
-                '-Wno-sign-conversion',
                 '-Wno-unused-parameter',
             ]
         })
 
         autowaf.add_compiler_flags(conf.env, 'c', {
-            'gcc': [
-                '-Wno-float-conversion',
-                '-Wno-sign-conversion',
-            ],
             'msvc': [
                 '/wd4514',  # unreferenced inline function has been removed
                 '/wd4820',  # padding added after construct
@@ -92,7 +86,6 @@ def configure(conf):
             ],
             'gcc': [
                 '-Wno-effc++',
-                '-Wno-float-conversion',
             ],
         })
 

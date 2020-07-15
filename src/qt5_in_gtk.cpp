@@ -221,7 +221,7 @@ suil_wrapper_new(SuilHost*      host,
 		LV2_URID ui_updateRate = map->map(map->handle, LV2_UI__updateRate);
 		for (LV2_Options_Option* o = options; o->key; ++o) {
 			if (o->key == ui_updateRate) {
-				wrap->idle_ms = 1000.0f / *(const float*)o->value;
+				wrap->idle_ms = (guint)(1000.0f / *(const float*)o->value);
 				break;
 			}
 		}

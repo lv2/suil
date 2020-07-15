@@ -217,7 +217,7 @@ forward_size_request(SuilX11Wrapper* socket,
 		// Resize widget window
 		XResizeWindow(GDK_WINDOW_XDISPLAY(window),
 		              (Window)socket->instance->ui_widget,
-		              width, height);
+		              (unsigned)width, (unsigned)height);
 
 		// Get actual widget geometry
 		Window       root;
@@ -231,8 +231,8 @@ forward_size_request(SuilX11Wrapper* socket,
 		             &ignored, &ignored);
 
 		// Center widget in allocation
-		wx = (allocation->width  - ww) / 2;
-		wy = (allocation->height - wh) / 2;
+		wx = (allocation->width  - (int)ww) / 2;
+		wy = (allocation->height - (int)wh) / 2;
 		XMoveWindow(GDK_WINDOW_XDISPLAY(window),
 		            (Window)socket->instance->ui_widget,
 		            wx, wy);
@@ -466,7 +466,7 @@ suil_wrapper_new(SuilHost*      host,
 		LV2_URID ui_updateRate = map->map(map->handle, LV2_UI__updateRate);
 		for (LV2_Options_Option* o = options; o->key; ++o) {
 			if (o->key == ui_updateRate) {
-				wrap->idle_ms = 1000.0f / *(const float*)o->value;
+				wrap->idle_ms = (guint)(1000.0f / *(const float*)o->value);
 				break;
 			}
 		}
