@@ -61,9 +61,11 @@ def configure(conf):
                 '-Wno-padded',
             ],
             'clang': [
+                '-Wno-atomic-implicit-seq-cst',
                 '-Wno-cast-qual',
                 '-Wno-disabled-macro-expansion',
                 '-Wno-padded',
+                '-Wno-variadic-macros',
             ]
         })
 
