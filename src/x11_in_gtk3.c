@@ -161,7 +161,7 @@ forward_key_event(SuilX11Wrapper* socket,
 	GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(socket->plug));
 	GdkScreen* screen = gdk_visual_get_screen(gdk_window_get_visual(window));
 
-	Window target_window;
+	Window target_window = 0;
 	if (gdk_event->any.window == window) {
 		// Event sent up to the plug window, forward it up to the parent
 		GtkWidget* widget = GTK_WIDGET(socket->instance->host_widget);
@@ -232,10 +232,12 @@ forward_size_request(SuilX11Wrapper* socket,
 		              (unsigned)width, (unsigned)height);
 
 		// Get actual widget geometry
-		Window       root;
-		int          wx, wy;
-		unsigned int ww, wh;
-		unsigned int ignored;
+		Window       root    = 0;
+		int          wx      = 0;
+		int          wy      = 0;
+		unsigned int ww      = 0;
+		unsigned int wh      = 0;
+		unsigned int ignored = 0;
 		XGetGeometry(GDK_WINDOW_XDISPLAY(window),
 		             (Window)socket->instance->ui_widget,
 		             &root,
@@ -279,7 +281,7 @@ suil_x11_wrapper_get_preferred_width(GtkWidget* widget,
 		GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(self->plug));
 		XSizeHints hints;
 		memset(&hints, 0, sizeof(hints));
-		long supplied;
+		long supplied = 0;
 		XGetWMNormalHints(GDK_WINDOW_XDISPLAY(window),
 		                  (Window)self->instance->ui_widget,
 		                  &hints,
@@ -303,7 +305,7 @@ suil_x11_wrapper_get_preferred_height(GtkWidget* widget,
 		GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(self->plug));
 		XSizeHints hints;
 		memset(&hints, 0, sizeof(hints));
-		long supplied;
+		long supplied = 0;
 		XGetWMNormalHints(GDK_WINDOW_XDISPLAY(window),
 		                  (Window)self->instance->ui_widget,
 		                  &hints,

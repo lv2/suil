@@ -4,11 +4,9 @@ Checks: >
   -*-uppercase-literal-suffix,
   -bugprone-suspicious-string-compare,
   -clang-analyzer-core.CallAndMessage,
-  -cppcoreguidelines-init-variables,
   -hicpp-signed-bitwise,
   -llvm-header-guard,
   -readability-else-after-return,
-  -readability-isolate-declaration,
   -readability-non-const-parameter,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
