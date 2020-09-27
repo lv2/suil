@@ -15,12 +15,12 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+#include "dylib.h"
 #include "suil_config.h"
 #include "suil_internal.h"
 
 #include "suil/suil.h"
 
-#include <dlfcn.h>
 #include <stdlib.h>
 
 int    suil_argc = 0;
@@ -57,7 +57,7 @@ suil_host_free(SuilHost* host)
 {
 	if (host) {
 		if (host->gtk_lib) {
-			dlclose(host->gtk_lib);
+			dylib_close(host->gtk_lib);
 		}
 		free(host);
 	}
@@ -79,7 +79,7 @@ suil_load_init_module(const char* module_name)
 		SUIL_ERRORF("Corrupt init module %s\n", module_name);
 	}
 
-	dlclose(lib);
+	dylib_close(lib);
 }
 #endif
 

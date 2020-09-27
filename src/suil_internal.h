@@ -17,21 +17,11 @@
 #ifndef SUIL_INTERNAL_H
 #define SUIL_INTERNAL_H
 
+#include "dylib.h"
 #include "suil_config.h"
 
 #include "lv2/ui/ui.h"
 #include "suil/suil.h"
-
-#ifdef _WIN32
-#include <windows.h>
-#define dlopen(path, flags) LoadLibrary(path)
-#define dlclose(lib) FreeLibrary((HMODULE)lib)
-#define inline __inline
-#define snprintf _snprintf
-static inline const char* dlerror(void) { return "Unknown error"; }
-#else
-#include <dlfcn.h>
-#endif
 
 #include <assert.h>
 #include <stdio.h>
@@ -126,10 +116,10 @@ suil_open_module(const char* module_name)
 	         mod_dir, SUIL_DIR_SEP,
 	         SUIL_MODULE_PREFIX, module_name, SUIL_MODULE_EXT);
 
-	dlerror();
-	void* lib = dlopen(path, RTLD_NOW);
+	dylib_error();
+	void* lib = dylib_open(path, DYLIB_NOW);
 	if (!lib) {
-		SUIL_ERRORF("Failed to open module %s (%s)\n", path, dlerror());
+		SUIL_ERRORF("Failed to open module %s (%s)\n", path, dylib_error());
 	}
 
 	free(path);

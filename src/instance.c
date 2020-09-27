@@ -14,6 +14,7 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+#include "dylib.h"
 #include "suil_config.h"
 #include "suil_internal.h"
 
@@ -21,7 +22,6 @@
 #include "lv2/ui/ui.h"
 #include "suil/suil.h"
 
-#include <dlfcn.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -188,7 +188,7 @@ open_wrapper(SuilHost*      host,
 		wrapper->lib = lib;
 	} else {
 		SUIL_ERRORF("Corrupt wrap module %s\n", module_name);
-		dlclose(lib);
+		dylib_close(lib);
 	}
 
 	return wrapper;
@@ -207,11 +207,11 @@ suil_instance_new(SuilHost*                 host,
                   const LV2_Feature* const* features)
 {
 	// Open UI library
-	dlerror();
-	void* lib = dlopen(ui_binary_path, RTLD_NOW);
+	dylib_error();
+	void* lib = dylib_open(ui_binary_path, DYLIB_NOW);
 	if (!lib) {
 		SUIL_ERRORF("Unable to open UI library %s (%s)\n",
-		            ui_binary_path, dlerror());
+		            ui_binary_path, dylib_error());
 		return NULL;
 	}
 
@@ -221,7 +221,7 @@ suil_instance_new(SuilHost*                 host,
 	if (!df) {
 		SUIL_ERRORF("Broken LV2 UI %s (no lv2ui_descriptor symbol found)\n",
 		            ui_binary_path);
-		dlclose(lib);
+		dylib_close(lib);
 		return NULL;
 	}
 
@@ -241,7 +241,7 @@ suil_instance_new(SuilHost*                 host,
 	if (!descriptor) {
 		SUIL_ERRORF("Failed to find descriptor for <%s> in %s\n",
 		            ui_uri, ui_binary_path);
-		dlclose(lib);
+		dylib_close(lib);
 		return NULL;
 	}
 
@@ -249,7 +249,7 @@ suil_instance_new(SuilHost*                 host,
 	SuilInstance* instance = (SuilInstance*)calloc(1, sizeof(SuilInstance));
 	if (!instance) {
 		SUIL_ERRORF("Failed to allocate memory for <%s> instance\n", ui_uri);
-		dlclose(lib);
+		dylib_close(lib);
 		return NULL;
 	}
 
@@ -352,13 +352,13 @@ suil_instance_free(SuilInstance* instance)
 			instance->descriptor->cleanup(instance->handle);
 		}
 
-		dlclose(instance->lib_handle);
+		dylib_close(instance->lib_handle);
 
 		// Close libraries and free everything
 		if (instance->wrapper) {
 #ifndef _WIN32
 			// Never unload modules on windows, causes mysterious segfaults
-			dlclose(instance->wrapper->lib);
+			dylib_close(instance->wrapper->lib);
 #endif
 			free(instance->wrapper);
 		}

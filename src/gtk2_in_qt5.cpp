@@ -15,6 +15,7 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+#include "dylib.h"
 #include "suil_config.h"
 #include "suil_internal.h"
 
@@ -35,7 +36,6 @@
 #include <gtk/gtk.h>
 #include <gobject/gclosure.h>
 
-#include <dlfcn.h>
 #include <stdlib.h>
 
 extern "C" {
@@ -138,11 +138,11 @@ suil_wrapper_new(SuilHost* host,
 	   type" errors.
 	*/
 	if (!host->gtk_lib) {
-		dlerror();
-		host->gtk_lib = dlopen(SUIL_GTK2_LIB_NAME, RTLD_LAZY|RTLD_GLOBAL);
+		dylib_error();
+		host->gtk_lib = dylib_open(SUIL_GTK2_LIB_NAME, DYLIB_LAZY|DYLIB_GLOBAL);
 		if (!host->gtk_lib) {
 			SUIL_ERRORF("Failed to open %s (%s)\n",
-			            SUIL_GTK2_LIB_NAME, dlerror());
+			            SUIL_GTK2_LIB_NAME, dylib_error());
 			return NULL;
 		}
 		gtk_init(NULL, NULL);
