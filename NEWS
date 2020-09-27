@@ -1,11 +1,11 @@
-suil (0.10.7) unstable;
+suil (0.10.8) stable;
 
   * Fix X11 in Gtk size regressions (thanks Robin Gareus)
   * Fix compilation on MacOS older than 10.12
   * Fix drag and drop for X11 in Gtk
   * Fix various minor warnings and other code quality issues
 
- -- David Robillard <d@drobilla.net>  Wed, 12 Feb 2020 19:12:01 +0000
+ -- David Robillard <d@drobilla.net>  Sun, 27 Sep 2020 12:22:08 +0000
 
 suil (0.10.6) stable;
 
