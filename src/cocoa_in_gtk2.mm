@@ -15,15 +15,15 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <string.h>
+#include "suil_internal.h"
+
+#include "lv2/options/options.h"
+#include "lv2/urid/urid.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdkquartz.h>
 
-#include "./suil_internal.h"
-
-#include "lv2/options/options.h"
-#include "lv2/urid/urid.h"
+#include <string.h>
 
 #ifndef MAC_OS_X_VERSION_10_12
 #define MAC_OS_X_VERSION_10_12 101200

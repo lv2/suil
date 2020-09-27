@@ -15,7 +15,13 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include "./suil_internal.h"
+#include "suil_config.h"
+#include "suil_internal.h"
+
+#include "suil/suil.h"
+
+#include <dlfcn.h>
+#include <stdlib.h>
 
 int    suil_argc = 0;
 char** suil_argv = NULL;

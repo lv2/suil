@@ -15,30 +15,36 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <gtk/gtk.h>
+#include "suil_internal.h"
+
+#include "suil/suil.h"
+#include "lv2/options/options.h"
+#include "lv2/urid/urid.h"
+#include "lv2/core/lv2.h"
+#include "lv2/ui/ui.h"
 
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QWindow>
+#include <QtGui>
+
+#undef signals
+
+#include <gtk/gtk.h>
+#include <glib-object.h>
+#include <glib.h>
+#include <gobject/gclosure.h>
 
 #if GTK_MAJOR_VERSION == 3
 #include <gtk/gtkx.h>
 #endif
 
-#include "lv2/options/options.h"
-#include "lv2/urid/urid.h"
-
-#include "./suil_internal.h"
+#include <stdlib.h>
+#include <string.h>
 
 extern "C" {
 
-#define SUIL_TYPE_QT_WRAPPER (suil_qt_wrapper_get_type())
-#define SUIL_QT_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_QT_WRAPPER, SuilQtWrapper))
-
-typedef struct _SuilQtWrapper      SuilQtWrapper;
-typedef struct _SuilQtWrapperClass SuilQtWrapperClass;
-
-struct _SuilQtWrapper {
+typedef struct {
 	GtkSocket                   socket;
 	QWidget*                    qembed;
 	SuilWrapper*                wrapper;
@@ -46,13 +52,16 @@ struct _SuilQtWrapper {
 	const LV2UI_Idle_Interface* idle_iface;
 	guint                       idle_id;
 	guint                       idle_ms;
-};
+} SuilQtWrapper;
 
-struct _SuilQtWrapperClass {
+typedef struct {
 	GtkSocketClass parent_class;
-};
+} SuilQtWrapperClass;
 
 GType suil_qt_wrapper_get_type(void);  // Accessor for SUIL_TYPE_QT_WRAPPER
+
+#define SUIL_TYPE_QT_WRAPPER (suil_qt_wrapper_get_type())
+#define SUIL_QT_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_QT_WRAPPER, SuilQtWrapper))
 
 G_DEFINE_TYPE(SuilQtWrapper, suil_qt_wrapper, GTK_TYPE_SOCKET)
 

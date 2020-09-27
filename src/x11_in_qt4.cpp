@@ -14,12 +14,13 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+#include "suil_config.h"
+#include "suil_internal.h"
+
 #include <QX11EmbedContainer>
 #include <QtEvents>
-#undef signals
 
-#include "./suil_config.h"
-#include "./suil_internal.h"
+#undef signals
 
 extern "C" {
 

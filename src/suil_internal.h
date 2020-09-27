@@ -17,10 +17,10 @@
 #ifndef SUIL_INTERNAL_H
 #define SUIL_INTERNAL_H
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "suil_config.h"
+
+#include "lv2/ui/ui.h"
+#include "suil/suil.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -33,10 +33,10 @@ static inline const char* dlerror(void) { return "Unknown error"; }
 #include <dlfcn.h>
 #endif
 
-#include "lv2/ui/ui.h"
-
-#include "suil/suil.h"
-#include "./suil_config.h"
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {

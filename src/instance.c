@@ -14,13 +14,19 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <assert.h>
+#include "suil_config.h"
+#include "suil_internal.h"
+
+#include "lv2/core/lv2.h"
+#include "lv2/ui/ui.h"
+#include "suil/suil.h"
+
+#include <dlfcn.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "./suil_config.h"
-#include "./suil_internal.h"
 
 #define GTK2_UI_URI  LV2_UI__GtkUI
 #define GTK3_UI_URI  LV2_UI__Gtk3UI

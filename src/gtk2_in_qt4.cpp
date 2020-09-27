@@ -14,14 +14,15 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+#include "suil_config.h"
+#include "suil_internal.h"
+
 #include <QX11EmbedContainer>
+
 #undef signals
 
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
-
-#include "./suil_config.h"
-#include "./suil_internal.h"
 
 extern "C" {
 

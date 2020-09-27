@@ -21,9 +21,9 @@
 #ifndef SUIL_SUIL_H
 #define SUIL_SUIL_H
 
-#include <stdint.h>
-
 #include "lv2/core/lv2.h"
+
+#include <stdbool.h>
 
 #ifdef _WIN32
 #    define SUIL_LIB_IMPORT __declspec(dllimport)
@@ -45,8 +45,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#else
-#    include <stdbool.h>
 #endif
 
 /**

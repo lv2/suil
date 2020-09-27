@@ -15,26 +15,36 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+#include "suil_config.h"
+#include "suil_internal.h"
+
+#include "lv2/core/lv2.h"
+#include "suil/suil.h"
+
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QWindow>
+#include <Qt>
+#include <QtGui>
 
 #undef signals
 
+#include <gdk/gdk.h>
+#include <glib-object.h>
+#include <glib.h>
 #include <gtk/gtk.h>
+#include <gobject/gclosure.h>
 
-#include "./suil_config.h"
-#include "./suil_internal.h"
+#include <dlfcn.h>
+#include <stdlib.h>
 
 extern "C" {
 
-typedef struct _SuilGtk2InQt5Wrapper SuilGtk2InQt5Wrapper;
-
-struct _SuilGtk2InQt5Wrapper {
+typedef struct {
 	QWidget*   host_widget;
 	QWindow*   window;
 	GtkWidget* plug;
-};
+} SuilGtk2InQt5Wrapper;
 
 static void
 on_size_request(GtkWidget*, GtkRequisition* requisition, gpointer user_data)

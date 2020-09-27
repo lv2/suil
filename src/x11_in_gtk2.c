@@ -14,30 +14,37 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <gdk/gdkx.h>
-#include <gtk/gtk.h>
-#include <string.h>
-#include <X11/Xatom.h>
+#include "suil_internal.h"
 
+#include "lv2/core/lv2.h"
 #include "lv2/options/options.h"
+#include "lv2/ui/ui.h"
 #include "lv2/urid/urid.h"
+#include "suil/suil.h"
 
-#include "./suil_internal.h"
+#include <X11/X.h>
+#include <X11/Xatom.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <gdk/gdk.h>
+#include <gdk/gdkx.h>
+#include <glib-object.h>
+#include <glib.h>
+#include <gobject/gclosure.h>
+#include <gtk/gtk.h>
 
-#define SUIL_TYPE_X11_WRAPPER (suil_x11_wrapper_get_type())
-#define SUIL_X11_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_X11_WRAPPER, SuilX11Wrapper))
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
-typedef struct _SuilX11Wrapper      SuilX11Wrapper;
-typedef struct _SuilX11WrapperClass SuilX11WrapperClass;
-typedef struct _SuilX11SizeHints    SuilX11SizeHints;
-
-struct _SuilX11SizeHints {
+typedef struct {
 	bool is_set;
 	int  width;
 	int  height;
-};
+} SuilX11SizeHints;
 
-struct _SuilX11Wrapper {
+typedef struct {
 	GtkSocket                   socket;
 	GtkPlug*                    plug;
 	SuilWrapper*                wrapper;
@@ -50,13 +57,16 @@ struct _SuilX11Wrapper {
 	SuilX11SizeHints            base_size;
 	SuilX11SizeHints            min_size;
 	bool                        query_wm;
-};
+} SuilX11Wrapper;
 
-struct _SuilX11WrapperClass {
+typedef struct {
 	GtkSocketClass parent_class;
-};
+} SuilX11WrapperClass;
 
 GType suil_x11_wrapper_get_type(void);  // Accessor for SUIL_TYPE_X11_WRAPPER
+
+#define SUIL_TYPE_X11_WRAPPER (suil_x11_wrapper_get_type())
+#define SUIL_X11_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_X11_WRAPPER, SuilX11Wrapper))
 
 G_DEFINE_TYPE(SuilX11Wrapper, suil_x11_wrapper, GTK_TYPE_SOCKET)
 

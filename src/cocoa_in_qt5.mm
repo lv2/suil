@@ -14,7 +14,8 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#import <Cocoa/Cocoa.h>
+#include "suil_config.h"
+#include "suil_internal.h"
 
 #include <QCloseEvent>
 #include <QMacCocoaViewContainer>
@@ -23,8 +24,7 @@
 
 #undef signals
 
-#include "./suil_config.h"
-#include "./suil_internal.h"
+#import <Cocoa/Cocoa.h>
 
 extern "C" {
 

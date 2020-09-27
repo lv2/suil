@@ -15,18 +15,26 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <QCloseEvent>
+#include "suil_internal.h"
+
+#include "lv2/core/lv2.h"
+#include "lv2/ui/ui.h"
+#include "suil/suil.h"
+
 #include <QResizeEvent>
+#include <QSize>
 #include <QTimerEvent>
 #include <QWidget>
 #include <QX11Info>
+#include <Qt>
+#include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#undef signals
+#include <stdint.h>
+#include <stdlib.h>
 
-#include "./suil_config.h"
-#include "./suil_internal.h"
+#undef signals
 
 extern "C" {
 

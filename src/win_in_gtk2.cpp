@@ -14,7 +14,10 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <string.h>
+#include "suil_internal.h"
+
+#include "lv2/options/options.h"
+#include "lv2/urid/urid.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdkwin32.h>
@@ -26,10 +29,7 @@
 #    define WM_MOUSEHWHEEL 0x020E
 #endif
 
-#include "./suil_internal.h"
-
-#include "lv2/options/options.h"
-#include "lv2/urid/urid.h"
+#include <string.h>
 
 extern "C" {
 

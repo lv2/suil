@@ -15,9 +15,11 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <X11/Xlib.h>
+#include "suil_internal.h"
 
-#include "./suil_internal.h"
+#include "suil/suil.h"
+
+#include <X11/Xlib.h>
 
 SUIL_LIB_EXPORT
 void
