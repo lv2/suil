@@ -41,7 +41,8 @@ def options(ctx):
          'no-gtk':    'do not build support for Gtk',
          'no-qt':     'do not build support for Qt (any version)',
          'no-qt4':    'do not build support for Qt4',
-         'no-qt5':    'do not build support for Qt5'})
+         'no-qt5':    'do not build support for Qt5',
+         'no-x11':    'do not build support for X11'})
 
 def configure(conf):
     conf.load('compiler_c', cache=True)
@@ -95,7 +96,9 @@ def configure(conf):
         conf.env.NODELETE_FLAGS = ['-Wl,-z,nodelete']
 
     conf.check_pkg('lv2 >= 1.16.0', uselib_store='LV2')
-    conf.check_pkg('x11', uselib_store='X11', system=True, mandatory=False)
+
+    if not conf.options.no_x11:
+        conf.check_pkg('x11', uselib_store='X11', system=True, mandatory=False)
 
     def enable_module(var_name):
         conf.define(var_name, 1)
@@ -114,10 +117,11 @@ def configure(conf):
             if conf.env.HAVE_GTK2:
                 conf.define('SUIL_OLD_GTK', 1)
 
-        conf.check_pkg('gtk+-x11-2.0',
-                       uselib_store='GTK2_X11',
-                       system=True,
-                       mandatory=False)
+        if not conf.options.no_x11:
+            conf.check_pkg('gtk+-x11-2.0',
+                           uselib_store='GTK2_X11',
+                           system=True,
+                           mandatory=False)
 
         if not conf.options.no_cocoa:
             conf.check_pkg('gtk+-quartz-2.0',
@@ -130,10 +134,11 @@ def configure(conf):
                        system=True,
                        mandatory=False)
 
-        conf.check_pkg('gtk+-x11-3.0 >= 3.14.0',
-                       uselib_store='GTK3_X11',
-                       system=True,
-                       mandatory=False)
+        if not conf.options.no_x11:
+            conf.check_pkg('gtk+-x11-3.0 >= 3.14.0',
+                           uselib_store='GTK3_X11',
+                           system=True,
+                           mandatory=False)
 
     if not conf.options.no_qt:
         if not conf.options.no_qt4:
@@ -147,10 +152,12 @@ def configure(conf):
                            uselib_store='QT5',
                            system=True,
                            mandatory=False)
-            conf.check_pkg('Qt5X11Extras >= 5.1.0',
-                           uselib_store='QT5_X11',
-                           system=True,
-                           mandatory=False)
+
+            if not conf.options.no_x11:
+                conf.check_pkg('Qt5X11Extras >= 5.1.0',
+                               uselib_store='QT5_X11',
+                               system=True,
+                               mandatory=False)
 
             if not conf.options.no_cocoa:
                 if conf.check_cxx(header_name = 'QMacCocoaViewContainer',
