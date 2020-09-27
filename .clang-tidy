@@ -6,7 +6,6 @@ Checks: >
   -clang-analyzer-core.CallAndMessage,
   -hicpp-signed-bitwise,
   -llvm-header-guard,
-  -readability-else-after-return,
   -readability-non-const-parameter,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

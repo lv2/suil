@@ -46,36 +46,39 @@ suil_ui_supported(const char* host_type_uri,
 		SUIL_WRAPPING_NATIVE      = 1,
 		SUIL_WRAPPING_EMBEDDED    = 2
 	};
+
 	if (!strcmp(host_type_uri, ui_type_uri)) {
 		return SUIL_WRAPPING_NATIVE;
-	} else if ((!strcmp(host_type_uri, GTK2_UI_URI)
-	            && !strcmp(ui_type_uri, QT4_UI_URI))
-	           || (!strcmp(host_type_uri, GTK2_UI_URI)
-	               && !strcmp(ui_type_uri, QT5_UI_URI))
-	           || (!strcmp(host_type_uri, QT4_UI_URI)
-	               && !strcmp(ui_type_uri, GTK2_UI_URI))
-	           || (!strcmp(host_type_uri, QT5_UI_URI)
-	               && !strcmp(ui_type_uri, GTK2_UI_URI))
-	           || (!strcmp(host_type_uri, GTK2_UI_URI)
-	               && !strcmp(ui_type_uri, X11_UI_URI))
-	           || (!strcmp(host_type_uri, GTK3_UI_URI)
-	               && !strcmp(ui_type_uri, X11_UI_URI))
-	           || (!strcmp(host_type_uri, GTK3_UI_URI)
-	               && !strcmp(ui_type_uri, QT5_UI_URI))
-	           || (!strcmp(host_type_uri, GTK2_UI_URI)
-	               && !strcmp(ui_type_uri, WIN_UI_URI))
-	           || (!strcmp(host_type_uri, GTK2_UI_URI)
-	               && !strcmp(ui_type_uri, COCOA_UI_URI))
-	           || (!strcmp(host_type_uri, QT4_UI_URI)
-	               && !strcmp(ui_type_uri, X11_UI_URI))
-	           || (!strcmp(host_type_uri, QT5_UI_URI)
-	               && !strcmp(ui_type_uri, X11_UI_URI))
-	           || (!strcmp(host_type_uri, QT5_UI_URI)
-	               && !strcmp(ui_type_uri, COCOA_UI_URI))) {
-		return SUIL_WRAPPING_EMBEDDED;
-	} else {
-		return SUIL_WRAPPING_UNSUPPORTED;
 	}
+
+	if ((!strcmp(host_type_uri, GTK2_UI_URI)
+	     && !strcmp(ui_type_uri, QT4_UI_URI))
+	    || (!strcmp(host_type_uri, GTK2_UI_URI)
+	        && !strcmp(ui_type_uri, QT5_UI_URI))
+	    || (!strcmp(host_type_uri, QT4_UI_URI)
+	        && !strcmp(ui_type_uri, GTK2_UI_URI))
+	    || (!strcmp(host_type_uri, QT5_UI_URI)
+	        && !strcmp(ui_type_uri, GTK2_UI_URI))
+	    || (!strcmp(host_type_uri, GTK2_UI_URI)
+	        && !strcmp(ui_type_uri, X11_UI_URI))
+	    || (!strcmp(host_type_uri, GTK3_UI_URI)
+	        && !strcmp(ui_type_uri, X11_UI_URI))
+	    || (!strcmp(host_type_uri, GTK3_UI_URI)
+	        && !strcmp(ui_type_uri, QT5_UI_URI))
+	    || (!strcmp(host_type_uri, GTK2_UI_URI)
+	        && !strcmp(ui_type_uri, WIN_UI_URI))
+	    || (!strcmp(host_type_uri, GTK2_UI_URI)
+	        && !strcmp(ui_type_uri, COCOA_UI_URI))
+	    || (!strcmp(host_type_uri, QT4_UI_URI)
+	        && !strcmp(ui_type_uri, X11_UI_URI))
+	    || (!strcmp(host_type_uri, QT5_UI_URI)
+	        && !strcmp(ui_type_uri, X11_UI_URI))
+	    || (!strcmp(host_type_uri, QT5_UI_URI)
+	        && !strcmp(ui_type_uri, COCOA_UI_URI))) {
+		return SUIL_WRAPPING_EMBEDDED;
+	}
+
+	return SUIL_WRAPPING_UNSUPPORTED;
 }
 
 static SuilWrapper*
@@ -228,7 +231,9 @@ suil_instance_new(SuilHost*                 host,
 		const LV2UI_Descriptor* ld = df(i);
 		if (!ld) {
 			break;
-		} else if (!strcmp(ld->URI, ui_uri)) {
+		}
+
+		if (!strcmp(ld->URI, ui_uri)) {
 			descriptor = ld;
 			break;
 		}
