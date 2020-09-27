@@ -59,6 +59,8 @@ def configure(conf):
         autowaf.add_compiler_flags(conf.env, '*', {
             'gcc': [
                 '-Wno-padded',
+                '-Wno-suggest-attribute=const',
+                '-Wno-suggest-attribute=pure',
             ],
             'clang': [
                 '-Wno-atomic-implicit-seq-cst',
