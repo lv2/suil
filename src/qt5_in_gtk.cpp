@@ -17,30 +17,31 @@
 
 #include "suil_internal.h"
 
-#include "suil/suil.h"
-#include "lv2/options/options.h"
-#include "lv2/urid/urid.h"
 #include "lv2/core/lv2.h"
+#include "lv2/options/options.h"
 #include "lv2/ui/ui.h"
+#include "lv2/urid/urid.h"
+#include "suil/suil.h"
 
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QWindow>
+#include <Qt>
 #include <QtGui>
 
 #undef signals
 
-#include <gtk/gtk.h>
 #include <glib-object.h>
 #include <glib.h>
 #include <gobject/gclosure.h>
+#include <gtk/gtk.h>
 
 #if GTK_MAJOR_VERSION == 3
 #include <gtk/gtkx.h>
 #endif
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 extern "C" {
 

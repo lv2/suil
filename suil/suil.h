@@ -24,6 +24,7 @@
 #include "lv2/core/lv2.h"
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifdef _WIN32
 #    define SUIL_LIB_IMPORT __declspec(dllimport)

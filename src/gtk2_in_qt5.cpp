@@ -33,10 +33,10 @@
 #include <gdk/gdk.h>
 #include <glib-object.h>
 #include <glib.h>
-#include <gtk/gtk.h>
 #include <gobject/gclosure.h>
+#include <gtk/gtk.h>
 
-#include <stdlib.h>
+#include <cstdlib>
 
 extern "C" {
 

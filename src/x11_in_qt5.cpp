@@ -31,8 +31,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include <stdint.h>
-#include <stdlib.h>
+#include <cstdint>
+#include <cstdlib>
 
 #undef signals
 

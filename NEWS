@@ -1,3 +1,9 @@
+suil (0.10.9) unstable;
+
+  * Clean up minor code issues
+
+ -- David Robillard <d@drobilla.net>  Tue, 15 Dec 2020 20:55:16 +0000
+
 suil (0.10.8) stable;
 
   * Fix X11 in Gtk size regressions (thanks Robin Gareus)

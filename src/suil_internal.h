@@ -20,10 +20,14 @@
 #include "dylib.h"
 #include "suil_config.h"
 
+#include "lv2/core/lv2.h"
 #include "lv2/ui/ui.h"
 #include "suil/suil.h"
 
-#include <assert.h>
+#ifndef _WIN32
+#	include <dlfcn.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
