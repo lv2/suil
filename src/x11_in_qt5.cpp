@@ -145,9 +145,7 @@ wrapper_free(SuilWrapper* wrapper)
 {
 	SuilX11InQt5Wrapper* impl = (SuilX11InQt5Wrapper*)wrapper->impl;
 
-	if (impl->host_widget) {
-		delete impl->host_widget;
-	}
+	delete impl->host_widget;
 
 	free(impl);
 }

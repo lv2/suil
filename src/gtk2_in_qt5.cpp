@@ -74,9 +74,7 @@ wrapper_free(SuilWrapper* wrapper)
 		gtk_widget_destroy(impl->plug);
 	}
 
-	if (impl->host_widget) {
-		delete impl->host_widget;
-	}
+	delete impl->host_widget;
 
 	free(impl);
 }
