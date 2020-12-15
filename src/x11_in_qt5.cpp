@@ -52,6 +52,9 @@ public:
 	SuilQX11Widget(const SuilQX11Widget&) = delete;
 	SuilQX11Widget& operator=(const SuilQX11Widget&) = delete;
 
+	SuilQX11Widget(SuilQX11Widget&&) = delete;
+	SuilQX11Widget& operator=(SuilQX11Widget&&) = delete;
+
 	~SuilQX11Widget() override;
 
 	void start_idle(SuilInstance*               instance,
