@@ -49,14 +49,14 @@ struct SuilHostImpl {
 	char**                  argv;
 };
 
-struct _SuilWrapper;
+struct SuilWrapperImpl;
 
-typedef void (*SuilWrapperFreeFunc)(struct _SuilWrapper*);
+typedef void (*SuilWrapperFreeFunc)(struct SuilWrapperImpl*);
 
-typedef int (*SuilWrapperWrapFunc)(struct _SuilWrapper* wrapper,
+typedef int (*SuilWrapperWrapFunc)(struct SuilWrapperImpl* wrapper,
                                    SuilInstance*        instance);
 
-typedef struct _SuilWrapper {
+typedef struct SuilWrapperImpl {
 	SuilWrapperWrapFunc wrap;
 	SuilWrapperFreeFunc free;
 	void*               lib;
