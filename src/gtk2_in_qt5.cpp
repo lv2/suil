@@ -93,13 +93,15 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	gtk_container_add(GTK_CONTAINER(plug), widget);
 	gtk_widget_show_all(plug);
 
-	const WId    wid       = (WId)gtk_plug_get_id((GtkPlug*)plug);
-	QWindow*     window    = QWindow::fromWinId(wid);
-	QWidget*     container = QWidget::createWindowContainer(window, wrap);
-	QVBoxLayout* layout    = new QVBoxLayout();
+	const WId wid    = (WId)gtk_plug_get_id((GtkPlug*)plug);
+	QWindow*  window = QWindow::fromWinId(wid);
+	QWidget*  container =
+	    QWidget::createWindowContainer(window, wrap, Qt::WindowFlags());
+
+	QVBoxLayout* layout = new QVBoxLayout();
 	layout->setMargin(0);
 	layout->setSpacing(0);
-	layout->addWidget(container);
+	layout->addWidget(container, 0, Qt::Alignment());
 	wrap->setLayout(layout);
 
 #ifdef SUIL_OLD_GTK

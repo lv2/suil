@@ -60,7 +60,7 @@ public:
 		_instance   = instance;
 		_idle_iface = idle_iface;
 		if (_idle_iface && _ui_timer == 0) {
-			_ui_timer = this->startTimer(30);
+			_ui_timer = this->startTimer(30, Qt::CoarseTimer);
 		}
 	}
 

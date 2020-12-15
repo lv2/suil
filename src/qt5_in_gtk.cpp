@@ -150,7 +150,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 {
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(wrapper->impl);
 
-	wrap->qembed   = new QWidget();
+	wrap->qembed   = new QWidget(nullptr, Qt::WindowFlags());
 	wrap->wrapper  = wrapper;
 	wrap->instance = instance;
 
@@ -158,7 +158,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	QVBoxLayout* layout  = new QVBoxLayout();
 	layout->setMargin(0);
 	layout->setSpacing(0);
-	layout->addWidget(qwidget);
+	layout->addWidget(qwidget, 0, Qt::Alignment());
 
 	wrap->qembed->setLayout(layout);
 
