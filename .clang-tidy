@@ -14,6 +14,8 @@ Checks: >
   -cppcoreguidelines-owning-memory,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-pro-type-cstyle-cast,
+  -fuchsia-default-arguments,
+  -fuchsia-default-arguments-calls,
   -google-runtime-int,
   -hicpp-signed-bitwise,
   -llvm-header-guard,
