@@ -1,0 +1,5 @@
+.. toctree::
+
+   suil
+   overview
+   reference
