@@ -20,7 +20,6 @@ Checks: >
   -hicpp-signed-bitwise,
   -llvm-header-guard,
   -llvmlibc-*,
-  -modernize-use-nullptr,
   -modernize-use-trailing-return-type,
   -modernize-use-using,
   -readability-implicit-bool-conversion,

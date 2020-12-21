@@ -78,16 +78,16 @@ suil_qt_wrapper_finalize(GObject* gobject)
 
 	if (self->instance->handle) {
 		self->instance->descriptor->cleanup(self->instance->handle);
-		self->instance->handle = NULL;
+		self->instance->handle = nullptr;
 	}
 
 	if (self->qembed) {
 		self->qembed->deleteLater();
 	}
 
-	self->qembed        = NULL;
-	self->idle_iface    = NULL;
-	self->wrapper->impl = NULL;
+	self->qembed        = nullptr;
+	self->idle_iface    = nullptr;
+	self->wrapper->impl = nullptr;
 
 	G_OBJECT_CLASS(suil_qt_wrapper_parent_class)->finalize(gobject);
 }
@@ -103,10 +103,10 @@ suil_qt_wrapper_class_init(SuilQtWrapperClass* klass)
 static void
 suil_qt_wrapper_init(SuilQtWrapper* self)
 {
-	self->qembed     = NULL;
-	self->wrapper    = NULL;
-	self->instance   = NULL;
-	self->idle_iface = NULL;
+	self->qembed     = nullptr;
+	self->wrapper    = nullptr;
+	self->instance   = nullptr;
+	self->idle_iface = nullptr;
 	self->idle_id    = 0;
 	self->idle_ms    = 1000 / 30;  // 30 Hz default
 }
@@ -167,7 +167,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 
 	instance->host_widget = GTK_WIDGET(wrap);
 
-	const LV2UI_Idle_Interface* idle_iface = NULL;
+	const LV2UI_Idle_Interface* idle_iface = nullptr;
 	if (instance->descriptor->extension_data) {
 		idle_iface = (const LV2UI_Idle_Interface*)
 			instance->descriptor->extension_data(LV2_UI__idleInterface);
@@ -204,20 +204,20 @@ suil_wrapper_new(SuilHost*,
 	wrapper->free = wrapper_free;
 
 	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(
-		g_object_new(SUIL_TYPE_QT_WRAPPER, NULL));
+		g_object_new(SUIL_TYPE_QT_WRAPPER, nullptr));
 
-	wrap->wrapper = NULL;
+	wrap->wrapper = nullptr;
 	wrapper->impl = wrap;
 
 	wrapper->resize.handle    = wrap;
 	wrapper->resize.ui_resize = suil_qt_wrapper_resize;
 
 	suil_add_feature(features, &n_features, LV2_UI__resize, &wrapper->resize);
-	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
+	suil_add_feature(features, &n_features, LV2_UI__idleInterface, nullptr);
 
 	// Scan for URID map and options
-	LV2_URID_Map*       map     = NULL;
-	LV2_Options_Option* options = NULL;
+	LV2_URID_Map*       map     = nullptr;
+	LV2_Options_Option* options = nullptr;
 	for (LV2_Feature** f = *features; *f && (!map || !options); ++f) {
 		if (!strcmp((*f)->URI, LV2_OPTIONS__options)) {
 			options = (LV2_Options_Option*)(*f)->data;

@@ -66,7 +66,7 @@ wrapper_free(SuilWrapper* wrapper)
 	SuilGtk2InQt5Wrapper* impl = (SuilGtk2InQt5Wrapper*)wrapper->impl;
 
 	if (impl->window) {
-		impl->window->setParent(NULL);
+		impl->window->setParent(nullptr);
 		delete impl->window;
 	}
 
@@ -84,7 +84,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
 {
 	SuilGtk2InQt5Wrapper* const impl   = (SuilGtk2InQt5Wrapper*)wrapper->impl;
-	QWidget* const              wrap   = new QWidget(NULL, Qt::Window);
+	QWidget* const              wrap   = new QWidget(nullptr, Qt::Window);
 	GtkWidget* const            plug   = gtk_plug_new(0);
 	GtkWidget* const            widget = (GtkWidget*)instance->ui_widget;
 
@@ -143,9 +143,9 @@ suil_wrapper_new(SuilHost* host,
 		if (!host->gtk_lib) {
 			SUIL_ERRORF("Failed to open %s (%s)\n",
 			            SUIL_GTK2_LIB_NAME, dylib_error());
-			return NULL;
+			return nullptr;
 		}
-		gtk_init(NULL, NULL);
+		gtk_init(nullptr, nullptr);
 	}
 
 	/* Create wrapper implementation. */
