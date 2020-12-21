@@ -232,7 +232,11 @@ def configure(conf):
     conf.define('SUIL_MODULE_EXT', module_ext)
 
     conf.run_env.append_unique('SUIL_MODULE_DIR', [conf.build_path()])
-    autowaf.set_lib_env(conf, 'suil', SUIL_VERSION)
+
+    # Set up environment for building/using as a subproject
+    autowaf.set_lib_env(conf, 'suil', SUIL_VERSION,
+                        include_path=str(conf.path.find_node('include')))
+
     conf.write_config_header('suil_config.h', remove=False)
 
     autowaf.display_summary(
@@ -293,10 +297,10 @@ def build(bld):
     # Shared Library
     if bld.env.BUILD_SHARED:
         bld(features        = 'c cshlib',
-            export_includes = ['.'],
+            export_includes = ['include'],
             source          = 'src/host.c src/instance.c',
             target          = 'suil-%s' % SUIL_MAJOR_VERSION,
-            includes        = ['.'],
+            includes        = ['.', 'include'],
             defines         = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             name            = 'libsuil',
             vnum            = SUIL_VERSION,
@@ -308,10 +312,10 @@ def build(bld):
     # Static library
     if bld.env.BUILD_STATIC:
         bld(features        = 'c cstlib',
-            export_includes = ['.'],
+            export_includes = ['include'],
             source          = 'src/host.c src/instance.c',
             target          = 'suil-%s' % SUIL_MAJOR_VERSION,
-            includes        = ['.'],
+            includes        = ['.', 'include'],
             defines         = ['SUIL_INTERNAL'],
             name            = 'libsuil_static',
             vnum            = SUIL_VERSION,
@@ -324,7 +328,7 @@ def build(bld):
         bld(features     = 'cxx cxxshlib',
             source       = 'src/gtk2_in_qt4.cpp',
             target       = 'suil_gtk2_in_qt4',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cxxflags     = cflags,
@@ -335,7 +339,7 @@ def build(bld):
         bld(features     = 'cxx cxxshlib',
             source       = 'src/gtk2_in_qt5.cpp',
             target       = 'suil_gtk2_in_qt5',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cxxflags     = cflags,
@@ -346,7 +350,7 @@ def build(bld):
         bld(features     = 'cxx cxxshlib',
             source       = 'src/qt4_in_gtk2.cpp',
             target       = 'suil_qt4_in_gtk2',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cxxflags     = cflags,
@@ -358,7 +362,7 @@ def build(bld):
         bld(features     = 'cxx cxxshlib',
             source       = 'src/qt5_in_gtk.cpp',
             target       = 'suil_qt5_in_gtk2',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cxxflags     = cflags,
@@ -370,7 +374,7 @@ def build(bld):
         bld(features     = 'c cshlib',
             source       = 'src/x11_in_gtk2.c',
             target       = 'suil_x11_in_gtk2',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cflags       = cflags,
@@ -382,7 +386,7 @@ def build(bld):
         bld(features     = 'c cshlib',
             source       = 'src/x11_in_gtk3.c',
             target       = 'suil_x11_in_gtk3',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cflags       = cflags,
@@ -394,7 +398,7 @@ def build(bld):
         bld(features     = 'cxx cxxshlib',
             source       = 'src/qt5_in_gtk.cpp',
             target       = 'suil_qt5_in_gtk3',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cflags       = cflags,
@@ -406,7 +410,7 @@ def build(bld):
         bld(features     = 'cxx cshlib',
             source       = 'src/cocoa_in_gtk2.mm',
             target       = 'suil_cocoa_in_gtk2',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cflags       = cflags,
@@ -418,7 +422,7 @@ def build(bld):
         bld(features     = 'cxx cxxshlib',
             source       = 'src/win_in_gtk2.cpp',
             target       = 'suil_win_in_gtk2',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cflags       = cflags,
@@ -430,7 +434,7 @@ def build(bld):
         bld(features     = 'cxx cxxshlib',
             source       = 'src/x11_in_qt4.cpp',
             target       = 'suil_x11_in_qt4',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cflags       = cflags,
@@ -441,7 +445,7 @@ def build(bld):
         bld(features     = 'cxx cxxshlib',
             source       = 'src/x11_in_qt5.cpp',
             target       = 'suil_x11_in_qt5',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cflags       = cflags,
@@ -452,7 +456,7 @@ def build(bld):
         bld(features     = 'cxx cxxshlib',
             source       = 'src/cocoa_in_qt5.mm',
             target       = 'suil_cocoa_in_qt5',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cflags       = cflags,
@@ -464,7 +468,7 @@ def build(bld):
         bld(features     = 'c cshlib',
             source       = 'src/x11.c',
             target       = 'suil_x11',
-            includes     = ['.'],
+            includes     = ['.', 'include'],
             defines      = ['SUIL_SHARED', 'SUIL_INTERNAL'],
             install_path = module_dir,
             cflags       = cflags,
