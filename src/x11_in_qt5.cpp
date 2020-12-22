@@ -144,7 +144,7 @@ typedef struct {
 static void
 wrapper_free(SuilWrapper* wrapper)
 {
-	SuilX11InQt5Wrapper* impl = (SuilX11InQt5Wrapper*)wrapper->impl;
+	auto* impl = (SuilX11InQt5Wrapper*)wrapper->impl;
 
 	delete impl->host_widget;
 
@@ -155,10 +155,10 @@ static int
 wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
 {
-	SuilX11InQt5Wrapper* const impl    = (SuilX11InQt5Wrapper*)wrapper->impl;
-	SuilQX11Widget* const      ew      = impl->parent;
-	Display* const             display = QX11Info::display();
-	const Window               window  = (Window)instance->ui_widget;
+	auto* const           impl    = (SuilX11InQt5Wrapper*)wrapper->impl;
+	SuilQX11Widget* const ew      = impl->parent;
+	Display* const        display = QX11Info::display();
+	const auto            window  = (Window)instance->ui_widget;
 
 	XWindowAttributes attrs{};
 	XSizeHints        hints{};
@@ -182,9 +182,10 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	}
 
 	if (instance->descriptor->extension_data) {
-		const LV2UI_Idle_Interface* idle_iface
-			= (const LV2UI_Idle_Interface*)
-				instance->descriptor->extension_data(LV2_UI__idleInterface);
+		const auto* idle_iface =
+		    (const LV2UI_Idle_Interface*)instance->descriptor->extension_data(
+		        LV2_UI__idleInterface);
+
 		ew->start_idle(instance, idle_iface);
 	}
 
@@ -198,7 +199,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 static int
 wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 {
-	QWidget* const ew = (QWidget*)handle;
+	auto* const ew = (QWidget*)handle;
 	ew->resize(width, height);
 	return 0;
 }
@@ -211,14 +212,14 @@ suil_wrapper_new(SuilHost*,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
-	SuilX11InQt5Wrapper* const impl = (SuilX11InQt5Wrapper*)
-		calloc(1, sizeof(SuilX11InQt5Wrapper));
+	auto* const impl =
+	    (SuilX11InQt5Wrapper*)calloc(1, sizeof(SuilX11InQt5Wrapper));
 
-	SuilWrapper* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
+	auto* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = wrapper_free;
 
-	SuilQX11Widget* const ew = new SuilQX11Widget(nullptr, Qt::Window);
+	auto* const ew = new SuilQX11Widget(nullptr, Qt::Window);
 
 	impl->parent = ew;
 

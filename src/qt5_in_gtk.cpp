@@ -154,8 +154,8 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	wrap->wrapper  = wrapper;
 	wrap->instance = instance;
 
-	QWidget*     qwidget = (QWidget*)instance->ui_widget;
-	QVBoxLayout* layout  = new QVBoxLayout();
+	auto* qwidget = (QWidget*)instance->ui_widget;
+	auto* layout  = new QVBoxLayout();
 	layout->setMargin(0);
 	layout->setSpacing(0);
 	layout->addWidget(qwidget, 0, Qt::Alignment());
@@ -199,7 +199,7 @@ suil_wrapper_new(SuilHost*,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
-	SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
+	auto* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = wrapper_free;
 

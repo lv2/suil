@@ -4,7 +4,6 @@ Checks: >
   -*-named-parameter,
   -*-no-malloc,
   -*-uppercase-literal-suffix,
-  -*-use-auto,
   -*-vararg,
   -bugprone-suspicious-string-compare,
   -clang-analyzer-core.CallAndMessage,

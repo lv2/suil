@@ -49,21 +49,21 @@ typedef struct {
 static void
 on_size_request(GtkWidget*, GtkRequisition* requisition, gpointer user_data)
 {
-	QWidget* const wrap = (QWidget*)user_data;
+	auto* const wrap = (QWidget*)user_data;
 	wrap->setMinimumSize(requisition->width, requisition->height);
 }
 
 static void
 on_size_allocate(GtkWidget*, GdkRectangle* allocation, gpointer user_data)
 {
-	QWidget* const wrap = (QWidget*)user_data;
+	auto* const wrap = (QWidget*)user_data;
 	wrap->resize(allocation->width, allocation->height);
 }
 
 static void
 wrapper_free(SuilWrapper* wrapper)
 {
-	SuilGtk2InQt5Wrapper* impl = (SuilGtk2InQt5Wrapper*)wrapper->impl;
+	auto* impl = (SuilGtk2InQt5Wrapper*)wrapper->impl;
 
 	if (impl->window) {
 		impl->window->setParent(nullptr);
@@ -83,10 +83,10 @@ static int
 wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
 {
-	SuilGtk2InQt5Wrapper* const impl   = (SuilGtk2InQt5Wrapper*)wrapper->impl;
-	QWidget* const              wrap   = new QWidget(nullptr, Qt::Window);
-	GtkWidget* const            plug   = gtk_plug_new(0);
-	GtkWidget* const            widget = (GtkWidget*)instance->ui_widget;
+	auto* const      impl   = (SuilGtk2InQt5Wrapper*)wrapper->impl;
+	auto* const      wrap   = new QWidget(nullptr, Qt::Window);
+	GtkWidget* const plug   = gtk_plug_new(0);
+	auto* const      widget = (GtkWidget*)instance->ui_widget;
 
 	gtk_container_add(GTK_CONTAINER(plug), widget);
 	gtk_widget_show_all(plug);
@@ -96,7 +96,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	QWidget*  container =
 	    QWidget::createWindowContainer(window, wrap, Qt::WindowFlags());
 
-	QVBoxLayout* layout = new QVBoxLayout();
+	auto* layout = new QVBoxLayout();
 	layout->setMargin(0);
 	layout->setSpacing(0);
 	layout->addWidget(container, 0, Qt::Alignment());
@@ -149,10 +149,10 @@ suil_wrapper_new(SuilHost* host,
 	}
 
 	/* Create wrapper implementation. */
-	SuilGtk2InQt5Wrapper* const impl = (SuilGtk2InQt5Wrapper*)
-		calloc(1, sizeof(SuilGtk2InQt5Wrapper));
+	auto* const impl =
+	    (SuilGtk2InQt5Wrapper*)calloc(1, sizeof(SuilGtk2InQt5Wrapper));
 
-	SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
+	auto* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = wrapper_free;
 	wrapper->impl = impl;
