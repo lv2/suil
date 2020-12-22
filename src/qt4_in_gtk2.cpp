@@ -29,8 +29,8 @@ extern "C" {
 #define SUIL_TYPE_QT_WRAPPER (suil_qt_wrapper_get_type())
 #define SUIL_QT_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_QT_WRAPPER, SuilQtWrapper))
 
-typedef struct _SuilQtWrapper      SuilQtWrapper;
-typedef struct _SuilQtWrapperClass SuilQtWrapperClass;
+using SuilQtWrapper      = _SuilQtWrapper;
+using SuilQtWrapperClass = _SuilQtWrapperClass;
 
 struct _SuilQtWrapper {
 	GtkSocket        socket;

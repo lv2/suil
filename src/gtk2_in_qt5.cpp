@@ -40,11 +40,11 @@
 
 extern "C" {
 
-typedef struct {
+struct SuilGtk2InQt5Wrapper {
 	QWidget*   host_widget;
 	QWindow*   window;
 	GtkWidget* plug;
-} SuilGtk2InQt5Wrapper;
+};
 
 static void
 on_size_request(GtkWidget*, GtkRequisition* requisition, gpointer user_data)

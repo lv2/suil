@@ -136,10 +136,10 @@ private:
 
 SuilQX11Widget::~SuilQX11Widget() = default;
 
-typedef struct {
+struct SuilX11InQt5Wrapper {
 	QWidget*        host_widget;
 	SuilQX11Widget* parent;
-} SuilX11InQt5Wrapper;
+};
 
 static void
 wrapper_free(SuilWrapper* wrapper)

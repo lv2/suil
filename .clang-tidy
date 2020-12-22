@@ -19,7 +19,6 @@ Checks: >
   -llvm-header-guard,
   -llvmlibc-*,
   -modernize-use-trailing-return-type,
-  -modernize-use-using,
   -readability-implicit-bool-conversion,
   -readability-non-const-parameter,
 WarningsAsErrors: '*'

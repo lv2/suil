@@ -27,7 +27,7 @@
 
 extern "C" {
 
-typedef struct _SuilGtk2InQt4Wrapper SuilGtk2InQt4Wrapper;
+using SuilGtk2InQt4Wrapper = _SuilGtk2InQt4Wrapper;
 
 struct _SuilGtk2InQt4Wrapper {
 	QX11EmbedContainer* host_widget;

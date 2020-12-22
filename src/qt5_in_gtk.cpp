@@ -45,7 +45,7 @@
 
 extern "C" {
 
-typedef struct {
+struct SuilQtWrapper {
 	GtkSocket                   socket;
 	QWidget*                    qembed;
 	SuilWrapper*                wrapper;
@@ -53,11 +53,11 @@ typedef struct {
 	const LV2UI_Idle_Interface* idle_iface;
 	guint                       idle_id;
 	guint                       idle_ms;
-} SuilQtWrapper;
+};
 
-typedef struct {
+struct SuilQtWrapperClass {
 	GtkSocketClass parent_class;
-} SuilQtWrapperClass;
+};
 
 GType suil_qt_wrapper_get_type(void);  // Accessor for SUIL_TYPE_QT_WRAPPER
 

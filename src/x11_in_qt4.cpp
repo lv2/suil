@@ -24,10 +24,10 @@
 
 extern "C" {
 
-typedef struct {
+struct SuilX11InQt4Wrapper {
 	QX11EmbedContainer* host_widget;
 	QX11EmbedWidget*    parent;
-} SuilX11InQt4Wrapper;
+};
 
 class SuilQX11Container : public QX11EmbedContainer
 {
