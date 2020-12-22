@@ -5,7 +5,6 @@ Checks: >
   -*-no-malloc,
   -*-uppercase-literal-suffix,
   -*-use-auto,
-  -*-use-equals-default,
   -*-vararg,
   -bugprone-suspicious-string-compare,
   -clang-analyzer-core.CallAndMessage,

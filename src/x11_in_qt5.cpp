@@ -134,9 +134,7 @@ private:
 	int                         _ui_timer;
 };
 
-SuilQX11Widget::~SuilQX11Widget()
-{
-}
+SuilQX11Widget::~SuilQX11Widget() = default;
 
 typedef struct {
 	QWidget*        host_widget;
