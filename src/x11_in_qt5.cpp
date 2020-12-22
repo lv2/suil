@@ -43,8 +43,8 @@ class SuilQX11Widget : public QWidget
 public:
 	SuilQX11Widget(QWidget* parent, Qt::WindowFlags wflags)
 		: QWidget(parent, wflags)
-		, _instance(NULL)
-		, _idle_iface(NULL)
+		, _instance(nullptr)
+		, _idle_iface(nullptr)
 		, _window(0)
 		, _ui_timer(0)
 	{}
@@ -220,7 +220,7 @@ suil_wrapper_new(SuilHost*,
 	wrapper->wrap = wrapper_wrap;
 	wrapper->free = wrapper_free;
 
-	SuilQX11Widget* const ew = new SuilQX11Widget(NULL, Qt::Window);
+	SuilQX11Widget* const ew = new SuilQX11Widget(nullptr, Qt::Window);
 
 	impl->parent = ew;
 
@@ -231,7 +231,7 @@ suil_wrapper_new(SuilHost*,
 	void* parent_id = (void*)(intptr_t)ew->winId();
 	suil_add_feature(features, &n_features, LV2_UI__parent, parent_id);
 	suil_add_feature(features, &n_features, LV2_UI__resize, &wrapper->resize);
-	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
+	suil_add_feature(features, &n_features, LV2_UI__idleInterface, nullptr);
 
 	return wrapper;
 }

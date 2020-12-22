@@ -62,8 +62,8 @@ suil_win_wrapper_finalize(GObject* gobject)
 {
 	SuilWinWrapper* const self = SUIL_WIN_WRAPPER(gobject);
 
-	self->wrapper->impl = NULL;
-	self->instance      = NULL;
+	self->wrapper->impl = nullptr;
+	self->instance      = nullptr;
 
 	G_OBJECT_CLASS(suil_win_wrapper_parent_class)->finalize(gobject);
 }
@@ -72,7 +72,7 @@ static void
 suil_win_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
 {
 	SuilWinWrapper* const self = SUIL_WIN_WRAPPER(widget);
-	g_return_if_fail(self != NULL);
+	g_return_if_fail(self != nullptr);
 
 	widget->allocation = *allocation;
 	if (gtk_widget_get_realized(widget)) {
@@ -104,9 +104,9 @@ suil_win_wrapper_class_init(SuilWinWrapperClass* klass)
 static void
 suil_win_wrapper_init(SuilWinWrapper* self)
 {
-	self->instance   = NULL;
-	self->flt_win    = NULL;
-	self->idle_iface = NULL;
+	self->instance   = nullptr;
+	self->flt_win    = nullptr;
+	self->idle_iface = nullptr;
 	self->idle_ms    = 1000 / 30;  // 30 Hz default
 }
 
@@ -135,7 +135,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	wrap->wrapper         = wrapper;
 	wrap->instance        = instance;
 
-	const LV2UI_Idle_Interface* idle_iface = NULL;
+	const LV2UI_Idle_Interface* idle_iface = nullptr;
 	if (instance->descriptor->extension_data) {
 		idle_iface = (const LV2UI_Idle_Interface*)
 			instance->descriptor->extension_data(LV2_UI__idleInterface);
@@ -189,7 +189,7 @@ suil_wrapper_new(SuilHost*      host,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
-	GtkWidget* parent = NULL;
+	GtkWidget* parent = nullptr;
 	for (unsigned i = 0; i < n_features; ++i) {
 		if (!strcmp((*features)[i]->URI, LV2_UI__parent)) {
 			parent = (GtkWidget*)(*features)[i]->data;
@@ -199,7 +199,7 @@ suil_wrapper_new(SuilHost*      host,
 	if (!GTK_CONTAINER(parent)) {
 		SUIL_ERRORF("No GtkContainer parent given for %s UI\n",
 		            ui_type_uri);
-		return NULL;
+		return nullptr;
 	}
 
 	SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
@@ -207,9 +207,9 @@ suil_wrapper_new(SuilHost*      host,
 	wrapper->free = wrapper_free;
 
 	SuilWinWrapper* const wrap = SUIL_WIN_WRAPPER(
-		g_object_new(SUIL_TYPE_WIN_WRAPPER, NULL));
+		g_object_new(SUIL_TYPE_WIN_WRAPPER, nullptr));
 
-	wrap->wrapper = NULL;
+	wrap->wrapper = nullptr;
 
 	wrapper->impl             = wrap;
 	wrapper->resize.handle    = wrap;
@@ -228,11 +228,11 @@ suil_wrapper_new(SuilHost*      host,
 	HWND parent_window = (HWND)GDK_WINDOW_HWND(window);
 	suil_add_feature(features, &n_features, LV2_UI__parent, parent_window);
 	suil_add_feature(features, &n_features, LV2_UI__resize, &wrapper->resize);
-	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
+	suil_add_feature(features, &n_features, LV2_UI__idleInterface, nullptr);
 
 	// Scan for URID map and options
-	LV2_URID_Map*       map     = NULL;
-	LV2_Options_Option* options = NULL;
+	LV2_URID_Map*       map     = nullptr;
+	LV2_Options_Option* options = nullptr;
 	for (LV2_Feature** f = *features; *f && (!map || !options); ++f) {
 		if (!strcmp((*f)->URI, LV2_OPTIONS__options)) {
 			options = (LV2_Options_Option *)(*f)->data;

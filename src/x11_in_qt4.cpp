@@ -94,7 +94,7 @@ static int
 wrapper_wrap(SuilWrapper*  wrapper,
              SuilInstance* instance)
 {
-	const LV2UI_Idle_Interface* idle_iface = NULL;
+	const LV2UI_Idle_Interface* idle_iface = nullptr;
 	if (instance->descriptor->extension_data) {
 		idle_iface = (const LV2UI_Idle_Interface*)
 			instance->descriptor->extension_data(LV2_UI__idleInterface);
@@ -144,7 +144,7 @@ suil_wrapper_new(SuilHost*      host,
 	const intptr_t parent_id = (intptr_t)ew->winId();
 	suil_add_feature(features, &n_features, LV2_UI__parent, (void*)parent_id);
 	suil_add_feature(features, &n_features, LV2_UI__resize, &wrapper->resize);
-	suil_add_feature(features, &n_features, LV2_UI__idleInterface, NULL);
+	suil_add_feature(features, &n_features, LV2_UI__idleInterface, nullptr);
 
 	return wrapper;
 }

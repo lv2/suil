@@ -122,9 +122,9 @@ suil_wrapper_new(SuilHost*      host,
 		if (!host->gtk_lib) {
 			SUIL_ERRORF("Failed to open %s (%s)\n",
 			            SUIL_GTK2_LIB_NAME, dylib_error());
-			return NULL;
+			return nullptr;
 		}
-		gtk_init(NULL, NULL);
+		gtk_init(nullptr, nullptr);
 	}
 
 	/* Create wrapper implementation. */

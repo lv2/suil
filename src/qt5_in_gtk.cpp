@@ -163,7 +163,7 @@ wrapper_wrap(SuilWrapper*  wrapper,
 	wrap->qembed->setLayout(layout);
 
 	g_signal_connect_after(G_OBJECT(wrap), "realize",
-	                       G_CALLBACK(suil_qt_wrapper_realize), NULL);
+	                       G_CALLBACK(suil_qt_wrapper_realize), nullptr);
 
 	instance->host_widget = GTK_WIDGET(wrap);
 
