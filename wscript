@@ -276,7 +276,7 @@ def configure(conf):
 def build(bld):
     # C Headers
     includedir = '${INCLUDEDIR}/suil-%s/suil' % SUIL_MAJOR_VERSION
-    bld.install_files(includedir, bld.path.ant_glob('suil/*.h'))
+    bld.install_files(includedir, bld.path.ant_glob('include/suil/*.h'))
     TaskGen.task_gen.mappings['.mm'] = TaskGen.task_gen.mappings['.cc']
 
     # Pkgconfig file
