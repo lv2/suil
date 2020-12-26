@@ -27,103 +27,104 @@
 extern "C" {
 
 #define SUIL_TYPE_QT_WRAPPER (suil_qt_wrapper_get_type())
-#define SUIL_QT_WRAPPER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_QT_WRAPPER, SuilQtWrapper))
+#define SUIL_QT_WRAPPER(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_QT_WRAPPER, SuilQtWrapper))
 
 using SuilQtWrapper      = _SuilQtWrapper;
 using SuilQtWrapperClass = _SuilQtWrapperClass;
 
 struct _SuilQtWrapper {
-	GtkSocket        socket;
-	QApplication*    app;
-	QX11EmbedWidget* qembed;
-	SuilWrapper*     wrapper;
-	SuilInstance*    instance;
+  GtkSocket        socket;
+  QApplication*    app;
+  QX11EmbedWidget* qembed;
+  SuilWrapper*     wrapper;
+  SuilInstance*    instance;
 };
 
 struct _SuilQtWrapperClass {
-	GtkSocketClass parent_class;
+  GtkSocketClass parent_class;
 };
 
-GType suil_qt_wrapper_get_type(void);  // Accessor for SUIL_TYPE_QT_WRAPPER
+GType
+suil_qt_wrapper_get_type(void); // Accessor for SUIL_TYPE_QT_WRAPPER
 
 G_DEFINE_TYPE(SuilQtWrapper, suil_qt_wrapper, GTK_TYPE_SOCKET)
 
 static void
 suil_qt_wrapper_finalize(GObject* gobject)
 {
-	SuilQtWrapper* const self = SUIL_QT_WRAPPER(gobject);
+  SuilQtWrapper* const self = SUIL_QT_WRAPPER(gobject);
 
-	if (self->instance->handle) {
-		self->instance->descriptor->cleanup(self->instance->handle);
-		self->instance->handle = nullptr;
-	}
+  if (self->instance->handle) {
+    self->instance->descriptor->cleanup(self->instance->handle);
+    self->instance->handle = nullptr;
+  }
 
-	delete self->qembed;
+  delete self->qembed;
 
-	self->qembed        = nullptr;
-	self->app           = nullptr;
-	self->wrapper->impl = nullptr;
+  self->qembed        = nullptr;
+  self->app           = nullptr;
+  self->wrapper->impl = nullptr;
 
-	G_OBJECT_CLASS(suil_qt_wrapper_parent_class)->finalize(gobject);
+  G_OBJECT_CLASS(suil_qt_wrapper_parent_class)->finalize(gobject);
 }
 
 static void
 suil_qt_wrapper_class_init(SuilQtWrapperClass* klass)
 {
-	GObjectClass* const gobject_class = G_OBJECT_CLASS(klass);
+  GObjectClass* const gobject_class = G_OBJECT_CLASS(klass);
 
-	gobject_class->finalize = suil_qt_wrapper_finalize;
+  gobject_class->finalize = suil_qt_wrapper_finalize;
 }
 
 static void
 suil_qt_wrapper_init(SuilQtWrapper* self)
 {
-	self->app      = nullptr;
-	self->qembed   = nullptr;
-	self->instance = nullptr;
+  self->app      = nullptr;
+  self->qembed   = nullptr;
+  self->instance = nullptr;
 }
 
 static void
 suil_qt_wrapper_realize(GtkWidget* w, gpointer data)
 {
-	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(w);
-	GtkSocket* const     s    = GTK_SOCKET(w);
+  SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(w);
+  GtkSocket* const     s    = GTK_SOCKET(w);
 
-	gtk_socket_add_id(s, wrap->qembed->winId());
-	wrap->qembed->show();
+  gtk_socket_add_id(s, wrap->qembed->winId());
+  wrap->qembed->show();
 }
 
 static int
-wrapper_wrap(SuilWrapper*  wrapper,
-             SuilInstance* instance)
+wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
 {
-	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(wrapper->impl);
+  SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(wrapper->impl);
 
-	wrap->qembed   = new QX11EmbedWidget();
-	wrap->wrapper  = wrapper;
-	wrap->instance = instance;
+  wrap->qembed   = new QX11EmbedWidget();
+  wrap->wrapper  = wrapper;
+  wrap->instance = instance;
 
-	QWidget*     qwidget = (QWidget*)instance->ui_widget;
-	QVBoxLayout* layout  = new QVBoxLayout(wrap->qembed);
-	layout->addWidget(qwidget);
+  QWidget*     qwidget = (QWidget*)instance->ui_widget;
+  QVBoxLayout* layout  = new QVBoxLayout(wrap->qembed);
+  layout->addWidget(qwidget);
 
-	qwidget->setParent(wrap->qembed);
+  qwidget->setParent(wrap->qembed);
 
-	g_signal_connect_after(G_OBJECT(wrap), "realize",
-	                       G_CALLBACK(suil_qt_wrapper_realize), nullptr);
+  g_signal_connect_after(
+    G_OBJECT(wrap), "realize", G_CALLBACK(suil_qt_wrapper_realize), nullptr);
 
-	instance->host_widget = GTK_WIDGET(wrap);
+  instance->host_widget = GTK_WIDGET(wrap);
 
-	return 0;
+  return 0;
 }
 
 static void
 wrapper_free(SuilWrapper* wrapper)
 {
-	if (wrapper->impl) {
-		SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(wrapper->impl);
-		gtk_object_destroy(GTK_OBJECT(wrap));
-	}
+  if (wrapper->impl) {
+    SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(wrapper->impl);
+    gtk_object_destroy(GTK_OBJECT(wrap));
+  }
 }
 
 SUIL_LIB_EXPORT
@@ -134,23 +135,23 @@ suil_wrapper_new(SuilHost*      host,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
-	SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
-	wrapper->wrap = wrapper_wrap;
-	wrapper->free = wrapper_free;
+  SuilWrapper* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
+  wrapper->wrap        = wrapper_wrap;
+  wrapper->free        = wrapper_free;
 
-	SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(
-		g_object_new(SUIL_TYPE_QT_WRAPPER, nullptr));
+  SuilQtWrapper* const wrap =
+    SUIL_QT_WRAPPER(g_object_new(SUIL_TYPE_QT_WRAPPER, nullptr));
 
-	if (qApp) {
-		wrap->app = qApp;
-	} else {
-		wrap->app = new QApplication(host->argc, host->argv, true);
-	}
+  if (qApp) {
+    wrap->app = qApp;
+  } else {
+    wrap->app = new QApplication(host->argc, host->argv, true);
+  }
 
-	wrap->wrapper = nullptr;
-	wrapper->impl = wrap;
+  wrap->wrapper = nullptr;
+  wrapper->impl = wrap;
 
-	return wrapper;
+  return wrapper;
 }
 
-}  // extern "C"
+} // extern "C"

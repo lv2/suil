@@ -27,21 +27,21 @@
 #include <stdint.h>
 
 #ifdef _WIN32
-#    define SUIL_LIB_IMPORT __declspec(dllimport)
-#    define SUIL_LIB_EXPORT __declspec(dllexport)
+#  define SUIL_LIB_IMPORT __declspec(dllimport)
+#  define SUIL_LIB_EXPORT __declspec(dllexport)
 #else
-#    define SUIL_LIB_IMPORT __attribute__((visibility("default")))
-#    define SUIL_LIB_EXPORT __attribute__((visibility("default")))
+#  define SUIL_LIB_IMPORT __attribute__((visibility("default")))
+#  define SUIL_LIB_EXPORT __attribute__((visibility("default")))
 #endif
 
 #ifdef SUIL_SHARED
-#    ifdef SUIL_INTERNAL
-#        define SUIL_API SUIL_LIB_EXPORT
-#    else
-#        define SUIL_API SUIL_LIB_IMPORT
-#    endif
+#  ifdef SUIL_INTERNAL
+#    define SUIL_API SUIL_LIB_EXPORT
+#  else
+#    define SUIL_API SUIL_LIB_IMPORT
+#  endif
 #else
-#    define SUIL_API
+#  define SUIL_API
 #endif
 
 #ifdef __cplusplus
@@ -82,42 +82,40 @@ typedef void* SuilWidget;
 typedef void* SuilController;
 
 /** Function to write/send a value to a port. */
-typedef void (*SuilPortWriteFunc)(
-	SuilController controller,
-	uint32_t       port_index,
-	uint32_t       buffer_size,
-	uint32_t       protocol,
-	void const*    buffer);
+typedef void (*SuilPortWriteFunc)( //
+  SuilController controller,
+  uint32_t       port_index,
+  uint32_t       buffer_size,
+  uint32_t       protocol,
+  void const*    buffer);
 
 /** Function to return the index for a port by symbol. */
-typedef uint32_t (*SuilPortIndexFunc)(
-	SuilController controller,
-	const char*    port_symbol);
+typedef uint32_t (*SuilPortIndexFunc)( //
+  SuilController controller,
+  const char*    port_symbol);
 
 /** Function to subscribe to notifications for a port. */
-typedef uint32_t (*SuilPortSubscribeFunc)(
-	SuilController            controller,
-	uint32_t                  port_index,
-	uint32_t                  protocol,
-	const LV2_Feature* const* features);
+typedef uint32_t (*SuilPortSubscribeFunc)( //
+  SuilController            controller,
+  uint32_t                  port_index,
+  uint32_t                  protocol,
+  const LV2_Feature* const* features);
 
 /** Function to unsubscribe from notifications for a port. */
-typedef uint32_t (*SuilPortUnsubscribeFunc)(
-	SuilController            controller,
-	uint32_t                  port_index,
-	uint32_t                  protocol,
-	const LV2_Feature* const* features);
+typedef uint32_t (*SuilPortUnsubscribeFunc)( //
+  SuilController            controller,
+  uint32_t                  port_index,
+  uint32_t                  protocol,
+  const LV2_Feature* const* features);
 
 /** Function called when a control is grabbed or released. */
-typedef void (*SuilTouchFunc)(
-	SuilController controller,
-	uint32_t       port_index,
-	bool           grabbed);
+typedef void (*SuilTouchFunc)( //
+  SuilController controller,
+  uint32_t       port_index,
+  bool           grabbed);
 
 /** Initialization argument. */
-typedef enum {
-	SUIL_ARG_NONE
-} SuilArg;
+typedef enum { SUIL_ARG_NONE } SuilArg;
 
 /**
    Initialize suil.
@@ -152,8 +150,7 @@ suil_host_new(SuilPortWriteFunc       write_func,
 */
 SUIL_API
 void
-suil_host_set_touch_func(SuilHost*     host,
-                         SuilTouchFunc touch_func);
+suil_host_set_touch_func(SuilHost* host, SuilTouchFunc touch_func);
 
 /**
    Free `host`.
@@ -173,8 +170,7 @@ suil_host_free(SuilHost* host);
 */
 SUIL_API
 unsigned
-suil_ui_supported(const char* host_type_uri,
-                  const char* ui_type_uri);
+suil_ui_supported(const char* host_type_uri, const char* ui_type_uri);
 
 /**
    Instantiate a UI for an LV2 plugin.
@@ -276,8 +272,7 @@ suil_instance_port_event(SuilInstance* instance,
 */
 SUIL_API
 const void*
-suil_instance_extension_data(SuilInstance* instance,
-                             const char*   uri);
+suil_instance_extension_data(SuilInstance* instance, const char* uri);
 
 /**
    @}

@@ -25,7 +25,7 @@
 #include "suil/suil.h"
 
 #ifndef _WIN32
-#	include <dlfcn.h>
+#  include <dlfcn.h>
 #endif
 
 #include <stdio.h>
@@ -39,14 +39,14 @@ extern "C" {
 #define SUIL_ERRORF(fmt, ...) fprintf(stderr, "suil error: " fmt, __VA_ARGS__)
 
 struct SuilHostImpl {
-	SuilPortWriteFunc       write_func;
-	SuilPortIndexFunc       index_func;
-	SuilPortSubscribeFunc   subscribe_func;
-	SuilPortUnsubscribeFunc unsubscribe_func;
-	SuilTouchFunc           touch_func;
-	void*                   gtk_lib;
-	int                     argc;
-	char**                  argv;
+  SuilPortWriteFunc       write_func;
+  SuilPortIndexFunc       index_func;
+  SuilPortSubscribeFunc   subscribe_func;
+  SuilPortUnsubscribeFunc unsubscribe_func;
+  SuilTouchFunc           touch_func;
+  void*                   gtk_lib;
+  int                     argc;
+  char**                  argv;
 };
 
 struct SuilWrapperImpl;
@@ -54,27 +54,27 @@ struct SuilWrapperImpl;
 typedef void (*SuilWrapperFreeFunc)(struct SuilWrapperImpl*);
 
 typedef int (*SuilWrapperWrapFunc)(struct SuilWrapperImpl* wrapper,
-                                   SuilInstance*        instance);
+                                   SuilInstance*           instance);
 
 typedef struct SuilWrapperImpl {
-	SuilWrapperWrapFunc wrap;
-	SuilWrapperFreeFunc free;
-	void*               lib;
-	void*               impl;
-	LV2UI_Resize        resize;
+  SuilWrapperWrapFunc wrap;
+  SuilWrapperFreeFunc free;
+  void*               lib;
+  void*               impl;
+  LV2UI_Resize        resize;
 } SuilWrapper;
 
 struct SuilInstanceImpl {
-	void*                   lib_handle;
-	const LV2UI_Descriptor* descriptor;
-	LV2UI_Handle            handle;
-	SuilWrapper*            wrapper;
-	LV2_Feature**           features;
-	LV2UI_Port_Map          port_map;
-	LV2UI_Port_Subscribe    port_subscribe;
-	LV2UI_Touch             touch;
-	SuilWidget              ui_widget;
-	SuilWidget              host_widget;
+  void*                   lib_handle;
+  const LV2UI_Descriptor* descriptor;
+  LV2UI_Handle            handle;
+  SuilWrapper*            wrapper;
+  LV2_Feature**           features;
+  LV2UI_Port_Map          port_map;
+  LV2UI_Port_Subscribe    port_subscribe;
+  LV2UI_Touch             touch;
+  SuilWidget              ui_widget;
+  SuilWidget              host_widget;
 };
 
 /**
@@ -108,26 +108,30 @@ suil_host_init(void);
 static inline void*
 suil_open_module(const char* module_name)
 {
-	const char* const env_dir  = getenv("SUIL_MODULE_DIR");
-	const char* const mod_dir  = env_dir ? env_dir : SUIL_MODULE_DIR;
-	const size_t      path_len = strlen(mod_dir)
-		+ strlen(SUIL_DIR_SEP SUIL_MODULE_PREFIX SUIL_MODULE_EXT)
-		+ strlen(module_name)
-		+ 2;
+  const char* const env_dir = getenv("SUIL_MODULE_DIR");
+  const char* const mod_dir = env_dir ? env_dir : SUIL_MODULE_DIR;
+  const size_t      path_len =
+    strlen(mod_dir) + strlen(SUIL_DIR_SEP SUIL_MODULE_PREFIX SUIL_MODULE_EXT) +
+    strlen(module_name) + 2;
 
-	char* const path = (char*)calloc(path_len, 1);
-	snprintf(path, path_len, "%s%s%s%s%s",
-	         mod_dir, SUIL_DIR_SEP,
-	         SUIL_MODULE_PREFIX, module_name, SUIL_MODULE_EXT);
+  char* const path = (char*)calloc(path_len, 1);
+  snprintf(path,
+           path_len,
+           "%s%s%s%s%s",
+           mod_dir,
+           SUIL_DIR_SEP,
+           SUIL_MODULE_PREFIX,
+           module_name,
+           SUIL_MODULE_EXT);
 
-	dylib_error();
-	void* lib = dylib_open(path, DYLIB_NOW);
-	if (!lib) {
-		SUIL_ERRORF("Failed to open module %s (%s)\n", path, dylib_error());
-	}
+  dylib_error();
+  void* lib = dylib_open(path, DYLIB_NOW);
+  if (!lib) {
+    SUIL_ERRORF("Failed to open module %s (%s)\n", path, dylib_error());
+  }
 
-	free(path);
-	return lib;
+  free(path);
+  return lib;
 }
 
 typedef void (*SuilVoidFunc)(void);
@@ -137,11 +141,11 @@ static inline SuilVoidFunc
 suil_dlfunc(void* handle, const char* symbol)
 {
 #ifdef _WIN32
-	 return (SuilVoidFunc)GetProcAddress((HMODULE)handle, symbol);
+  return (SuilVoidFunc)GetProcAddress((HMODULE)handle, symbol);
 #else
-	typedef SuilVoidFunc (*VoidFuncGetter)(void*, const char*);
-	VoidFuncGetter dlfunc = (VoidFuncGetter)dlsym;
-	return dlfunc(handle, symbol);
+  typedef SuilVoidFunc (*VoidFuncGetter)(void*, const char*);
+  VoidFuncGetter dlfunc = (VoidFuncGetter)dlsym;
+  return dlfunc(handle, symbol);
 #endif
 }
 
@@ -152,21 +156,21 @@ suil_add_feature(LV2_Feature*** features,
                  const char*    uri,
                  void*          data)
 {
-	for (unsigned i = 0; i < *n && (*features)[i]; ++i) {
-		if (!strcmp((*features)[i]->URI, uri)) {
-			(*features)[i]->data = data;
-			return;
-		}
-	}
+  for (unsigned i = 0; i < *n && (*features)[i]; ++i) {
+    if (!strcmp((*features)[i]->URI, uri)) {
+      (*features)[i]->data = data;
+      return;
+    }
+  }
 
-	*features = (LV2_Feature**)realloc(*features,
-	                                   sizeof(LV2_Feature*) * (*n + 2));
+  *features =
+    (LV2_Feature**)realloc(*features, sizeof(LV2_Feature*) * (*n + 2));
 
-	(*features)[*n]       = (LV2_Feature*)malloc(sizeof(LV2_Feature));
-	(*features)[*n]->URI  = uri;
-	(*features)[*n]->data = data;
-	(*features)[*n + 1]   = NULL;
-	*n += 1;
+  (*features)[*n]       = (LV2_Feature*)malloc(sizeof(LV2_Feature));
+  (*features)[*n]->URI  = uri;
+  (*features)[*n]->data = data;
+  (*features)[*n + 1]   = NULL;
+  *n += 1;
 }
 
 extern int    suil_argc;
@@ -176,4 +180,4 @@ extern char** suil_argv;
 } /* extern "C" */
 #endif
 
-#endif  // SUIL_INTERNAL_H
+#endif // SUIL_INTERNAL_H

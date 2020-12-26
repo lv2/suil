@@ -25,6 +25,6 @@ SUIL_LIB_EXPORT
 void
 suil_host_init(void)
 {
-	// This must be called first for Qt5 in Gtk2 to function correctly
-	XInitThreads();
+  // This must be called first for Qt5 in Gtk2 to function correctly
+  XInitThreads();
 }

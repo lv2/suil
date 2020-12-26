@@ -41,87 +41,86 @@
 extern "C" {
 
 struct SuilGtk2InQt5Wrapper {
-	QWidget*   host_widget;
-	QWindow*   window;
-	GtkWidget* plug;
+  QWidget*   host_widget;
+  QWindow*   window;
+  GtkWidget* plug;
 };
 
 static void
 on_size_request(GtkWidget*, GtkRequisition* requisition, gpointer user_data)
 {
-	auto* const wrap = (QWidget*)user_data;
-	wrap->setMinimumSize(requisition->width, requisition->height);
+  auto* const wrap = (QWidget*)user_data;
+  wrap->setMinimumSize(requisition->width, requisition->height);
 }
 
 static void
 on_size_allocate(GtkWidget*, GdkRectangle* allocation, gpointer user_data)
 {
-	auto* const wrap = (QWidget*)user_data;
-	wrap->resize(allocation->width, allocation->height);
+  auto* const wrap = (QWidget*)user_data;
+  wrap->resize(allocation->width, allocation->height);
 }
 
 static void
 wrapper_free(SuilWrapper* wrapper)
 {
-	auto* impl = (SuilGtk2InQt5Wrapper*)wrapper->impl;
+  auto* impl = (SuilGtk2InQt5Wrapper*)wrapper->impl;
 
-	if (impl->window) {
-		impl->window->setParent(nullptr);
-		delete impl->window;
-	}
+  if (impl->window) {
+    impl->window->setParent(nullptr);
+    delete impl->window;
+  }
 
-	if (impl->plug) {
-		gtk_widget_destroy(impl->plug);
-	}
+  if (impl->plug) {
+    gtk_widget_destroy(impl->plug);
+  }
 
-	delete impl->host_widget;
+  delete impl->host_widget;
 
-	free(impl);
+  free(impl);
 }
 
 static int
-wrapper_wrap(SuilWrapper*  wrapper,
-             SuilInstance* instance)
+wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
 {
-	auto* const      impl   = (SuilGtk2InQt5Wrapper*)wrapper->impl;
-	auto* const      wrap   = new QWidget(nullptr, Qt::Window);
-	GtkWidget* const plug   = gtk_plug_new(0);
-	auto* const      widget = (GtkWidget*)instance->ui_widget;
+  auto* const      impl   = (SuilGtk2InQt5Wrapper*)wrapper->impl;
+  auto* const      wrap   = new QWidget(nullptr, Qt::Window);
+  GtkWidget* const plug   = gtk_plug_new(0);
+  auto* const      widget = (GtkWidget*)instance->ui_widget;
 
-	gtk_container_add(GTK_CONTAINER(plug), widget);
-	gtk_widget_show_all(plug);
+  gtk_container_add(GTK_CONTAINER(plug), widget);
+  gtk_widget_show_all(plug);
 
-	const WId wid    = (WId)gtk_plug_get_id((GtkPlug*)plug);
-	QWindow*  window = QWindow::fromWinId(wid);
-	QWidget*  container =
-	    QWidget::createWindowContainer(window, wrap, Qt::WindowFlags());
+  const WId wid    = (WId)gtk_plug_get_id((GtkPlug*)plug);
+  QWindow*  window = QWindow::fromWinId(wid);
+  QWidget*  container =
+    QWidget::createWindowContainer(window, wrap, Qt::WindowFlags());
 
-	auto* layout = new QVBoxLayout();
-	layout->setMargin(0);
-	layout->setSpacing(0);
-	layout->addWidget(container, 0, Qt::Alignment());
-	wrap->setLayout(layout);
+  auto* layout = new QVBoxLayout();
+  layout->setMargin(0);
+  layout->setSpacing(0);
+  layout->addWidget(container, 0, Qt::Alignment());
+  wrap->setLayout(layout);
 
 #ifdef SUIL_OLD_GTK
-	wrap->resize(widget->allocation.width, widget->allocation.height);
+  wrap->resize(widget->allocation.width, widget->allocation.height);
 #else
-	GtkAllocation alloc;
-	gtk_widget_get_allocation(widget, &alloc);
-	wrap->resize(alloc.width, alloc.height);
+  GtkAllocation alloc;
+  gtk_widget_get_allocation(widget, &alloc);
+  wrap->resize(alloc.width, alloc.height);
 #endif
 
-	g_signal_connect(
-		G_OBJECT(plug), "size-request", G_CALLBACK(on_size_request), wrap);
+  g_signal_connect(
+    G_OBJECT(plug), "size-request", G_CALLBACK(on_size_request), wrap);
 
-	g_signal_connect(
-		G_OBJECT(plug), "size-allocate", G_CALLBACK(on_size_allocate), wrap);
+  g_signal_connect(
+    G_OBJECT(plug), "size-allocate", G_CALLBACK(on_size_allocate), wrap);
 
-	impl->host_widget     = wrap;
-	impl->window          = window;
-	impl->plug            = plug;
-	instance->host_widget = wrap;
+  impl->host_widget     = wrap;
+  impl->window          = window;
+  impl->plug            = plug;
+  instance->host_widget = wrap;
 
-	return 0;
+  return 0;
 }
 
 SUIL_LIB_EXPORT
@@ -132,32 +131,33 @@ suil_wrapper_new(SuilHost* host,
                  LV2_Feature***,
                  unsigned)
 {
-	/* We have to open libgtk here, so Gtk type symbols are present and will be
-	   found by the introspection stuff.  This is required at least to make
-	   GtkBuilder use in UIs work, otherwise they will cause "Invalid object
-	   type" errors.
-	*/
-	if (!host->gtk_lib) {
-		dylib_error();
-		host->gtk_lib = dylib_open(SUIL_GTK2_LIB_NAME, DYLIB_LAZY|DYLIB_GLOBAL);
-		if (!host->gtk_lib) {
-			SUIL_ERRORF("Failed to open %s (%s)\n",
-			            SUIL_GTK2_LIB_NAME, dylib_error());
-			return nullptr;
-		}
-		gtk_init(nullptr, nullptr);
-	}
+  /* We have to open libgtk here, so Gtk type symbols are present and will be
+     found by the introspection stuff.  This is required at least to make
+     GtkBuilder use in UIs work, otherwise they will cause "Invalid object
+     type" errors.
+  */
+  if (!host->gtk_lib) {
+    dylib_error();
+    host->gtk_lib = dylib_open(SUIL_GTK2_LIB_NAME, DYLIB_LAZY | DYLIB_GLOBAL);
+    if (!host->gtk_lib) {
+      SUIL_ERRORF(
+        "Failed to open %s (%s)\n", SUIL_GTK2_LIB_NAME, dylib_error());
+      return nullptr;
+    }
 
-	/* Create wrapper implementation. */
-	auto* const impl =
-	    (SuilGtk2InQt5Wrapper*)calloc(1, sizeof(SuilGtk2InQt5Wrapper));
+    gtk_init(nullptr, nullptr);
+  }
 
-	auto* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
-	wrapper->wrap = wrapper_wrap;
-	wrapper->free = wrapper_free;
-	wrapper->impl = impl;
+  /* Create wrapper implementation. */
+  auto* const impl =
+    (SuilGtk2InQt5Wrapper*)calloc(1, sizeof(SuilGtk2InQt5Wrapper));
 
-	return wrapper;
+  auto* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
+  wrapper->wrap = wrapper_wrap;
+  wrapper->free = wrapper_free;
+  wrapper->impl = impl;
+
+  return wrapper;
 }
 
-}  // extern "C"
+} // extern "C"
