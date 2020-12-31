@@ -1,0 +1,4 @@
+[
+  { "symbol": [ "QX11Info", "private", "<QX11Info>", "public" ] },
+  { "symbol": [ "WId", "private", "<QtGui>", "public" ] }
+]
