@@ -65,7 +65,7 @@ suil_host_free(SuilHost* host)
   }
 }
 
-#ifdef SUIL_WITH_X11
+#if USE_X11
 static void
 suil_load_init_module(const char* module_name)
 {
@@ -94,7 +94,7 @@ suil_init(int* argc, char*** argv, SuilArg key, ...)
   suil_argc = argc ? *argc : 0;
   suil_argv = argv ? *argv : NULL;
 
-#ifdef SUIL_WITH_X11
+#if USE_X11
   suil_load_init_module("suil_x11");
 #endif
 }

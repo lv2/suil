@@ -180,7 +180,6 @@ def configure(conf):
     conf.define('SUIL_MODULE_DIR',
                 conf.env.LIBDIR + '/suil-' + SUIL_MAJOR_VERSION)
 
-    conf.define('SUIL_DIR_SEP', '/')
     conf.define('SUIL_GTK2_LIB_NAME', conf.options.gtk2_lib_name)
     conf.define('SUIL_GTK3_LIB_NAME', conf.options.gtk3_lib_name)
 
@@ -217,29 +216,13 @@ def configure(conf):
     if conf.env.HAVE_X11:
         enable_module('SUIL_WITH_X11')
 
-    module_prefix = ''
-    module_ext    = ''
-    if conf.env.PARDEBUG:
-        module_ext += 'D'
-    if conf.env.DEST_OS == 'win32':
-        module_ext += '.dll'
-    elif conf.env.DEST_OS == 'darwin':
-        module_prefix = 'lib'
-        module_ext += '.dylib'
-    else:
-        module_prefix = 'lib'
-        module_ext += '.so'
-
-    conf.define('SUIL_MODULE_PREFIX', module_prefix)
-    conf.define('SUIL_MODULE_EXT', module_ext)
-
     conf.run_env.append_unique('SUIL_MODULE_DIR', [conf.build_path()])
 
     # Set up environment for building/using as a subproject
     autowaf.set_lib_env(conf, 'suil', SUIL_VERSION,
                         include_path=str(conf.path.find_node('include')))
 
-    conf.write_config_header('suil_config.h', remove=False)
+    conf.define('SUIL_NO_DEFAULT_CONFIG', 1)
 
     autowaf.display_summary(
         conf,

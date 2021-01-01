@@ -15,7 +15,6 @@
 */
 
 #include "dylib.h"
-#include "suil_config.h"
 #include "suil_internal.h"
 
 #include "lv2/core/lv2.h"
