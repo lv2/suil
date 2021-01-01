@@ -109,7 +109,6 @@ def configure(conf):
         conf.check_pkg('x11', uselib_store='X11', system=True, mandatory=False)
 
     def enable_module(var_name):
-        conf.define(var_name, 1)
         conf.env[var_name] = 1
 
     if not conf.options.no_gtk:
