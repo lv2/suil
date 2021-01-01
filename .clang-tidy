@@ -7,6 +7,7 @@ Checks: >
   -*-vararg,
   -bugprone-suspicious-string-compare,
   -clang-analyzer-core.CallAndMessage,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
   -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-macro-usage,
   -cppcoreguidelines-owning-memory,
