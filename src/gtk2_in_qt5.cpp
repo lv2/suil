@@ -1,5 +1,5 @@
 /*
-  Copyright 2011-2015 David Robillard <http://drobilla.net>
+  Copyright 2011-2015 David Robillard <d@drobilla.net>
   Copyright 2015 Rui Nuno Capela <rncbc@rncbc.org>
 
   Permission to use, copy, modify, and/or distribute this software for any
