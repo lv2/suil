@@ -34,7 +34,7 @@
 #  define SUIL_LIB_EXPORT __attribute__((visibility("default")))
 #endif
 
-#ifdef SUIL_SHARED
+#ifndef SUIL_STATIC
 #  ifdef SUIL_INTERNAL
 #    define SUIL_API SUIL_LIB_EXPORT
 #  else
