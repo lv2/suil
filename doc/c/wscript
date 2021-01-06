@@ -5,8 +5,6 @@ def build(bld):
     index_xml = bld.path.get_bld().make_node("xml/index.xml")
 
     files = [
-        ("../_static/custom.css", "sphinx/_static/custom.css"),
-        ("../_templates/about.html", "sphinx/_templates/about.html"),
         ("../suil.rst", "sphinx/suil.rst"),
         ("index.rst", "sphinx/index.rst"),
         ("overview.rst", "sphinx/overview.rst"),
@@ -37,5 +35,5 @@ def build(bld):
     bld(features="sphinx",
         sphinx_source=bld.path.get_bld().make_node("sphinx"),
         sphinx_output_format="singlehtml",
-        sphinx_options=["-E", "-q"],
+        sphinx_options=["-E", "-q", "-t", "singlehtml"],
         install_path=doc_dir + "c/singlehtml/")
