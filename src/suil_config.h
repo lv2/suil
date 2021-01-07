@@ -31,9 +31,6 @@
 #ifndef SUIL_CONFIG_H
 #define SUIL_CONFIG_H
 
-// Define version unconditionally so a warning will catch a mismatch
-#define SUIL_VERSION "0.10.9"
-
 #if !defined(SUIL_NO_DEFAULT_CONFIG)
 
 // X11 (requires loading an init module)
