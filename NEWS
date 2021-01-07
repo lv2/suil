@@ -1,9 +1,9 @@
-suil (0.10.9) unstable;
+suil (0.10.10) stable;
 
   * Clean up minor code issues
   * Remove the need for a generated configuration header
 
- -- David Robillard <d@drobilla.net>  Fri, 01 Jan 2021 18:03:42 +0000
+ -- David Robillard <d@drobilla.net>  Thu, 07 Jan 2021 21:40:54 +0000
 
 suil (0.10.8) stable;
 
