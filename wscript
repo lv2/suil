@@ -86,13 +86,6 @@ def configure(conf):
             ],
         })
 
-        autowaf.add_compiler_flags(conf.env, 'cxx', {
-            'clang': [
-                '-Wno-old-style-cast',
-                '-Wno-zero-as-null-pointer-constant',
-            ],
-        })
-
     conf.env.NODELETE_FLAGS = []
     if (not conf.env.MSVC_COMPILER and
         conf.check(linkflags = ['-Wl,-z,nodelete'],

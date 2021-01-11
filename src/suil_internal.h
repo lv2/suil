@@ -34,6 +34,11 @@
 
 #ifdef __cplusplus
 extern "C" {
+#  if defined(__GNUC__)
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wold-style-cast"
+#    pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
+#  endif
 #endif
 
 #define SUIL_ERRORF(fmt, ...) fprintf(stderr, "suil error: " fmt, __VA_ARGS__)
