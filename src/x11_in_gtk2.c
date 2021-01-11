@@ -15,6 +15,7 @@
 */
 
 #include "suil_internal.h"
+#include "warnings.h"
 
 #include "lv2/core/lv2.h"
 #include "lv2/options/options.h"
@@ -26,12 +27,15 @@
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+
+SUIL_DISABLE_GTK_WARNINGS
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <glib-object.h>
 #include <glib.h>
 #include <gobject/gclosure.h>
 #include <gtk/gtk.h>
+SUIL_RESTORE_WARNINGS
 
 #include <stdbool.h>
 #include <stdint.h>

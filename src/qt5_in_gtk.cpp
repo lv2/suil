@@ -16,6 +16,7 @@
 */
 
 #include "suil_internal.h"
+#include "warnings.h"
 
 #include "lv2/core/lv2.h"
 #include "lv2/options/options.h"
@@ -23,13 +24,17 @@
 #include "lv2/urid/urid.h"
 #include "suil/suil.h"
 
+SUIL_DISABLE_QT_WARNINGS
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QWindow>
 #include <Qt>
 #include <QtGui>
+SUIL_RESTORE_WARNINGS
 
 #undef signals
+
+SUIL_DISABLE_GTK_WARNINGS
 
 #include <glib-object.h>
 #include <glib.h>
@@ -39,6 +44,8 @@
 #if GTK_MAJOR_VERSION == 3
 #  include <gtk/gtkx.h>
 #endif
+
+SUIL_RESTORE_WARNINGS
 
 #include <cstdlib>
 #include <cstring>

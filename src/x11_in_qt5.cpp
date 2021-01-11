@@ -16,11 +16,13 @@
 */
 
 #include "suil_internal.h"
+#include "warnings.h"
 
 #include "lv2/core/lv2.h"
 #include "lv2/ui/ui.h"
 #include "suil/suil.h"
 
+SUIL_DISABLE_QT_WARNINGS
 #include <QResizeEvent>
 #include <QSize>
 #include <QTimerEvent>
@@ -30,6 +32,7 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+SUIL_RESTORE_WARNINGS
 
 #include <cstdint>
 #include <cstdlib>

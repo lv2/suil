@@ -18,23 +18,28 @@
 #include "dylib.h"
 #include "suil_config.h" // IWYU pragma: keep
 #include "suil_internal.h"
+#include "warnings.h"
 
 #include "lv2/core/lv2.h"
 #include "suil/suil.h"
 
+SUIL_DISABLE_QT_WARNINGS
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QWindow>
 #include <Qt>
 #include <QtGui>
+SUIL_RESTORE_WARNINGS
 
 #undef signals
 
+SUIL_DISABLE_GTK_WARNINGS
 #include <gdk/gdk.h>
 #include <glib-object.h>
 #include <glib.h>
 #include <gobject/gclosure.h>
 #include <gtk/gtk.h>
+SUIL_RESTORE_WARNINGS
 
 #include <cstdlib>
 
