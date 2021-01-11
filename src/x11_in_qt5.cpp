@@ -105,8 +105,8 @@ protected:
     if (_window) {
       XResizeWindow(QX11Info::display(),
                     _window,
-                    (unsigned)event->size().width(),
-                    (unsigned)event->size().height());
+                    static_cast<unsigned>(event->size().width()),
+                    static_cast<unsigned>(event->size().height()));
     }
   }
 
@@ -146,7 +146,7 @@ struct SuilX11InQt5Wrapper {
 static void
 wrapper_free(SuilWrapper* wrapper)
 {
-  auto* impl = (SuilX11InQt5Wrapper*)wrapper->impl;
+  auto* impl = static_cast<SuilX11InQt5Wrapper*>(wrapper->impl);
 
   delete impl->host_widget;
 
@@ -156,10 +156,11 @@ wrapper_free(SuilWrapper* wrapper)
 static int
 wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
 {
-  auto* const           impl    = (SuilX11InQt5Wrapper*)wrapper->impl;
+  auto* const impl = static_cast<SuilX11InQt5Wrapper*>(wrapper->impl);
+
   SuilQX11Widget* const ew      = impl->parent;
   Display* const        display = QX11Info::display();
-  const auto            window  = (Window)instance->ui_widget;
+  const auto            window  = reinterpret_cast<Window>(instance->ui_widget);
 
   XWindowAttributes attrs{};
   XSizeHints        hints{};
@@ -183,9 +184,8 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
   }
 
   if (instance->descriptor->extension_data) {
-    const auto* idle_iface =
-      (const LV2UI_Idle_Interface*)instance->descriptor->extension_data(
-        LV2_UI__idleInterface);
+    const auto* idle_iface = static_cast<const LV2UI_Idle_Interface*>(
+      instance->descriptor->extension_data(LV2_UI__idleInterface));
 
     ew->start_idle(instance, idle_iface);
   }
@@ -199,7 +199,7 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
 static int
 wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 {
-  auto* const ew = (QWidget*)handle;
+  auto* const ew = static_cast<QWidget*>(handle);
   ew->resize(width, height);
   return 0;
 }
@@ -213,9 +213,9 @@ suil_wrapper_new(SuilHost*,
                  unsigned       n_features)
 {
   auto* const impl =
-    (SuilX11InQt5Wrapper*)calloc(1, sizeof(SuilX11InQt5Wrapper));
+    static_cast<SuilX11InQt5Wrapper*>(calloc(1, sizeof(SuilX11InQt5Wrapper)));
 
-  auto* wrapper = (SuilWrapper*)malloc(sizeof(SuilWrapper));
+  auto* wrapper = static_cast<SuilWrapper*>(malloc(sizeof(SuilWrapper)));
   wrapper->wrap = wrapper_wrap;
   wrapper->free = wrapper_free;
 
@@ -227,7 +227,7 @@ suil_wrapper_new(SuilHost*,
   wrapper->resize.handle    = ew;
   wrapper->resize.ui_resize = wrapper_resize;
 
-  void* parent_id = (void*)(intptr_t)ew->winId();
+  void* parent_id = reinterpret_cast<void*>(ew->winId());
   suil_add_feature(features, &n_features, LV2_UI__parent, parent_id);
   suil_add_feature(features, &n_features, LV2_UI__resize, &wrapper->resize);
   suil_add_feature(features, &n_features, LV2_UI__idleInterface, nullptr);

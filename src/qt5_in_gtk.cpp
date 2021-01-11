@@ -125,7 +125,7 @@ suil_qt_wrapper_realize(GtkWidget* w, gpointer)
 {
   SuilQtWrapper* const wrap = SUIL_QT_WRAPPER(w);
   GtkSocket* const     s    = GTK_SOCKET(w);
-  const WId            id   = (WId)gtk_socket_get_id(s);
+  const WId            id   = static_cast<WId>(gtk_socket_get_id(s));
 
   wrap->qembed->winId();
   wrap->qembed->windowHandle()->setParent(QWindow::fromWinId(id));
@@ -162,7 +162,7 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
   wrap->wrapper  = wrapper;
   wrap->instance = instance;
 
-  auto* qwidget = (QWidget*)instance->ui_widget;
+  auto* qwidget = static_cast<QWidget*>(instance->ui_widget);
   auto* layout  = new QVBoxLayout();
   layout->setMargin(0);
   layout->setSpacing(0);
@@ -177,9 +177,8 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
 
   const LV2UI_Idle_Interface* idle_iface = nullptr;
   if (instance->descriptor->extension_data) {
-    idle_iface =
-      (const LV2UI_Idle_Interface*)instance->descriptor->extension_data(
-        LV2_UI__idleInterface);
+    idle_iface = static_cast<const LV2UI_Idle_Interface*>(
+      instance->descriptor->extension_data(LV2_UI__idleInterface));
   }
 
   if (idle_iface) {
@@ -207,7 +206,7 @@ suil_wrapper_new(SuilHost*,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
-  auto* wrapper = (SuilWrapper*)calloc(1, sizeof(SuilWrapper));
+  auto* wrapper = static_cast<SuilWrapper*>(calloc(1, sizeof(SuilWrapper)));
   wrapper->wrap = wrapper_wrap;
   wrapper->free = wrapper_free;
 
@@ -228,9 +227,9 @@ suil_wrapper_new(SuilHost*,
   LV2_Options_Option* options = nullptr;
   for (LV2_Feature** f = *features; *f && (!map || !options); ++f) {
     if (!strcmp((*f)->URI, LV2_OPTIONS__options)) {
-      options = (LV2_Options_Option*)(*f)->data;
+      options = static_cast<LV2_Options_Option*>((*f)->data);
     } else if (!strcmp((*f)->URI, LV2_URID__map)) {
-      map = (LV2_URID_Map*)(*f)->data;
+      map = static_cast<LV2_URID_Map*>((*f)->data);
     }
   }
 
@@ -239,7 +238,9 @@ suil_wrapper_new(SuilHost*,
     LV2_URID ui_updateRate = map->map(map->handle, LV2_UI__updateRate);
     for (LV2_Options_Option* o = options; o->key; ++o) {
       if (o->key == ui_updateRate) {
-        wrap->idle_ms = (guint)(1000.0f / *(const float*)o->value);
+        wrap->idle_ms =
+          static_cast<guint>(1000.0f / *static_cast<const float*>(o->value));
+
         break;
       }
     }
