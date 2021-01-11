@@ -1,3 +1,9 @@
+suil (0.10.11) unstable;
+
+  * Remote Qt4 support
+
+ -- David Robillard <d@drobilla.net>  Mon, 11 Jan 2021 03:30:34 +0000
+
 suil (0.10.10) stable;
 
   * Clean up minor code issues

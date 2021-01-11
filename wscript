@@ -4,7 +4,7 @@ from waflib import Build, Logs, Options, TaskGen
 from waflib.extras import autowaf
 
 # Semver package/library version
-SUIL_VERSION       = '0.10.10'
+SUIL_VERSION       = '0.10.11'
 SUIL_MAJOR_VERSION = SUIL_VERSION[0:SUIL_VERSION.find('.')]
 
 # Mandatory waf variables
@@ -38,7 +38,6 @@ def options(ctx):
          'no-cocoa':  'do not build support for Cocoa/Quartz',
          'no-gtk':    'do not build support for Gtk',
          'no-qt':     'do not build support for Qt (any version)',
-         'no-qt4':    'do not build support for Qt4',
          'no-qt5':    'do not build support for Qt5',
          'no-x11':    'do not build support for X11'})
 
@@ -148,12 +147,6 @@ def configure(conf):
                            mandatory=False)
 
     if not conf.options.no_qt:
-        if not conf.options.no_qt4:
-            conf.check_pkg('QtGui >= 4.4.0',
-                           uselib_store='QT4',
-                           system=True,
-                           mandatory=False)
-
         if not conf.options.no_qt5:
             conf.check_pkg('Qt5Widgets >= 5.1.0',
                            uselib_store='QT5',
@@ -183,11 +176,6 @@ def configure(conf):
     conf.define('SUIL_GTK2_LIB_NAME', conf.options.gtk2_lib_name)
     conf.define('SUIL_GTK3_LIB_NAME', conf.options.gtk3_lib_name)
 
-    if conf.env.HAVE_GTK2 and conf.env.HAVE_QT4:
-        enable_module('SUIL_WITH_QT4_IN_GTK2')
-        if conf.env.HAVE_GTK2_X11:
-            enable_module('SUIL_WITH_GTK2_IN_QT4')
-
     if conf.env.HAVE_GTK2 and conf.env.HAVE_QT5:
         enable_module('SUIL_WITH_GTK2_IN_QT5')
         enable_module('SUIL_WITH_QT5_IN_GTK2')
@@ -206,9 +194,6 @@ def configure(conf):
 
     if conf.env.HAVE_GTK2 and conf.env.DEST_OS == 'win32':
         enable_module('SUIL_WITH_WIN_IN_GTK2')
-
-    if conf.env.HAVE_QT4:
-        enable_module('SUIL_WITH_X11_IN_QT4')
 
     if conf.env.HAVE_QT5 and conf.env.HAVE_QT5_X11:
         enable_module('SUIL_WITH_X11_IN_QT5')
@@ -238,15 +223,12 @@ def configure(conf):
 
     # Print summary message for every potentially supported wrapper
     wrappers = [('cocoa', 'gtk2'),
-                ('gtk2', 'qt4'),
                 ('gtk2', 'qt5'),
-                ('qt4', 'gtk2'),
                 ('qt5', 'gtk2'),
                 ('win', 'gtk2'),
                 ('x11', 'gtk2'),
                 ('x11', 'gtk3'),
                 ('qt5', 'gtk3'),
-                ('x11', 'qt4'),
                 ('x11', 'qt5'),
                 ('cocoa', 'qt5')]
     for w in wrappers:
@@ -309,17 +291,6 @@ def build(bld):
             lib             = lib,
             uselib          = 'LV2')
 
-    if bld.env.SUIL_WITH_GTK2_IN_QT4:
-        bld(features     = 'cxx cxxshlib',
-            source       = 'src/gtk2_in_qt4.cpp',
-            target       = 'suil_gtk2_in_qt4',
-            includes     = ['.', 'include'],
-            defines      = ['SUIL_INTERNAL'],
-            install_path = module_dir,
-            cxxflags     = cflags,
-            lib          = modlib,
-            uselib       = 'GTK2 QT4 LV2')
-
     if bld.env.SUIL_WITH_GTK2_IN_QT5:
         bld(features     = 'cxx cxxshlib',
             source       = 'src/gtk2_in_qt5.cpp',
@@ -330,18 +301,6 @@ def build(bld):
             cxxflags     = cflags,
             lib          = modlib,
             uselib       = 'GTK2 QT5 LV2')
-
-    if bld.env.SUIL_WITH_QT4_IN_GTK2:
-        bld(features     = 'cxx cxxshlib',
-            source       = 'src/qt4_in_gtk2.cpp',
-            target       = 'suil_qt4_in_gtk2',
-            includes     = ['.', 'include'],
-            defines      = ['SUIL_INTERNAL'],
-            install_path = module_dir,
-            cxxflags     = cflags,
-            lib          = modlib,
-            uselib       = 'GTK2 QT4 LV2',
-            linkflags    = bld.env.NODELETE_FLAGS)
 
     if bld.env.SUIL_WITH_QT5_IN_GTK2:
         bld(features     = 'cxx cxxshlib',
@@ -414,17 +373,6 @@ def build(bld):
             lib          = modlib,
             uselib       = 'GTK2 LV2',
             linkflags    = bld.env.NODELETE_FLAGS)
-
-    if bld.env.SUIL_WITH_X11_IN_QT4:
-        bld(features     = 'cxx cxxshlib',
-            source       = 'src/x11_in_qt4.cpp',
-            target       = 'suil_x11_in_qt4',
-            includes     = ['.', 'include'],
-            defines      = ['SUIL_INTERNAL'],
-            install_path = module_dir,
-            cflags       = cflags,
-            lib          = modlib,
-            uselib       = 'QT4 LV2')
 
     if bld.env.SUIL_WITH_X11_IN_QT5:
         bld(features     = 'cxx cxxshlib',
