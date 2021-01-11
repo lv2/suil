@@ -14,9 +14,7 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/**
-   @file suil.h API for Suil, an LV2 UI wrapper library.
-*/
+/// @file suil.h Public API for Suil
 
 #ifndef SUIL_SUIL_H
 #define SUIL_SUIL_H
@@ -62,13 +60,13 @@ extern "C" {
 */
 typedef struct SuilHostImpl SuilHost;
 
-/** An instance of an LV2 plugin UI. */
+/// An instance of an LV2 plugin UI
 typedef struct SuilInstanceImpl SuilInstance;
 
-/** Opaque pointer to a UI handle. */
+/// Opaque pointer to a UI handle
 typedef void* SuilHandle;
 
-/** Opaque pointer to a UI widget. */
+/// Opaque pointer to a UI widget
 typedef void* SuilWidget;
 
 /**
@@ -81,7 +79,7 @@ typedef void* SuilWidget;
 */
 typedef void* SuilController;
 
-/** Function to write/send a value to a port. */
+/// Function to write/send a value to a port
 typedef void (*SuilPortWriteFunc)( //
   SuilController controller,
   uint32_t       port_index,
@@ -89,32 +87,32 @@ typedef void (*SuilPortWriteFunc)( //
   uint32_t       protocol,
   void const*    buffer);
 
-/** Function to return the index for a port by symbol. */
+/// Function to return the index for a port by symbol
 typedef uint32_t (*SuilPortIndexFunc)( //
   SuilController controller,
   const char*    port_symbol);
 
-/** Function to subscribe to notifications for a port. */
+/// Function to subscribe to notifications for a port
 typedef uint32_t (*SuilPortSubscribeFunc)( //
   SuilController            controller,
   uint32_t                  port_index,
   uint32_t                  protocol,
   const LV2_Feature* const* features);
 
-/** Function to unsubscribe from notifications for a port. */
+/// Function to unsubscribe from notifications for a port
 typedef uint32_t (*SuilPortUnsubscribeFunc)( //
   SuilController            controller,
   uint32_t                  port_index,
   uint32_t                  protocol,
   const LV2_Feature* const* features);
 
-/** Function called when a control is grabbed or released. */
+/// Function called when a control is grabbed or released
 typedef void (*SuilTouchFunc)( //
   SuilController controller,
   uint32_t       port_index,
   bool           grabbed);
 
-/** Initialization argument. */
+/// Initialization argument
 typedef enum { SUIL_ARG_NONE } SuilArg;
 
 /**
@@ -131,6 +129,7 @@ suil_init(int* argc, char*** argv, SuilArg key, ...);
 
 /**
    Create a new UI host descriptor.
+
    @param write_func Function to send a value to a plugin port.
    @param index_func Function to get the index for a port by symbol.
    @param subscribe_func Function to subscribe to port updates.
@@ -161,9 +160,12 @@ suil_host_free(SuilHost* host);
 
 /**
    Check if suil can wrap a UI type.
+
    @param host_type_uri The URI of the desired widget type of the host,
    corresponding to the `type_uri` parameter of suil_instance_new().
+
    @param ui_type_uri The URI of the UI widget type.
+
    @return 0 if wrapping is unsupported, otherwise the quality of the wrapping
    where 1 is the highest quality (direct native embedding with no wrapping)
    and increasing values are of a progressively lower quality and/or stability.
@@ -245,11 +247,6 @@ suil_instance_get_widget(SuilInstance* instance);
 
 /**
    Notify the UI about a change in a plugin port.
-   @param instance UI instance.
-   @param port_index Index of the port which has changed.
-   @param buffer_size Size of `buffer` in bytes.
-   @param format Format of `buffer` (mapped URI, or 0 for float).
-   @param buffer Change data, e.g. the new port value.
 
    This function can be used to notify the UI about any port change, but in the
    simplest case is used to set the value of lv2:ControlPort ports.  For
@@ -258,6 +255,12 @@ suil_instance_get_widget(SuilInstance* instance);
 
    The `buffer` must be valid only for the duration of this call, the UI must
    not keep a reference to it.
+
+   @param instance UI instance.
+   @param port_index Index of the port which has changed.
+   @param buffer_size Size of `buffer` in bytes.
+   @param format Format of `buffer` (mapped URI, or 0 for float).
+   @param buffer Change data, e.g. the new port value.
 */
 SUIL_API
 void
@@ -267,9 +270,7 @@ suil_instance_port_event(SuilInstance* instance,
                          uint32_t      format,
                          const void*   buffer);
 
-/**
-   Return a data structure defined by some LV2 extension URI.
-*/
+/// Return a data structure defined by some LV2 extension URI
 SUIL_API
 const void*
 suil_instance_extension_data(SuilInstance* instance, const char* uri);
@@ -279,7 +280,7 @@ suil_instance_extension_data(SuilInstance* instance, const char* uri);
 */
 
 #ifdef __cplusplus
-} /* extern "C" */
+} // extern "C"
 #endif
 
 #endif /* SUIL_SUIL_H */
