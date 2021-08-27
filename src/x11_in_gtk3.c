@@ -39,10 +39,8 @@ typedef struct {
   guint                       idle_id;
   guint                       idle_ms;
   guint                       idle_size_request_id;
-  int                         initial_width;
-  int                         initial_height;
-  int                         req_width;
-  int                         req_height;
+  XSizeHints                  size_hints;
+  gboolean                    size_hints_dirty;
 } SuilX11Wrapper;
 
 typedef struct {
@@ -197,6 +195,32 @@ idle_size_request(gpointer user_data)
 }
 
 static void
+update_wm_hints(SuilX11Wrapper* wrap, gboolean force)
+{
+  const XSizeHints old_hints = wrap->size_hints;
+  if (!wrap->size_hints_dirty && !force) {
+    return;
+  }
+
+  // Fetch hints from X
+  GdkWindow* window   = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
+  long       supplied = 0;
+  XGetWMNormalHints(GDK_WINDOW_XDISPLAY(window),
+                    (Window)wrap->instance->ui_widget,
+                    &wrap->size_hints,
+                    &supplied);
+
+  // Preserve old "custom" size if necessary
+  if ((old_hints.flags & USSize) && old_hints.x && old_hints.y) {
+    wrap->size_hints.flags |= USSize;
+    wrap->size_hints.x = old_hints.x;
+    wrap->size_hints.y = old_hints.y;
+  }
+
+  wrap->size_hints_dirty = FALSE;
+}
+
+static void
 forward_size_request(SuilX11Wrapper* socket, GtkAllocation* allocation)
 {
   GdkWindow* gwindow   = gtk_widget_get_window(GTK_WIDGET(socket->plug));
@@ -266,16 +290,24 @@ suil_x11_wrapper_get_preferred_width(GtkWidget* widget,
   Window                ui_window = (Window)self->instance->ui_widget;
 
   if (suil_x11_is_valid_child(xdisplay, GDK_WINDOW_XID(gwindow), ui_window)) {
-    XSizeHints hints;
-    memset(&hints, 0, sizeof(hints));
-    long supplied = 0;
-    XGetWMNormalHints(xdisplay, ui_window, &hints, &supplied);
-    *natural_width =
-      ((hints.flags & PBaseSize) ? hints.base_width : self->initial_width);
-    *minimum_width =
-      ((hints.flags & PMinSize) ? hints.min_width : self->req_width);
-  } else {
-    *natural_width = *minimum_width = self->req_width;
+    update_wm_hints(self, FALSE);
+
+    if (self->size_hints.flags & USSize) {
+      *natural_width = self->size_hints.width;
+    } else if (self->size_hints.flags & PBaseSize) {
+      *natural_width = self->size_hints.base_width;
+    } else if (self->size_hints.flags & PMinSize) {
+      *natural_width = self->size_hints.min_width;
+    } else {
+      g_warning("UI size hints have no base or minimum size");
+      XWindowAttributes attrs;
+      XGetWindowAttributes(xdisplay, ui_window, &attrs);
+      *natural_width = attrs.width;
+    }
+
+    *minimum_width = (self->size_hints.flags & PMinSize)
+                       ? self->size_hints.min_width
+                       : *natural_width;
   }
 }
 
@@ -290,16 +322,24 @@ suil_x11_wrapper_get_preferred_height(GtkWidget* widget,
   Window                ui_window = (Window)self->instance->ui_widget;
 
   if (suil_x11_is_valid_child(xdisplay, GDK_WINDOW_XID(gwindow), ui_window)) {
-    XSizeHints hints;
-    memset(&hints, 0, sizeof(hints));
-    long supplied = 0;
-    XGetWMNormalHints(xdisplay, ui_window, &hints, &supplied);
-    *natural_height =
-      ((hints.flags & PBaseSize) ? hints.base_height : self->initial_height);
-    *minimum_height =
-      ((hints.flags & PMinSize) ? hints.min_height : self->req_height);
-  } else {
-    *natural_height = *minimum_height = self->req_height;
+    update_wm_hints(self, FALSE);
+
+    if (self->size_hints.flags & USSize) {
+      *natural_height = self->size_hints.height;
+    } else if (self->size_hints.flags & PBaseSize) {
+      *natural_height = self->size_hints.base_height;
+    } else if (self->size_hints.flags & PMinSize) {
+      *natural_height = self->size_hints.min_height;
+    } else {
+      g_warning("UI size hints have no base or minimum size");
+      XWindowAttributes attrs;
+      XGetWindowAttributes(xdisplay, ui_window, &attrs);
+      *natural_height = attrs.height;
+    }
+
+    *minimum_height = (self->size_hints.flags & PMinSize)
+                        ? self->size_hints.min_height
+                        : *natural_height;
   }
 }
 
@@ -332,13 +372,14 @@ suil_x11_wrapper_class_init(SuilX11WrapperClass* klass)
 static void
 suil_x11_wrapper_init(SuilX11Wrapper* self)
 {
-  self->plug       = GTK_PLUG(gtk_plug_new(0));
-  self->wrapper    = NULL;
-  self->instance   = NULL;
-  self->idle_iface = NULL;
-  self->idle_ms    = 1000 / 30; // 30 Hz default
-  self->req_width  = 0;
-  self->req_height = 0;
+  self->plug             = GTK_PLUG(gtk_plug_new(0));
+  self->wrapper          = NULL;
+  self->instance         = NULL;
+  self->idle_iface       = NULL;
+  self->idle_ms          = 1000 / 30; // 30 Hz default
+  self->size_hints_dirty = TRUE;
+
+  memset(&self->size_hints, 0, sizeof(self->size_hints));
 }
 
 static int
@@ -346,8 +387,14 @@ wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 {
   SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(handle);
 
-  wrap->req_width  = width;
-  wrap->req_height = height;
+  wrap->size_hints.width  = width;
+  wrap->size_hints.height = height;
+  if (width > 0 && height > 0) {
+    wrap->size_hints.flags |= USSize;
+  }
+
+  // Fetch hints to get size constraints (probably) updated by plugin
+  wrap->size_hints_dirty = TRUE;
 
   gtk_widget_queue_resize(GTK_WIDGET(handle));
   return 0;
@@ -378,11 +425,18 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
   Window      ui_window = (Window)instance->ui_widget;
 
   gdk_display_sync(display);
+  if (suil_x11_is_valid_child(xdisplay, GDK_WINDOW_XID(gwindow), ui_window)) {
+    XWindowAttributes attrs;
+    XGetWindowAttributes(xdisplay, ui_window, &attrs);
 
-  XWindowAttributes attrs;
-  XGetWindowAttributes(xdisplay, ui_window, &attrs);
-  wrap->initial_width  = attrs.width;
-  wrap->initial_height = attrs.height;
+    update_wm_hints(wrap, TRUE);
+    if (!(wrap->size_hints.flags & PBaseSize)) {
+      // Fall back to using initial size as base size
+      wrap->size_hints.flags |= PBaseSize;
+      wrap->size_hints.base_width  = attrs.width;
+      wrap->size_hints.base_height = attrs.height;
+    }
+  }
 
   const LV2UI_Idle_Interface* idle_iface = NULL;
   if (instance->descriptor->extension_data) {

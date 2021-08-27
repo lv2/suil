@@ -19,3 +19,5 @@ Contributors:
  * Stefan Westerfeld
    * Qt5 in Gtk2 support
    * Initialization API
+ * Alexandros Theodotou
+   * X11 in Gtk3 improvements
