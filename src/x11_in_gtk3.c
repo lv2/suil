@@ -50,6 +50,7 @@ typedef struct {
   const LV2UI_Idle_Interface* idle_iface;
   guint                       idle_id;
   guint                       idle_ms;
+  guint                       idle_size_request_id;
   int                         initial_width;
   int                         initial_height;
   int                         req_width;
@@ -112,6 +113,11 @@ on_plug_removed(GtkSocket* sock, gpointer data)
   if (self->idle_id) {
     g_source_remove(self->idle_id);
     self->idle_id = 0;
+  }
+
+  if (self->idle_size_request_id) {
+    g_source_remove(self->idle_size_request_id);
+    self->idle_size_request_id = 0;
   }
 
   if (self->instance->handle) {
@@ -207,8 +213,11 @@ forward_key_event(SuilX11Wrapper* socket, GdkEvent* gdk_event)
 static gboolean
 idle_size_request(gpointer user_data)
 {
-  GtkWidget* w = GTK_WIDGET(user_data);
+  SuilX11Wrapper* socket = (SuilX11Wrapper*)user_data;
+  GtkWidget*      w      = GTK_WIDGET(socket->plug);
+
   gtk_widget_queue_resize(w);
+  socket->idle_size_request_id = 0;
   return FALSE;
 }
 
@@ -264,7 +273,7 @@ forward_size_request(SuilX11Wrapper* socket, GtkAllocation* allocation)
   } else {
     /* Child has not been realized, so unable to resize now.
        Queue an idle resize. */
-    g_idle_add(idle_size_request, socket->plug);
+    socket->idle_size_request_id = g_idle_add(idle_size_request, socket);
   }
 }
 
