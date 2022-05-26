@@ -177,7 +177,7 @@ def configure(conf):
     if conf.env.HAVE_GTK3 and conf.env.HAVE_GTK3_X11:
         enable_module('SUIL_WITH_X11_IN_GTK3')
 
-    if conf.env.HAVE_GTK3 and conf.env.HAVE_QT5:
+    if conf.env.HAVE_GTK3 and conf.env.HAVE_GTK3_X11 and conf.env.HAVE_QT5:
         enable_module('SUIL_WITH_QT5_IN_GTK3')
 
     if conf.env.HAVE_GTK2 and conf.env.HAVE_GTK2_QUARTZ:
