@@ -1,9 +1,10 @@
-suil (0.10.11) unstable;
+suil (0.10.12) stable;
 
+  * Fix build issues with newer toolchains
   * Fix some compiler warnings
   * Remove Qt4 support
 
- -- David Robillard <d@drobilla.net>  Mon, 11 Jan 2021 13:00:33 +0000
+ -- David Robillard <d@drobilla.net>  Fri, 27 May 2022 01:43:47 +0000
 
 suil (0.10.10) stable;
 

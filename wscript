@@ -4,7 +4,7 @@ from waflib import Build, Logs, Options, TaskGen
 from waflib.extras import autowaf
 
 # Semver package/library version
-SUIL_VERSION       = '0.10.11'
+SUIL_VERSION       = '0.10.12'
 SUIL_MAJOR_VERSION = SUIL_VERSION[0:SUIL_VERSION.find('.')]
 
 # Mandatory waf variables
