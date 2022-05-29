@@ -72,8 +72,11 @@ def configure(conf):
             ],
             'clang': [
                 '-Wno-cast-qual',
+                '-Wno-deprecated-declarations', # Mac
                 '-Wno-disabled-macro-expansion',
                 '-Wno-padded',
+                '-Wno-reserved-id-macro', # Mac
+                '-Wno-switch-enum', # Mac
             ]
         })
 

@@ -132,10 +132,13 @@ suil_cocoa_size_request(GtkWidget* widget, GtkRequisition* requisition)
     requisition->width  = self->req_width;
     requisition->height = self->req_height;
   } else {
-    NSView* view        = (NSView*)self->instance->ui_widget;
-    NSRect  frame       = [view frame];
-    requisition->width  = CGRectGetWidth(NSRectToCGRect(frame));
-    requisition->height = CGRectGetHeight(NSRectToCGRect(frame));
+    NSView* view  = (NSView*)self->instance->ui_widget;
+    NSRect  frame = [view frame];
+
+    requisition->width =
+      static_cast<int>(CGRectGetWidth(NSRectToCGRect(frame)));
+    requisition->height =
+      static_cast<int>(CGRectGetHeight(NSRectToCGRect(frame)));
   }
 }
 
@@ -286,6 +289,8 @@ suil_cocoa_wrapper_idle(void* data)
 static GdkFilterReturn
 event_filter(GdkXEvent* xevent, GdkEvent* event, gpointer data)
 {
+  (void)event;
+
   SuilCocoaWrapper* wrap = (SuilCocoaWrapper*)data;
   if (!wrap->instance || !wrap->wrapper || !wrap->wrapper->impl) {
     return GDK_FILTER_CONTINUE;
@@ -382,6 +387,9 @@ suil_wrapper_new(SuilHost*      host,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
+  (void)host;
+  (void)host_type_uri;
+
   GtkWidget* parent = NULL;
   for (unsigned i = 0; i < n_features; ++i) {
     if (!strcmp((*features)[i]->URI, LV2_UI__parent)) {
@@ -435,7 +443,7 @@ suil_wrapper_new(SuilHost*      host,
     LV2_URID ui_updateRate = map->map(map->handle, LV2_UI__updateRate);
     for (LV2_Options_Option* o = options; o->key; ++o) {
       if (o->key == ui_updateRate) {
-        wrap->idle_ms = 1000.0f / *(const float*)o->value;
+        wrap->idle_ms = static_cast<guint>(1000.0f / *(const float*)o->value);
         break;
       }
     }

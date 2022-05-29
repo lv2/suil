@@ -51,8 +51,8 @@ public:
 
     NSView* view = (NSView*)instance->ui_widget;
     setCocoaView((NSView*)instance->ui_widget);
-    setMinimumWidth([view fittingSize].width);
-    setMinimumHeight([view fittingSize].height);
+    setMinimumWidth(static_cast<int>([view fittingSize].width));
+    setMinimumHeight(static_cast<int>([view fittingSize].height));
 
     if (_idle_iface && _ui_timer == 0) {
       _ui_timer = this->startTimer(30);
@@ -133,6 +133,9 @@ suil_wrapper_new(SuilHost*      host,
                  LV2_Feature*** features,
                  unsigned       n_features)
 {
+  (void)host;
+  (void)host_type_uri;
+
   QWidget* parent = NULL;
   for (unsigned i = 0; i < n_features; ++i) {
     if (!strcmp((*features)[i]->URI, LV2_UI__parent)) {
