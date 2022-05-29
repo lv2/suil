@@ -41,6 +41,7 @@ SUIL_DISABLE_GTK_WARNINGS
 #include <gtk/gtk.h>
 SUIL_RESTORE_WARNINGS
 
+#include <cstdint>
 #include <cstdlib>
 
 extern "C" {
@@ -95,8 +96,7 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
   gtk_container_add(GTK_CONTAINER(plug), widget);
   gtk_widget_show_all(plug);
 
-  const WId wid =
-    static_cast<WId>(gtk_plug_get_id(reinterpret_cast<GtkPlug*>(plug)));
+  const WId wid = (WId)gtk_plug_get_id(GTK_PLUG(plug));
 
   QWindow* window = QWindow::fromWinId(wid);
   QWidget* container =
