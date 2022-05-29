@@ -154,11 +154,11 @@ def configure(conf):
                                system=True,
                                mandatory=False)
 
-            if not conf.options.no_cocoa:
-                if conf.check_cxx(header_name = 'QMacCocoaViewContainer',
-                                  uselib      = 'QT5_COCOA',
+            if conf.env.DEST_OS == 'darwin' and not conf.options.no_cocoa:
+                if conf.check_cxx(header_name='QMacCocoaViewContainer',
+                                  uselib='QT5',
                                   system=True,
-                                  mandatory   = False):
+                                  mandatory=False):
                     enable_module('SUIL_WITH_COCOA_IN_QT5')
 
     conf.check_cc(define_name   = 'HAVE_LIBDL',
@@ -389,7 +389,7 @@ def build(bld):
             install_path = module_dir,
             cflags       = cflags,
             lib          = modlib,
-            uselib       = 'QT5 QT5_COCOA LV2',
+            uselib       = 'QT5 LV2',
             linkflags    = ['-framework', 'Cocoa'])
 
     if bld.env.SUIL_WITH_X11:
