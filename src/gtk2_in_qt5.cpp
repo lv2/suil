@@ -96,7 +96,7 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
   gtk_widget_show_all(plug);
 
   const WId wid =
-    static_cast<WId>(gtk_plug_get_id(reinterpret_cast<GtkPlug*>(plug)));
+    reinterpret_cast<WId>(gtk_plug_get_id(reinterpret_cast<GtkPlug*>(plug)));
 
   QWindow* window = QWindow::fromWinId(wid);
   QWidget* container =
