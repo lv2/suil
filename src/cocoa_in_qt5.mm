@@ -60,7 +60,7 @@ public:
   }
 
 protected:
-  void timerEvent(QTimerEvent* event)
+  void timerEvent(QTimerEvent* event) override
   {
     if (event->timerId() == _ui_timer && _idle_iface) {
       _idle_iface->idle(_instance->handle);
@@ -69,7 +69,7 @@ protected:
     QWidget::timerEvent(event);
   }
 
-  void closeEvent(QCloseEvent* event)
+  void closeEvent(QCloseEvent* event) override
   {
     if (_ui_timer && _idle_iface) {
       this->killTimer(_ui_timer);
