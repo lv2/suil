@@ -41,7 +41,6 @@ SUIL_DISABLE_GTK_WARNINGS
 #include <gtk/gtk.h>
 SUIL_RESTORE_WARNINGS
 
-#include <cstdint>
 #include <cstdlib>
 
 extern "C" {

@@ -34,7 +34,6 @@ SUIL_DISABLE_QT_WARNINGS
 #include <X11/Xutil.h>
 SUIL_RESTORE_WARNINGS
 
-#include <cstdint>
 #include <cstdlib>
 
 #undef signals
