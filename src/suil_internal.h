@@ -113,21 +113,25 @@ suil_host_init(void);
 static inline void*
 suil_open_module(const char* module_name)
 {
+#define N_SLICES 4
+
   const char* const env_dir = getenv("SUIL_MODULE_DIR");
   const char* const mod_dir = env_dir ? env_dir : SUIL_MODULE_DIR;
-  const size_t      path_len =
-    strlen(mod_dir) + strlen(SUIL_DIR_SEP SUIL_MODULE_PREFIX SUIL_MODULE_EXT) +
-    strlen(module_name) + 2;
 
-  char* const path = (char*)calloc(path_len, 1);
-  snprintf(path,
-           path_len,
-           "%s%s%s%s%s",
-           mod_dir,
-           SUIL_DIR_SEP,
-           SUIL_MODULE_PREFIX,
-           module_name,
-           SUIL_MODULE_EXT);
+  const char* const slices[N_SLICES] = {
+    mod_dir, SUIL_DIR_SEP SUIL_MODULE_PREFIX, module_name, SUIL_MODULE_EXT};
+
+  const size_t lengths[N_SLICES] = {
+    strlen(slices[0]), strlen(slices[1]), strlen(slices[2]), strlen(slices[3])};
+
+  const size_t path_len = lengths[0] + lengths[1] + lengths[2] + lengths[3];
+  char* const  path     = (char*)calloc(path_len + 1, 1);
+
+  size_t offset = 0;
+  for (size_t i = 0; i < N_SLICES; ++i) {
+    memcpy(path + offset, slices[i], lengths[i]);
+    offset += lengths[i];
+  }
 
   dylib_error();
   void* lib = dylib_open(path, DYLIB_NOW);
@@ -137,6 +141,8 @@ suil_open_module(const char* module_name)
 
   free(path);
   return lib;
+
+#undef N_SLICES
 }
 
 typedef void (*SuilVoidFunc)(void);
