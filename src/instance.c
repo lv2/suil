@@ -29,7 +29,6 @@
 
 #define GTK2_UI_URI LV2_UI__GtkUI
 #define GTK3_UI_URI LV2_UI__Gtk3UI
-#define QT4_UI_URI LV2_UI__Qt4UI
 #define QT5_UI_URI LV2_UI__Qt5UI
 #define X11_UI_URI LV2_UI__X11UI
 #define WIN_UI_URI LV2_UI_PREFIX "WindowsUI"
@@ -50,11 +49,7 @@ suil_ui_supported(const char* host_type_uri, const char* ui_type_uri)
   }
 
   if ((!strcmp(host_type_uri, GTK2_UI_URI) &&
-       !strcmp(ui_type_uri, QT4_UI_URI)) ||
-      (!strcmp(host_type_uri, GTK2_UI_URI) &&
        !strcmp(ui_type_uri, QT5_UI_URI)) ||
-      (!strcmp(host_type_uri, QT4_UI_URI) &&
-       !strcmp(ui_type_uri, GTK2_UI_URI)) ||
       (!strcmp(host_type_uri, QT5_UI_URI) &&
        !strcmp(ui_type_uri, GTK2_UI_URI)) ||
       (!strcmp(host_type_uri, GTK2_UI_URI) &&
@@ -67,8 +62,6 @@ suil_ui_supported(const char* host_type_uri, const char* ui_type_uri)
        !strcmp(ui_type_uri, WIN_UI_URI)) ||
       (!strcmp(host_type_uri, GTK2_UI_URI) &&
        !strcmp(ui_type_uri, COCOA_UI_URI)) ||
-      (!strcmp(host_type_uri, QT4_UI_URI) &&
-       !strcmp(ui_type_uri, X11_UI_URI)) ||
       (!strcmp(host_type_uri, QT5_UI_URI) &&
        !strcmp(ui_type_uri, X11_UI_URI)) ||
       (!strcmp(host_type_uri, QT5_UI_URI) &&
@@ -88,23 +81,10 @@ open_wrapper(SuilHost*      host,
 {
   const char* module_name = NULL;
 
-  if (!strcmp(container_type_uri, QT4_UI_URI) &&
-      !strcmp(ui_type_uri, GTK2_UI_URI)) {
-    module_name = "suil_gtk2_in_qt4";
-  }
-
-
   if (!strcmp(container_type_uri, QT5_UI_URI) &&
       !strcmp(ui_type_uri, GTK2_UI_URI)) {
     module_name = "suil_gtk2_in_qt5";
   }
-
-
-  if (!strcmp(container_type_uri, GTK2_UI_URI) &&
-      !strcmp(ui_type_uri, QT4_UI_URI)) {
-    module_name = "suil_qt4_in_gtk2";
-  }
-
 
   if (!strcmp(container_type_uri, GTK2_UI_URI) &&
       !strcmp(ui_type_uri, QT5_UI_URI)) {
@@ -134,11 +114,6 @@ open_wrapper(SuilHost*      host,
   if (!strcmp(container_type_uri, GTK2_UI_URI) &&
       !strcmp(ui_type_uri, COCOA_UI_URI)) {
     module_name = "suil_cocoa_in_gtk2";
-  }
-
-  if (!strcmp(container_type_uri, QT4_UI_URI) &&
-      !strcmp(ui_type_uri, X11_UI_URI)) {
-    module_name = "suil_x11_in_qt4";
   }
 
   if (!strcmp(container_type_uri, QT5_UI_URI) &&
