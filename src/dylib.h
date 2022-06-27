@@ -30,6 +30,7 @@ enum DylibFlags {
 static inline void*
 dylib_open(const char* const filename, const int flags)
 {
+  (void)flags;
   return LoadLibrary(filename);
 }
 
