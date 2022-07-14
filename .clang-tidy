@@ -8,6 +8,7 @@ Checks: >
   -altera-*,
   -bugprone-easily-swappable-parameters,
   -bugprone-suspicious-string-compare,
+  -cert-err33-c,
   -clang-analyzer-core.CallAndMessage,
   -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
   -concurrency-mt-unsafe,
@@ -26,8 +27,9 @@ Checks: >
   -modernize-use-trailing-return-type,
   -performance-no-int-to-ptr,
   -readability-function-cognitive-complexity,
+  -readability-identifier-length,
   -readability-implicit-bool-conversion,
   -readability-non-const-parameter,
 WarningsAsErrors: '*'
-HeaderFilterRegex: '.*'
+HeaderFilterRegex: ''
 FormatStyle: file
