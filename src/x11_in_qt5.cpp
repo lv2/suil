@@ -45,10 +45,6 @@ class SuilQX11Widget : public QWidget
 public:
   SuilQX11Widget(QWidget* parent, Qt::WindowFlags wflags)
     : QWidget(parent, wflags)
-    , _instance(nullptr)
-    , _idle_iface(nullptr)
-    , _window(0)
-    , _ui_timer(0)
   {}
 
   SuilQX11Widget(const SuilQX11Widget&) = delete;
@@ -129,10 +125,10 @@ protected:
   }
 
 private:
-  SuilInstance*               _instance;
-  const LV2UI_Idle_Interface* _idle_iface;
-  Window                      _window;
-  int                         _ui_timer;
+  SuilInstance*               _instance{};
+  const LV2UI_Idle_Interface* _idle_iface{};
+  Window                      _window{};
+  int                         _ui_timer{};
 };
 
 SuilQX11Widget::~SuilQX11Widget() = default;
