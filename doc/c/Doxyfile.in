@@ -19,8 +19,10 @@ XML_PROGRAMLISTING     = NO
 SHOW_FILES             = NO
 
 MACRO_EXPANSION        = YES
-PREDEFINED             = SUIL_API \
+PREDEFINED             = SUIL_API
 
-INPUT                  = ../../include/suil/suil.h
+RECURSIVE              = YES
+STRIP_FROM_PATH        = @SUIL_SRCDIR@
+INPUT                  = @SUIL_SRCDIR@/include
 
-OUTPUT_DIRECTORY       = .
+OUTPUT_DIRECTORY       = @DOX_OUTPUT@

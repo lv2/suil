@@ -1,5 +1,10 @@
+####
+Suil
+####
+
+.. include:: summary.rst
+
 .. toctree::
 
-   suil
    overview
-   reference
+   api/suil

@@ -1,9 +1,11 @@
 suil (0.10.13) unstable;
 
   * Fix MacOS build
+  * Fix documentation install path
   * Remove dead Qt4 support code
+  * Switch to meson build system
 
- -- David Robillard <d@drobilla.net>  Fri, 17 Jun 2022 00:38:46 +0000
+ -- David Robillard <d@drobilla.net>  Fri, 08 Jul 2022 21:34:54 +0000
 
 suil (0.10.12) stable;
 

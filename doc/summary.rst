@@ -1,7 +1,3 @@
-####
-Suil
-####
-
 Suil is a library for loading and wrapping LV2 plugin UIs.
 
 With Suil,
