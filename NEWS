@@ -1,4 +1,4 @@
-suil (0.10.14) stable;
+suil (0.10.14) stable; urgency=medium
 
   * Fix MacOS build
   * Fix documentation install path
@@ -7,7 +7,7 @@ suil (0.10.14) stable;
 
  -- David Robillard <d@drobilla.net>  Tue, 19 Jul 2022 01:14:05 +0000
 
-suil (0.10.12) stable;
+suil (0.10.12) stable; urgency=medium
 
   * Fix build issues with newer toolchains
   * Fix some compiler warnings
@@ -15,14 +15,14 @@ suil (0.10.12) stable;
 
  -- David Robillard <d@drobilla.net>  Fri, 27 May 2022 01:43:47 +0000
 
-suil (0.10.10) stable;
+suil (0.10.10) stable; urgency=medium
 
   * Clean up minor code issues
   * Remove the need for a generated configuration header
 
  -- David Robillard <d@drobilla.net>  Thu, 07 Jan 2021 21:40:54 +0000
 
-suil (0.10.8) stable;
+suil (0.10.8) stable; urgency=medium
 
   * Fix X11 in Gtk size regressions (thanks Robin Gareus)
   * Fix compilation on MacOS older than 10.12
@@ -31,21 +31,21 @@ suil (0.10.8) stable;
 
  -- David Robillard <d@drobilla.net>  Sun, 27 Sep 2020 12:22:08 +0000
 
-suil (0.10.6) stable;
+suil (0.10.6) stable; urgency=medium
 
   * Add no-cocoa configure flag
   * Update build system
 
  -- David Robillard <d@drobilla.net>  Sun, 10 Nov 2019 21:35:59 +0000
 
-suil (0.10.4) stable;
+suil (0.10.4) stable; urgency=medium
 
   * Add support for Qt5 in Gtk3
   * Add support for min/base size hints for X11 in Gtk (thanks Hermann Meyer)
 
  -- David Robillard <d@drobilla.net>  Thu, 06 Jun 2019 19:02:47 +0000
 
-suil (0.10.2) stable;
+suil (0.10.2) stable; urgency=medium
 
   * Add support for Cocoa in Qt5
   * Fix resizing and add idle and update rate support for Qt5 in Gtk2
@@ -53,7 +53,7 @@ suil (0.10.2) stable;
 
  -- David Robillard <d@drobilla.net>  Thu, 20 Dec 2018 17:22:19 +0000
 
-suil (0.10.0) stable;
+suil (0.10.0) stable; urgency=medium
 
   * Add suil_init() to support early initialization and passing any necessary
     information that may be needed in the future (thanks Stefan Westerfeld)
@@ -65,7 +65,7 @@ suil (0.10.0) stable;
 
  -- David Robillard <d@drobilla.net>  Tue, 03 Oct 2017 20:11:49 +0000
 
-suil (0.8.4) stable;
+suil (0.8.4) stable; urgency=medium
 
   * Add Cocoa in Gtk wrapper (patch from Robin Gareus)
   * Add Gtk2 and X11 in Qt5 wrappers (patch from Rui Nuno Capela)
@@ -82,7 +82,7 @@ suil (0.8.4) stable;
 
  -- David Robillard <d@drobilla.net>  Tue, 20 Sep 2016 02:47:44 +0000
 
-suil (0.8.2) stable;
+suil (0.8.2) stable; urgency=medium
 
   * Add configure options to disable all Gtk or Qt support
   * Fix embedding several Qt UIs in Gtk
@@ -90,7 +90,7 @@ suil (0.8.2) stable;
 
  -- David Robillard <d@drobilla.net>  Fri, 08 Aug 2014 22:18:00 +0000
 
-suil (0.8.0) stable;
+suil (0.8.0) stable; urgency=medium
 
   * Add suil_instance_get_handle (patch from Rui Nuno Capela)
   * Fix compilation errors on some systems
@@ -98,14 +98,14 @@ suil (0.8.0) stable;
 
  -- David Robillard <d@drobilla.net>  Sat, 04 Jan 2014 21:06:56 +0000
 
-suil (0.6.16) stable;
+suil (0.6.16) stable; urgency=medium
 
   * Fix crashes and resizing for X11 in Qt (patch from Rui Nuno Capela)
   * Fix suil_instance_extension_data() for UIs with NULL extension_data
 
  -- David Robillard <d@drobilla.net>  Tue, 17 Sep 2013 03:48:57 +0000
 
-suil (0.6.14) stable;
+suil (0.6.14) stable; urgency=medium
 
   * Add support for new LV2 idle interface
   * Lower dependency from Gtk 2.24 introduced in 0.6.12
@@ -115,7 +115,7 @@ suil (0.6.14) stable;
 
  -- David Robillard <d@drobilla.net>  Fri, 09 Aug 2013 04:16:48 +0000
 
-suil (0.6.12) stable;
+suil (0.6.12) stable; urgency=medium
 
   * Fix compilation on BSD
   * Fix crash when a broken UI returns a NULL descriptor
@@ -123,14 +123,14 @@ suil (0.6.12) stable;
 
  -- David Robillard <d@drobilla.net>  Fri, 22 Feb 2013 18:03:48 +0000
 
-suil (0.6.10) stable;
+suil (0.6.10) stable; urgency=medium
 
   * Downgrade to waf 1.7.5, previous version does not build modules due to
     package check breakage in waf 1.7.6
 
  -- David Robillard <d@drobilla.net>  Sun, 23 Dec 2012 04:08:06 +0000
 
-suil (0.6.8) stable;
+suil (0.6.8) stable; urgency=medium
 
   * Fix crash in x11_in_gtk2 when event_filter fires before widget is realized
   * Update to waf 1.7.8 and autowaf r90 (install docs to versioned directory)
@@ -139,7 +139,7 @@ suil (0.6.8) stable;
 
  -- David Robillard <d@drobilla.net>  Sun, 23 Dec 2012 02:11:23 +0000
 
-suil (0.6.6) stable;
+suil (0.6.6) stable; urgency=medium
 
   * Disable timestamps in HTML documentation for reproducible build
   * Fix embedding Gtk in Qt as a child widget (support reparenting)
@@ -150,14 +150,14 @@ suil (0.6.6) stable;
 
  -- David Robillard <d@drobilla.net>  Wed, 14 Nov 2012 16:17:03 +0000
 
-suil (0.6.4) stable;
+suil (0.6.4) stable; urgency=medium
 
   * Correctly handle resizing for Gtk2 in Qt4
   * Improve documentation
 
  -- David Robillard <d@drobilla.net>  Mon, 09 Jul 2012 19:11:06 +0000
 
-suil (0.6.2) stable;
+suil (0.6.2) stable; urgency=medium
 
   * Allow run-time configuration of module directory via environment variable
     SUIL_MODULE_DIR
@@ -167,7 +167,7 @@ suil (0.6.2) stable;
 
  -- David Robillard <d@drobilla.net>  Fri, 25 May 2012 03:18:18 +0000
 
-suil (0.6.0) stable;
+suil (0.6.0) stable; urgency=medium
 
   * Add support for embedding X11 UIs (ui:X11UI)
   * Support new LV2 UI features automatically if provided by host
@@ -175,20 +175,20 @@ suil (0.6.0) stable;
 
  -- David Robillard <d@drobilla.net>  Wed, 18 Apr 2012 23:32:43 +0000
 
-suil (0.4.4) stable;
+suil (0.4.4) stable; urgency=medium
 
   * Fix embedding Gtk2 Qt4 UIs in Qt4 hosts that do not link to Gtk2
 
  -- David Robillard <d@drobilla.net>  Sat, 11 Jun 2011 15:20:11 +0000
 
-suil (0.4.2) stable;
+suil (0.4.2) stable; urgency=medium
 
   * Fix build system Python 3 compatibility
   * Fix compilation issues on some systems
 
  -- David Robillard <d@drobilla.net>  Wed, 25 May 2011 23:00:00 +0000
 
-suil (0.4.0) stable;
+suil (0.4.0) stable; urgency=medium
 
   * Initial release
 
