@@ -1,5 +1,5 @@
 project('suil', ['c', 'cpp'],
-        version: '0.10.14',
+        version: '0.10.15',
         license: 'ISC',
         meson_version: '>= 0.56.0',
         default_options: [
@@ -35,6 +35,13 @@ if get_option('strict') and not meson.is_subproject()
   subdir('meson/warnings')
 endif
 subdir('meson/suppressions')
+
+##########################
+# Platform Configuration #
+##########################
+
+suil_abs_module_dir = get_option('prefix') / suil_module_dir
+platform_defines = ['-DSUIL_MODULE_DIR="@0@"'.format(suil_abs_module_dir)]
 
 ################
 # Dependencies #
@@ -131,7 +138,7 @@ endif
 libsuil = library(
   meson.project_name() + library_suffix,
   sources,
-  c_args: c_suppressions + extra_c_args + ['-DSUIL_INTERNAL'],
+  c_args: c_suppressions + extra_c_args + platform_defines + ['-DSUIL_INTERNAL'],
   dependencies: [dl_dep, lv2_dep],
   gnu_symbol_visibility: 'hidden',
   include_directories: include_dirs,
@@ -169,7 +176,7 @@ if x11_dep.found()
   shared_module(
     'suil_x11',
     files('src/x11.c'),
-    c_args: c_suppressions,
+    c_args: c_suppressions + platform_defines,
     dependencies: [lv2_dep, x11_dep],
     gnu_symbol_visibility: 'hidden',
     include_directories: include_dirs,
@@ -196,7 +203,7 @@ if gtk2_dep.found() and qt5_dep.found()
   shared_module(
     'suil_gtk2_in_qt5',
     files('src/gtk2_in_qt5.cpp'),
-    cpp_args: cpp_suppressions + gtk_cpp_args,
+    cpp_args: cpp_suppressions + gtk_cpp_args + platform_defines,
     dependencies: [gtk2_dep, lv2_dep, qt5_dep],
     gnu_symbol_visibility: 'hidden',
     include_directories: include_dirs,
@@ -207,7 +214,7 @@ if gtk2_dep.found() and qt5_dep.found()
   shared_module(
     'suil_qt5_in_gtk2',
     files('src/qt5_in_gtk.cpp'),
-    cpp_args: cpp_suppressions + gtk_cpp_args,
+    cpp_args: cpp_suppressions + gtk_cpp_args + platform_defines,
     dependencies: [gtk2_dep, lv2_dep, qt5_dep],
     gnu_symbol_visibility: 'hidden',
     include_directories: include_dirs,
@@ -220,7 +227,7 @@ if gtk2_dep.found() and gtk2_x11_dep.found() and x11_dep.found()
   shared_module(
     'suil_x11_in_gtk2',
     files('src/x11_in_gtk2.c'),
-    c_args: c_suppressions + gtk_c_args,
+    c_args: c_suppressions + gtk_c_args + platform_defines,
     dependencies: [gtk2_dep, gtk2_x11_dep, lv2_dep, x11_dep],
     gnu_symbol_visibility: 'hidden',
     include_directories: include_dirs,
@@ -233,7 +240,7 @@ if gtk3_dep.found() and gtk3_x11_dep.found() and x11_dep.found()
   shared_module(
     'suil_x11_in_gtk3',
     files('src/x11_in_gtk3.c'),
-    c_args: c_suppressions + gtk_c_args,
+    c_args: c_suppressions + gtk_c_args + platform_defines,
     dependencies: [gtk3_dep, gtk3_x11_dep, lv2_dep, x11_dep],
     gnu_symbol_visibility: 'hidden',
     include_directories: include_dirs,
@@ -246,7 +253,7 @@ if gtk3_dep.found() and qt5_dep.found()
   shared_module(
     'suil_qt5_in_gtk3',
     files('src/qt5_in_gtk.cpp'),
-    cpp_args: cpp_suppressions + gtk_cpp_args,
+    cpp_args: cpp_suppressions + gtk_cpp_args + platform_defines,
     dependencies: [gtk3_dep, lv2_dep, qt5_dep],
     gnu_symbol_visibility: 'hidden',
     include_directories: include_dirs,
@@ -264,7 +271,7 @@ if gtk2_dep.found() and gtk2_quartz_dep.found()
     include_directories: include_dirs,
     install: true,
     install_dir: suil_module_dir,
-    objcpp_args: objcpp_suppressions + gtk_cpp_args,
+    objcpp_args: objcpp_suppressions + gtk_cpp_args + platform_defines,
   )
 endif
 
@@ -272,7 +279,7 @@ if gtk2_dep.found() and host_machine.system() == 'windows'
   shared_module(
     'suil_win_in_gtk2',
     files('src/win_in_gtk2.cpp'),
-    cpp_args: cpp_suppressions + gtk_cpp_args,
+    cpp_args: cpp_suppressions + gtk_cpp_args + platform_defines,
     dependencies: [gtk2_dep, lv2_dep],
     gnu_symbol_visibility: 'hidden',
     include_directories: include_dirs,
@@ -285,7 +292,7 @@ if qt5_dep.found() and qt5_x11_dep.found()
   shared_module(
     'suil_x11_in_qt5',
     files('src/x11_in_qt5.cpp'),
-    cpp_args: cpp_suppressions,
+    cpp_args: cpp_suppressions + platform_defines,
     dependencies: [lv2_dep, qt5_dep, qt5_x11_dep],
     gnu_symbol_visibility: 'hidden',
     include_directories: include_dirs,
@@ -308,7 +315,7 @@ if host_machine.system() == 'darwin'
       include_directories: include_dirs,
       install: true,
       install_dir: suil_module_dir,
-      objcpp_args: cocoa_suppressions + objcpp_suppressions,
+      objcpp_args: cocoa_suppressions + objcpp_suppressions + platform_defines,
     )
   endif
 endif
