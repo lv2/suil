@@ -1,5 +1,5 @@
 project('suil', ['c', 'cpp'],
-        version: '0.10.15',
+        version: '0.10.16',
         license: 'ISC',
         meson_version: '>= 0.56.0',
         default_options: [

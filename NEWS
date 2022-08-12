@@ -1,8 +1,8 @@
-suil (0.10.15) unstable; urgency=medium
+suil (0.10.16) stable; urgency=medium
 
   * Fix wrapper module installation path
 
- -- David Robillard <d@drobilla.net>  Fri, 05 Aug 2022 03:45:37 +0000
+ -- David Robillard <d@drobilla.net>  Fri, 12 Aug 2022 22:17:10 +0000
 
 suil (0.10.14) stable; urgency=medium
 
