@@ -1,5 +1,5 @@
 project('suil', ['c', 'cpp'],
-        version: '0.10.16',
+        version: '0.10.17',
         license: 'ISC',
         meson_version: '>= 0.56.0',
         default_options: [
@@ -249,7 +249,7 @@ if gtk3_dep.found() and gtk3_x11_dep.found() and x11_dep.found()
   )
 endif
 
-if gtk3_dep.found() and qt5_dep.found()
+if gtk3_dep.found() and gtk3_x11_dep.found() and qt5_dep.found()
   shared_module(
     'suil_qt5_in_gtk3',
     files('src/qt5_in_gtk.cpp'),
