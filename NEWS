@@ -1,8 +1,9 @@
 suil (0.10.17) unstable; urgency=medium
 
   * Fix MacOS build when Gtk3 and Qt5 are present without X11
+  * Add project metadata
 
- -- David Robillard <d@drobilla.net>  Mon, 15 Aug 2022 21:09:19 +0000
+ -- David Robillard <d@drobilla.net>  Tue, 16 Aug 2022 00:34:49 +0000
 
 suil (0.10.16) stable; urgency=medium
 
