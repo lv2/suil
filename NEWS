@@ -1,7 +1,7 @@
 suil (0.10.17) unstable; urgency=medium
 
-  * Fix MacOS build when Gtk3 and Qt5 are present without X11
   * Add project metadata
+  * Fix MacOS build when Gtk3 and Qt5 are present without X11
 
  -- David Robillard <d@drobilla.net>  Tue, 16 Aug 2022 00:34:49 +0000
 
