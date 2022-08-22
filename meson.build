@@ -320,6 +320,18 @@ if host_machine.system() == 'darwin'
   endif
 endif
 
+#########
+# Tests #
+#########
+
+if not meson.is_subproject() and get_option('strict')
+  # Check release metadata
+  autoship = find_program('autoship', required: false)
+  if autoship.found()
+    test('autoship', autoship, args: ['test', suil_src_root], suite: 'data')
+  endif
+endif
+
 #################
 # Documentation #
 #################
