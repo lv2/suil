@@ -6,7 +6,8 @@ Prerequisites
 
 To build from source, you will need:
 
- * A relatively modern C compiler (GCC, Clang, and MSVC are known to work).
+ * A relatively modern C and optionally C++ compiler (GCC, Clang, and MSVC are
+   known to work).
 
  * [Meson](http://mesonbuild.com/), which depends on
    [Python](http://python.org/).
