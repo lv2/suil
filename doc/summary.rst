@@ -1,3 +1,7 @@
+..
+   Copyright 2020-2022 David Robillard <d@drobilla.net>
+   SPDX-License-Identifier: ISC
+
 Suil is a library for loading and wrapping LV2 plugin UIs.
 
 With Suil,

@@ -1,10 +1,11 @@
 suil (0.10.17) unstable; urgency=medium
 
   * Add project metadata
+  * Adopt REUSE machine-readable licensing standard
   * Fix MacOS build when Gtk3 and Qt5 are present without X11
   * Fix opening wrapped UIs multiple times in Gtk
 
- -- David Robillard <d@drobilla.net>  Wed, 31 Aug 2022 23:16:45 +0000
+ -- David Robillard <d@drobilla.net>  Thu, 01 Sep 2022 18:22:32 +0000
 
 suil (0.10.16) stable; urgency=medium
 

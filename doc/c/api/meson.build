@@ -1,3 +1,6 @@
+# Copyright 2021-2022 David Robillard <d@drobilla.net>
+# SPDX-License-Identifier: CC0-1.0 OR ISC
+
 c_suil_rst = custom_target(
   'suil.rst',
   command: [dox_to_sphinx, '-f', '@INPUT0@', '@OUTDIR@'],

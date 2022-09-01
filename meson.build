@@ -1,3 +1,6 @@
+# Copyright 2021-2022 David Robillard <d@drobilla.net>
+# SPDX-License-Identifier: CC0-1.0 OR ISC
+
 project('suil', ['c', 'cpp'],
         version: '0.10.17',
         license: 'ISC',
@@ -332,12 +335,20 @@ endif
 # Tests #
 #########
 
+# Check release metadata
 if not meson.is_subproject() and get_option('strict')
-  # Check release metadata
   autoship = find_program('autoship', required: false)
   if autoship.found()
     test('autoship', autoship, args: ['test', suil_src_root], suite: 'data')
   endif
+endif
+
+# Check licensing metadata
+reuse = find_program('reuse', required: false)
+if reuse.found()
+  test('REUSE', reuse,
+       args: ['--root', suil_src_root, 'lint'],
+       suite: 'data')
 endif
 
 #################
