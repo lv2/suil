@@ -3,7 +3,7 @@ Upstream-Name: suil
 Upstream-Contact: David Robillard <d@drobilla.net>
 Source: https://gitlab.com/drobilla/suil
 
-Files: AUTHORS NEWS PACKAGING suil.ttl
+Files: AUTHORS NEWS suil.ttl
 Copyright: 2011-2022 David Robillard <d@drobilla.net>
 Comment: Contributed to the Commons as a representation of simple facts
 License: CC0-1.0 OR ISC
