@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: 0BSD OR ISC
 
 project('suil', ['c', 'cpp'],
-        version: '0.10.17',
+        version: '0.10.18',
         license: 'ISC',
         meson_version: '>= 0.56.0',
         default_options: [
