@@ -1,8 +1,9 @@
 suil (0.10.19) unstable; urgency=medium
 
   * Fix dependencies in pkg-config file
+  * Override pkg-config dependency within meson
 
- -- David Robillard <d@drobilla.net>  Wed, 05 Oct 2022 19:47:11 +0000
+ -- David Robillard <d@drobilla.net>  Fri, 07 Oct 2022 17:34:53 +0000
 
 suil (0.10.18) stable; urgency=medium
 

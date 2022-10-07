@@ -55,14 +55,11 @@ nodelete_cpp_link_args = cpp.get_supported_link_arguments(['-Wl,-z,nodelete'])
 
 dl_dep = cc.find_library('dl', required: false)
 
-lv2_dep = dependency(
-  'lv2',
-  version: '>= 1.18.3',
-  fallback: ['lv2', 'lv2_dep'],
-)
+lv2_dep = dependency('lv2', fallback: 'lv2', version: '>= 1.18.3')
 
 x11_dep = dependency(
   'x11',
+  include_type: 'system',
   required: get_option('x11'),
 )
 
@@ -171,6 +168,9 @@ pkg.generate(
   subdirs: [versioned_name],
   version: meson.project_version(),
 )
+
+# Override pkg-config dependency for internal meson dependants
+meson.override_dependency(versioned_name, suil_dep)
 
 # Install header to a versioned include directory
 install_headers(c_headers, subdir: versioned_name / 'suil')
