@@ -27,6 +27,7 @@ Checks: >
   -hicpp-signed-bitwise,
   -llvm-header-guard,
   -llvmlibc-*,
+  -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
   -performance-no-int-to-ptr,
   -readability-function-cognitive-complexity,
