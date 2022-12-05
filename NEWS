@@ -2,8 +2,9 @@ suil (0.10.19) unstable; urgency=medium
 
   * Fix dependencies in pkg-config file
   * Override pkg-config dependency within meson
+  * Replace duplicated dox_to_sphinx script with sphinxygen dependency
 
- -- David Robillard <d@drobilla.net>  Fri, 07 Oct 2022 17:34:53 +0000
+ -- David Robillard <d@drobilla.net>  Mon, 05 Dec 2022 00:03:30 +0000
 
 suil (0.10.18) stable; urgency=medium
 
