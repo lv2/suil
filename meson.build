@@ -277,7 +277,7 @@ if gtk2_dep.found() and gtk2_quartz_dep.found()
   shared_module(
     'suil_cocoa_in_gtk2',
     files('src/cocoa_in_gtk2.mm'),
-    dependencies: [gtk2_dep, lv2_dep, qt5_dep],
+    dependencies: [gtk2_dep, gtk2_quartz_dep, lv2_dep, qt5_dep],
     gnu_symbol_visibility: 'hidden',
     include_directories: include_dirs,
     install: true,
