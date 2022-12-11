@@ -36,15 +36,9 @@ suil_ui_supported(const char* host_type_uri, const char* ui_type_uri)
   }
 
   if ((!strcmp(host_type_uri, GTK2_UI_URI) &&
-       !strcmp(ui_type_uri, QT5_UI_URI)) ||
-      (!strcmp(host_type_uri, QT5_UI_URI) &&
-       !strcmp(ui_type_uri, GTK2_UI_URI)) ||
-      (!strcmp(host_type_uri, GTK2_UI_URI) &&
        !strcmp(ui_type_uri, X11_UI_URI)) ||
       (!strcmp(host_type_uri, GTK3_UI_URI) &&
        !strcmp(ui_type_uri, X11_UI_URI)) ||
-      (!strcmp(host_type_uri, GTK3_UI_URI) &&
-       !strcmp(ui_type_uri, QT5_UI_URI)) ||
       (!strcmp(host_type_uri, GTK2_UI_URI) &&
        !strcmp(ui_type_uri, WIN_UI_URI)) ||
       (!strcmp(host_type_uri, GTK2_UI_URI) &&
@@ -68,16 +62,6 @@ open_wrapper(SuilHost*      host,
 {
   const char* module_name = NULL;
 
-  if (!strcmp(container_type_uri, QT5_UI_URI) &&
-      !strcmp(ui_type_uri, GTK2_UI_URI)) {
-    module_name = "suil_gtk2_in_qt5";
-  }
-
-  if (!strcmp(container_type_uri, GTK2_UI_URI) &&
-      !strcmp(ui_type_uri, QT5_UI_URI)) {
-    module_name = "suil_qt5_in_gtk2";
-  }
-
   if (!strcmp(container_type_uri, GTK2_UI_URI) &&
       !strcmp(ui_type_uri, X11_UI_URI)) {
     module_name = "suil_x11_in_gtk2";
@@ -86,11 +70,6 @@ open_wrapper(SuilHost*      host,
   if (!strcmp(container_type_uri, GTK3_UI_URI) &&
       !strcmp(ui_type_uri, X11_UI_URI)) {
     module_name = "suil_x11_in_gtk3";
-  }
-
-  if (!strcmp(container_type_uri, GTK3_UI_URI) &&
-      !strcmp(ui_type_uri, QT5_UI_URI)) {
-    module_name = "suil_qt5_in_gtk3";
   }
 
   if (!strcmp(container_type_uri, GTK2_UI_URI) &&

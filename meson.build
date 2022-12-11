@@ -206,31 +206,6 @@ endif
 gtk_c_args = cc.get_supported_arguments(gtk_args)
 gtk_cpp_args = cpp.get_supported_arguments(gtk_args)
 
-if gtk2_dep.found() and qt5_dep.found()
-  shared_module(
-    'suil_gtk2_in_qt5',
-    files('src/gtk2_in_qt5.cpp'),
-    cpp_args: cpp_suppressions + gtk_cpp_args + platform_defines,
-    dependencies: [gtk2_dep, lv2_dep, qt5_dep],
-    gnu_symbol_visibility: 'hidden',
-    include_directories: include_dirs,
-    install: true,
-    install_dir: suil_module_dir,
-  )
-
-  shared_module(
-    'suil_qt5_in_gtk2',
-    files('src/qt5_in_gtk.cpp'),
-    cpp_args: cpp_suppressions + gtk_cpp_args + platform_defines,
-    dependencies: [gtk2_dep, lv2_dep, qt5_dep],
-    gnu_symbol_visibility: 'hidden',
-    include_directories: include_dirs,
-    install: true,
-    install_dir: suil_module_dir,
-    link_args: nodelete_cpp_link_args,
-  )
-endif
-
 if gtk2_dep.found() and gtk2_x11_dep.found() and x11_dep.found()
   shared_module(
     'suil_x11_in_gtk2',
@@ -256,20 +231,6 @@ if gtk3_dep.found() and gtk3_x11_dep.found() and x11_dep.found()
     install: true,
     install_dir: suil_module_dir,
     link_args: nodelete_c_link_args,
-  )
-endif
-
-if gtk3_dep.found() and gtk3_x11_dep.found() and qt5_dep.found()
-  shared_module(
-    'suil_qt5_in_gtk3',
-    files('src/qt5_in_gtk.cpp'),
-    cpp_args: cpp_suppressions + gtk_cpp_args + platform_defines,
-    dependencies: [gtk3_dep, lv2_dep, qt5_dep],
-    gnu_symbol_visibility: 'hidden',
-    include_directories: include_dirs,
-    install: true,
-    install_dir: suil_module_dir,
-    link_args: nodelete_cpp_link_args,
   )
 endif
 
