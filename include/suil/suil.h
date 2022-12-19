@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+// SUIL_LIB_IMPORT and SUIL_LIB_EXPORT mark the entry points of shared libraries
 #ifdef _WIN32
 #  define SUIL_LIB_IMPORT __declspec(dllimport)
 #  define SUIL_LIB_EXPORT __declspec(dllexport)
@@ -19,14 +20,15 @@
 #  define SUIL_LIB_EXPORT __attribute__((visibility("default")))
 #endif
 
-#ifndef SUIL_STATIC
-#  ifdef SUIL_INTERNAL
+// SUIL_API exposes symbols in the public API
+#ifndef SUIL_API
+#  ifdef SUIL_STATIC
+#    define SUIL_API
+#  elif defined(SUIL_INTERNAL)
 #    define SUIL_API SUIL_LIB_EXPORT
 #  else
 #    define SUIL_API SUIL_LIB_IMPORT
 #  endif
-#else
-#  define SUIL_API
 #endif
 
 #ifdef __cplusplus
