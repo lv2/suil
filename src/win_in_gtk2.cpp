@@ -27,9 +27,6 @@ extern "C" {
 #define SUIL_WIN_WRAPPER(obj) \
   (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_WIN_WRAPPER, SuilWinWrapper))
 
-using SuilWinWrapper      = _SuilWinWrapper;
-using SuilWinWrapperClass = _SuilWinWrapperClass;
-
 struct _SuilWinWrapper {
   GtkDrawingArea              area;
   SuilWrapper*                wrapper;
@@ -43,6 +40,9 @@ struct _SuilWinWrapper {
 struct _SuilWinWrapperClass {
   GtkDrawingAreaClass parent_class;
 };
+
+using SuilWinWrapper      = _SuilWinWrapper;
+using SuilWinWrapperClass = _SuilWinWrapperClass;
 
 GType
 suil_win_wrapper_get_type(void); // Accessor for SUIL_TYPE_WIN_WRAPPER
