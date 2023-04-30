@@ -34,9 +34,6 @@ if host_machine.system() == 'darwin'
 endif
 
 # Set global warning flags
-if get_option('strict') and not meson.is_subproject()
-  subdir('meson/warnings')
-endif
 subdir('meson/suppressions')
 
 ##########################
@@ -307,7 +304,7 @@ endif
 # Tests #
 #########
 
-if get_option('strict')
+if get_option('warning_level') == 'everything'
   # Check release metadata
   if not meson.is_subproject()
     autoship = find_program('autoship', required: false)

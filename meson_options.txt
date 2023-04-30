@@ -16,9 +16,6 @@ option('gtk3', type: 'feature', value: 'auto', yield: true,
 option('qt5', type: 'feature', value: 'auto', yield: true,
        description : 'Build Qt5 wrappers')
 
-option('strict', type: 'boolean', value: false, yield: true,
-       description: 'Enable ultra-strict warnings')
-
 option('tests', type: 'feature', value: 'auto', yield: true,
        description: 'Build tests')
 

@@ -1,11 +1,9 @@
-# Copyright 2020-2022 David Robillard <d@drobilla.net>
+# Copyright 2020-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
-# Project-specific warning suppressions.
-#
-# This should be used in conjunction with the generic "warnings" sibling that
-# enables all reasonable warnings for the compiler.  It lives here just to keep
-# the top-level meson.build more readable.
+# Project-specific warning suppressions
+
+warning_level = get_option('warning_level')
 
 #####
 # C #
@@ -14,8 +12,8 @@
 if is_variable('cc')
   c_suppressions = []
 
-  if get_option('strict')
-    if cc.get_id() == 'clang'
+  if cc.get_id() in ['clang', 'emscripten']
+    if warning_level == 'everything'
       c_suppressions += [
         '-Wno-atomic-implicit-seq-cst',
         '-Wno-cast-qual',
@@ -25,32 +23,46 @@ if is_variable('cc')
         '-Wno-reserved-id-macro',
         '-Wno-variadic-macros',
       ]
+    endif
 
-      if host_machine.system() == 'windows'
-        c_suppressions += [
-          '-Wno-deprecated-declarations',
-          '-Wno-nonportable-system-include-path',
-        ]
-      endif
+    if host_machine.system() == 'windows'
+      c_suppressions += [
+        '-Wno-deprecated-declarations',
+        '-Wno-nonportable-system-include-path',
+      ]
+    endif
 
-    elif cc.get_id() == 'gcc'
+  elif cc.get_id() == 'gcc'
+    if warning_level == 'everything'
       c_suppressions += [
         '-Wno-padded',
         '-Wno-suggest-attribute=const',
         '-Wno-suggest-attribute=pure',
       ]
+    endif
 
-    elif cc.get_id() == 'msvc'
+  elif cc.get_id() == 'msvc'
+    c_suppressions += [
+      '/experimental:external',
+      '/external:W0',
+      '/external:anglebrackets',
+    ]
+
+    if warning_level == 'everything'
       c_suppressions += [
         '/wd4191', # unsafe function conversion
         '/wd4514', # unreferenced inline function has been removed
         '/wd4710', # function not inlined
         '/wd4820', # padding added after construct
-        '/wd4996', # function or variable may be unsafe
         '/wd5045', # will insert Spectre mitigation for memory load
       ]
     endif
 
+    if warning_level in ['everything', '3', '2']
+      c_suppressions += [
+        '/wd4996', # function or variable may be unsafe
+      ]
+    endif
   endif
 
   c_suppressions = cc.get_supported_arguments(c_suppressions)
@@ -63,10 +75,12 @@ endif
 if is_variable('cpp')
   cpp_suppressions = []
 
-  if get_option('strict')
-    if cpp.get_id() == 'clang'
+  if cpp.get_id() in ['clang', 'emscripten']
+    if warning_level == 'everything'
       cpp_suppressions += [
         '-Wno-atomic-implicit-seq-cst',
+        '-Wno-c++98-compat',
+        '-Wno-c++98-compat-pedantic',
         '-Wno-cast-qual',
         '-Wno-disabled-macro-expansion',
         '-Wno-old-style-cast',
@@ -75,8 +89,9 @@ if is_variable('cpp')
         '-Wno-variadic-macros',
         '-Wno-zero-as-null-pointer-constant',
       ]
-
-    elif cpp.get_id() == 'gcc'
+    endif
+  elif cpp.get_id() == 'gcc'
+    if warning_level == 'everything'
       cpp_suppressions += [
         '-Wno-arith-conversion',
         '-Wno-cast-qual',
@@ -99,14 +114,18 @@ endif
 if is_variable('objcpp')
   objcpp_suppressions = []
 
-  if objcpp.get_id() == 'clang'
-    c_suppressions += [
-      '-Wno-deprecated-declarations',
-    ]
+  if objcpp.get_id() in ['clang', 'emscripten']
+    if warning_level == 'everything'
+      c_suppressions += [
+        '-Wno-deprecated-declarations',
+      ]
+    endif
   elif objcpp.get_id() == 'gcc'
-    objcpp_suppressions = gcc_common_warnings + [
-      '-Wno-direct-ivar-access',
-    ]
+    if warning_level == 'everything'
+      objcpp_suppressions = gcc_common_warnings + [
+        '-Wno-direct-ivar-access',
+      ]
+    endif
   endif
 
   objcpp_suppressions = objcpp.get_supported_arguments(objcpp_suppressions)
