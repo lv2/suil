@@ -1,4 +1,4 @@
-// Copyright 2020-2022 David Robillard <d@drobilla.net>
+// Copyright 2020-2023 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef SUIL_DYLIB_H
@@ -11,7 +11,7 @@
 enum DylibFlags {
   DYLIB_GLOBAL = 0,
   DYLIB_LAZY   = 1,
-  DYLIB_NOW    = 2,
+  DYLIB_NOW    = 2
 };
 
 static inline void*
@@ -40,7 +40,7 @@ dylib_error(void)
 enum DylibFlags {
   DYLIB_GLOBAL = RTLD_GLOBAL,
   DYLIB_LAZY   = RTLD_LAZY,
-  DYLIB_NOW    = RTLD_NOW,
+  DYLIB_NOW    = RTLD_NOW
 };
 
 static inline void*
