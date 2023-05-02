@@ -23,6 +23,12 @@ if is_variable('cc')
         '-Wno-reserved-id-macro',
         '-Wno-variadic-macros',
       ]
+
+      if not meson.is_cross_build()
+        c_suppressions += [
+          '-Wno-poison-system-directories',
+        ]
+      endif
     endif
 
     if host_machine.system() == 'windows'
@@ -116,10 +122,23 @@ if is_variable('objcpp')
 
   if objcpp.get_id() in ['clang', 'emscripten']
     if warning_level == 'everything'
-      c_suppressions += [
+      objcpp_suppressions += [
+        '-Wno-c++98-compat-pedantic',
         '-Wno-deprecated-declarations',
+        '-Wno-old-style-cast',
+        '-Wno-padded',
+        '-Wno-reserved-id-macro',
+        '-Wno-weak-vtables',
+        '-Wno-zero-as-null-pointer-constant',
       ]
+
+      if not meson.is_cross_build()
+        objcpp_suppressions += [
+          '-Wno-poison-system-directories',
+        ]
+      endif
     endif
+
   elif objcpp.get_id() == 'gcc'
     if warning_level == 'everything'
       objcpp_suppressions = gcc_common_warnings + [
