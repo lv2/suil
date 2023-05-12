@@ -83,11 +83,15 @@ gtk2_x11_dep = dependency(
   required: get_option('gtk2').enabled() and get_option('x11').enabled(),
 )
 
-gtk2_quartz_dep = dependency(
-  'gtk+-quartz-2.0',
-  include_type: 'system',
-  required: get_option('gtk2').enabled() and get_option('cocoa').enabled(),
-)
+if host_machine.system() == 'darwin'
+  gtk2_quartz_dep = dependency(
+    'gtk+-quartz-2.0',
+    include_type: 'system',
+    required: get_option('gtk2').enabled() and get_option('cocoa').enabled(),
+  )
+else
+  gtk2_quartz_dep = disabler()
+endif
 
 gtk3_dep = dependency(
   'gtk+-3.0',

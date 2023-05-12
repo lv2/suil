@@ -2,11 +2,12 @@ suil (0.10.19) unstable; urgency=medium
 
   * Allow SUIL_API to be defined by the user
   * Fix dependencies in pkg-config file
+  * Only check for Gtk Quartz support on MacOS
   * Override pkg-config dependency within meson
   * Remove Gtk in Qt and Qt in Gtk wrappers
   * Replace duplicated dox_to_sphinx script with sphinxygen dependency
 
- -- David Robillard <d@drobilla.net>  Mon, 19 Dec 2022 23:54:42 +0000
+ -- David Robillard <d@drobilla.net>  Fri, 12 May 2023 11:34:21 +0000
 
 suil (0.10.18) stable; urgency=medium
 
