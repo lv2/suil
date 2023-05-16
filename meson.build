@@ -334,8 +334,14 @@ if not get_option('docs').disabled()
   subdir('doc')
 endif
 
+# Display top-level summary (augmented in subdirectories)
 if not meson.is_subproject()
-  summary('Install prefix', get_option('prefix'))
-  summary('Headers', get_option('prefix') / get_option('includedir'))
-  summary('Libraries', get_option('prefix') / get_option('libdir'))
+  summary(
+    {
+      'Install prefix':  get_option('prefix'),
+      'Headers':  get_option('prefix') / get_option('includedir'),
+      'Libraries':  get_option('prefix') / get_option('libdir'),
+    },
+    section: 'Directories',
+  )
 endif

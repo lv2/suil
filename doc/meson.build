@@ -19,5 +19,5 @@ if build_docs
 endif
 
 if not meson.is_subproject()
-  summary('Documentation', build_docs, bool_yn: true)
+  summary('Documentation', build_docs, bool_yn: true, section: 'Components')
 endif
