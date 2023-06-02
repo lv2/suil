@@ -40,7 +40,7 @@ suil_ui_supported(const char* host_type_uri, const char* ui_type_uri)
         !strcmp(ui_type_uri, WIN_UI_URI) ||
         !strcmp(ui_type_uri, X11_UI_URI))) ||
       (!strcmp(host_type_uri, GTK3_UI_URI) &&
-       (!strcmp(ui_type_uri, QT5_UI_URI))) ||
+       !strcmp(ui_type_uri, X11_UI_URI)) ||
       (!strcmp(host_type_uri, QT5_UI_URI) &&
        (!strcmp(ui_type_uri, COCOA_UI_URI) ||
         !strcmp(ui_type_uri, X11_UI_URI)))) {
