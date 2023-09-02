@@ -5,9 +5,10 @@ suil (0.10.19) unstable; urgency=medium
   * Only check for Gtk Quartz support on MacOS
   * Override pkg-config dependency within meson
   * Remove Gtk in Qt and Qt in Gtk wrappers
+  * Remove junk files from documentation install
   * Replace duplicated dox_to_sphinx script with sphinxygen dependency
 
- -- David Robillard <d@drobilla.net>  Fri, 12 May 2023 11:34:21 +0000
+ -- David Robillard <d@drobilla.net>  Sat, 02 Sep 2023 23:22:07 +0000
 
 suil (0.10.18) stable; urgency=medium
 

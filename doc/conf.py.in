@@ -1,12 +1,14 @@
-# Copyright 2020-2021 David Robillard <d@drobilla.net>
+# Copyright 2020-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: ISC
 
 # Project information
 
-project = "Suil"
-copyright = "2020, David Robillard"
+project = "@SUIL_TITLE@"
+copyright = "2023, David Robillard"
 author = "David Robillard"
 release = "@SUIL_VERSION@"
+version = "@SUIL_VERSION@"
+desc = "A library for loading LV2 plugin UIs"
 
 # General configuration
 
@@ -42,7 +44,7 @@ if tags.has("singlehtml"):
     html_theme_options = {
         "body_max_width": "48em",
         "body_min_width": "48em",
-        "description": "A library for loading LV2 plugin UIs",
+        "description": desc,
         "globaltoc_collapse": False,
         "globaltoc_maxdepth": 3,
         "logo_name": True,
@@ -57,7 +59,7 @@ else:
     html_theme_options = {
         "body_max_width": "60em",
         "body_min_width": "40em",
-        "description": "A library for loading LV2 plugin UIs",
+        "description": desc,
         "globaltoc_collapse": True,
         "globaltoc_maxdepth": 1,
         "logo_name": True,
