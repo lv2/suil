@@ -16,11 +16,13 @@ if is_variable('cc')
     if warning_level == 'everything'
       c_suppressions += [
         '-Wno-atomic-implicit-seq-cst',
+        '-Wno-cast-function-type-strict',
         '-Wno-cast-qual',
         '-Wno-declaration-after-statement',
         '-Wno-disabled-macro-expansion',
         '-Wno-padded',
         '-Wno-reserved-id-macro',
+        '-Wno-unsafe-buffer-usage',
         '-Wno-variadic-macros',
       ]
 
@@ -87,11 +89,13 @@ if is_variable('cpp')
         '-Wno-atomic-implicit-seq-cst',
         '-Wno-c++98-compat',
         '-Wno-c++98-compat-pedantic',
+        '-Wno-cast-function-type-strict',
         '-Wno-cast-qual',
         '-Wno-disabled-macro-expansion',
         '-Wno-old-style-cast',
         '-Wno-padded',
         '-Wno-reserved-id-macro',
+        '-Wno-unsafe-buffer-usage',
         '-Wno-variadic-macros',
         '-Wno-zero-as-null-pointer-constant',
       ]
