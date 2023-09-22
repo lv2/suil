@@ -25,7 +25,7 @@ SUIL_RESTORE_WARNINGS
 
 #undef signals
 
-extern "C" {
+namespace {
 
 class SuilQX11Widget : public QWidget
 {
@@ -34,10 +34,10 @@ public:
     : QWidget(parent, wflags)
   {}
 
-  SuilQX11Widget(const SuilQX11Widget&) = delete;
+  SuilQX11Widget(const SuilQX11Widget&)            = delete;
   SuilQX11Widget& operator=(const SuilQX11Widget&) = delete;
 
-  SuilQX11Widget(SuilQX11Widget&&) = delete;
+  SuilQX11Widget(SuilQX11Widget&&)            = delete;
   SuilQX11Widget& operator=(SuilQX11Widget&&) = delete;
 
   ~SuilQX11Widget() override;
@@ -125,7 +125,7 @@ struct SuilX11InQt5Wrapper {
   SuilQX11Widget* parent;
 };
 
-static void
+void
 wrapper_free(SuilWrapper* wrapper)
 {
   auto* impl = static_cast<SuilX11InQt5Wrapper*>(wrapper->impl);
@@ -135,7 +135,7 @@ wrapper_free(SuilWrapper* wrapper)
   free(impl);
 }
 
-static int
+int
 wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
 {
   auto* const impl = static_cast<SuilX11InQt5Wrapper*>(wrapper->impl);
@@ -178,13 +178,17 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
   return 0;
 }
 
-static int
+int
 wrapper_resize(LV2UI_Feature_Handle handle, int width, int height)
 {
   auto* const ew = static_cast<QWidget*>(handle);
   ew->resize(width, height);
   return 0;
 }
+
+} // namespace
+
+extern "C" {
 
 SUIL_LIB_EXPORT
 SuilWrapper*
