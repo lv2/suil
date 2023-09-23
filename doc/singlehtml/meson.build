@@ -14,12 +14,13 @@ custom_target(
     sphinx_in_dir,
     '@OUTDIR@',
   ],
-  input: [c_rst_files, c_suil_rst, c_index_xml, conf_py],
+  input: [api_suil_rst, conf_py, sphinx_input],
   install: true,
   install_dir: singlehtml_dir,
   output: [
-    '_static',
     'index.html',
+
+    '_static',
   ],
 )
 
