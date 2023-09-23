@@ -145,9 +145,11 @@ if is_variable('objcpp')
 
   elif objcpp.get_id() == 'gcc'
     if warning_level == 'everything'
-      objcpp_suppressions = gcc_common_warnings + [
-        '-Wno-direct-ivar-access',
-      ]
+      objcpp_suppressions = (
+        gcc_common_warnings + [
+          '-Wno-direct-ivar-access',
+        ]
+      )
     endif
   endif
 
