@@ -1,4 +1,4 @@
-suil (0.10.19) unstable; urgency=medium
+suil (0.10.20) stable; urgency=medium
 
   * Allow SUIL_API to be defined by the user
   * Fix dependencies in pkg-config file
@@ -8,7 +8,7 @@ suil (0.10.19) unstable; urgency=medium
   * Remove junk files from documentation install
   * Replace duplicated dox_to_sphinx script with sphinxygen dependency
 
- -- David Robillard <d@drobilla.net>  Sat, 02 Sep 2023 23:22:07 +0000
+ -- David Robillard <d@drobilla.net>  Sun, 22 Oct 2023 20:11:10 +0000
 
 suil (0.10.18) stable; urgency=medium
 
