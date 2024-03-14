@@ -12,7 +12,7 @@ project(
   ],
   license: 'ISC',
   meson_version: '>= 0.56.0',
-  version: '0.10.20',
+  version: '0.10.21',
 )
 
 suil_src_root = meson.current_source_dir()
@@ -155,6 +155,7 @@ libsuil = library(
   versioned_name,
   sources,
   c_args: c_suppressions + extra_c_args + platform_defines + ['-DSUIL_INTERNAL'],
+  darwin_versions: [major_version + '.0.0', meson.project_version()],
   dependencies: [dl_dep, lv2_dep],
   gnu_symbol_visibility: 'hidden',
   include_directories: include_dirs,
