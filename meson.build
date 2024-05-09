@@ -419,12 +419,12 @@ if gtk2_dep.found() and host_machine.system() == 'windows'
   )
 endif
 
-if qt5_dep.found() and qt5_x11_dep.found()
+if qt5_dep.found() and qt5_x11_dep.found() and x11_dep.found()
   shared_module(
     'suil_x11_in_qt5',
     files('src/x11_in_qt.cpp'),
     cpp_args: cpp_suppressions + platform_defines,
-    dependencies: [lv2_dep, qt5_dep, qt5_x11_dep],
+    dependencies: [lv2_dep, qt5_dep, qt5_x11_dep, x11_dep],
     gnu_symbol_visibility: 'hidden',
     include_directories: include_dirs,
     install: true,
