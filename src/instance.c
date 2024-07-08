@@ -17,6 +17,7 @@
 #define GTK2_UI_URI LV2_UI__GtkUI
 #define GTK3_UI_URI LV2_UI__Gtk3UI
 #define QT5_UI_URI LV2_UI__Qt5UI
+#define QT6_UI_URI LV2_UI_PREFIX "Qt6UI"
 #define X11_UI_URI LV2_UI__X11UI
 #define WIN_UI_URI LV2_UI_PREFIX "WindowsUI"
 #define COCOA_UI_URI LV2_UI__CocoaUI
@@ -43,7 +44,11 @@ suil_ui_supported(const char* host_type_uri, const char* ui_type_uri)
        !strcmp(ui_type_uri, X11_UI_URI)) ||
       (!strcmp(host_type_uri, QT5_UI_URI) &&
        (!strcmp(ui_type_uri, COCOA_UI_URI) ||
-        !strcmp(ui_type_uri, X11_UI_URI)))) {
+        !strcmp(ui_type_uri, X11_UI_URI))) ||
+      (!strcmp(host_type_uri, QT6_UI_URI) &&
+       (!strcmp(ui_type_uri, X11_UI_URI)))
+     )
+  {
     return SUIL_WRAPPING_EMBEDDED;
   }
 
@@ -82,6 +87,11 @@ open_wrapper(SuilHost*      host,
   if (!strcmp(container_type_uri, QT5_UI_URI) &&
       !strcmp(ui_type_uri, X11_UI_URI)) {
     module_name = "suil_x11_in_qt5";
+  }
+
+  if (!strcmp(container_type_uri, QT6_UI_URI) &&
+      !strcmp(ui_type_uri, X11_UI_URI)) {
+    module_name = "suil_x11_in_qt6";
   }
 
   if (!strcmp(container_type_uri, QT5_UI_URI) &&

@@ -124,6 +124,14 @@ qt5_x11_dep = dependency(
   required: get_option('qt5').enabled() and get_option('x11').enabled(),
 )
 
+qt6_dep = dependency(
+  'Qt6Widgets',
+  include_type: 'system',
+  version: '>=6.2.0',
+  required: get_option('qt6'),
+)
+
+
 if host_machine.system() == 'darwin' and not get_option('cocoa').disabled()
   objcpp.has_header(
     'QMacCocoaViewContainer',
@@ -306,6 +314,19 @@ if host_machine.system() == 'darwin'
       objcpp_args: cocoa_suppressions + objcpp_suppressions + platform_defines,
     )
   endif
+endif
+
+if qt6_dep.found()
+  shared_module(
+    'suil_x11_in_qt6',
+    files('src/x11_in_qt6.cpp'),
+    cpp_args: cpp_suppressions + platform_defines + ['-std=c++17'],
+    dependencies: [lv2_dep, qt6_dep],
+    gnu_symbol_visibility: 'hidden',
+    include_directories: include_dirs,
+    install: true,
+    install_dir: suil_module_dir,
+  )
 endif
 
 #########
