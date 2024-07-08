@@ -8,7 +8,7 @@ project(
     'b_ndebug=if-release',
     'buildtype=release',
     'c_std=c99',
-    'cpp_std=c++14',
+    'cpp_std=c++17',
   ],
   license: 'ISC',
   meson_version: '>= 0.56.0',
@@ -122,6 +122,13 @@ qt5_x11_dep = dependency(
   include_type: 'system',
   version: '>=5.1.0',
   required: get_option('qt5').enabled() and get_option('x11').enabled(),
+)
+
+qt6_dep = dependency(
+  'Qt6Widgets',
+  include_type: 'system',
+  version: '>=6.2.0',
+  required: get_option('qt6'),
 )
 
 if host_machine.system() == 'darwin' and not get_option('cocoa').disabled()
@@ -279,7 +286,7 @@ endif
 if qt5_dep.found() and qt5_x11_dep.found()
   shared_module(
     'suil_x11_in_qt5',
-    files('src/x11_in_qt5.cpp'),
+    files('src/x11_in_qt.cpp'),
     cpp_args: cpp_suppressions + platform_defines,
     dependencies: [lv2_dep, qt5_dep, qt5_x11_dep],
     gnu_symbol_visibility: 'hidden',
@@ -306,6 +313,19 @@ if host_machine.system() == 'darwin'
       objcpp_args: cocoa_suppressions + objcpp_suppressions + platform_defines,
     )
   endif
+endif
+
+if qt6_dep.found()
+  shared_module(
+    'suil_x11_in_qt6',
+    files('src/x11_in_qt.cpp'),
+    cpp_args: cpp_suppressions + platform_defines,
+    dependencies: [lv2_dep, qt6_dep],
+    gnu_symbol_visibility: 'hidden',
+    include_directories: include_dirs,
+    install: true,
+    install_dir: suil_module_dir,
+  )
 endif
 
 #########

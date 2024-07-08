@@ -19,6 +19,9 @@ option('html', type: 'feature', value: 'auto', yield: true,
 option('qt5', type: 'feature', value: 'auto', yield: true,
        description : 'Build Qt5 wrappers')
 
+option('qt6', type: 'feature', value: 'auto', yield: true,
+       description : 'Build Qt6 wrappers')
+
 option('singlehtml', type: 'feature', value: 'auto', yield: true,
        description: 'Build single-page HTML documentation')
 

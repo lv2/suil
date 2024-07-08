@@ -14,18 +14,35 @@ SUIL_DISABLE_QT_WARNINGS
 #include <QSize>
 #include <QTimerEvent>
 #include <QWidget>
-#include <QX11Info>
 #include <Qt>
+#include <QtGlobal>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#  include <QX11Info>
+#else
+#  include <QGuiApplication>
+#endif
 SUIL_RESTORE_WARNINGS
+
+// IWYU pragma: no_include <qguiapplication_platform.h>
 
 #include <cstdlib>
 
 #undef signals
 
 namespace {
+
+inline Display*
+getX11Display()
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+  return QX11Info::display();
+#else
+  return qApp->nativeInterface<QNativeInterface::QX11Application>()->display();
+#endif
+}
 
 class SuilQX11Widget : public QWidget
 {
@@ -58,7 +75,7 @@ public:
   {
     if (_window) {
       XWindowAttributes attrs{};
-      XGetWindowAttributes(QX11Info::display(), _window, &attrs);
+      XGetWindowAttributes(getX11Display(), _window, &attrs);
       return {attrs.width, attrs.height};
     }
 
@@ -70,7 +87,7 @@ public:
     if (_window) {
       XSizeHints hints{};
       long       supplied{};
-      XGetWMNormalHints(QX11Info::display(), _window, &hints, &supplied);
+      XGetWMNormalHints(getX11Display(), _window, &hints, &supplied);
       if ((hints.flags & PMinSize)) {
         return {hints.min_width, hints.min_height};
       }
@@ -85,7 +102,7 @@ protected:
     QWidget::resizeEvent(event);
 
     if (_window) {
-      XResizeWindow(QX11Info::display(),
+      XResizeWindow(getX11Display(),
                     _window,
                     static_cast<unsigned>(event->size().width()),
                     static_cast<unsigned>(event->size().height()));
@@ -141,7 +158,7 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
   auto* const impl = static_cast<SuilX11InQt5Wrapper*>(wrapper->impl);
 
   SuilQX11Widget* const ew      = impl->parent;
-  Display* const        display = QX11Info::display();
+  Display* const        display = getX11Display();
   const auto            window  = reinterpret_cast<Window>(instance->ui_widget);
 
   XWindowAttributes attrs{};

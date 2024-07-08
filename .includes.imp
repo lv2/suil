@@ -1,4 +1,7 @@
 [
+  { "symbol": [ "QT_VERSION", "private", "<QtGlobal>", "public" ] },
+  { "symbol": [ "QT_VERSION_CHECK", "private", "<QtGlobal>", "public" ] },
+  { "symbol": [ "QX11Application", "private", "<QGuiApplication>", "public" ] },
   { "symbol": [ "QX11Info", "private", "<QX11Info>", "public" ] },
   { "symbol": [ "WId", "private", "<QtGui>", "public" ] }
 ]
