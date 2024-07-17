@@ -10,6 +10,7 @@ Checks: >
   -*-vararg,
   -altera-*,
   -bugprone-easily-swappable-parameters,
+  -bugprone-multi-level-implicit-pointer-conversion,
   -bugprone-suspicious-string-compare,
   -cert-err33-c,
   -clang-analyzer-core.CallAndMessage,
