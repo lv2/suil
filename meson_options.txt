@@ -1,35 +1,35 @@
 # Copyright 2021-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
-option('cocoa', type: 'feature', value: 'auto', yield: true,
+option('cocoa', type: 'feature', yield: true,
        description : 'Build Cocoa wrappers')
 
-option('docs', type: 'feature', value: 'auto', yield: true,
+option('docs', type: 'feature', yield: true,
        description: 'Build documentation')
 
-option('gtk2', type: 'feature', value: 'auto', yield: true,
+option('gtk2', type: 'feature', yield: true,
        description : 'Build Gtk2 wrappers')
 
-option('gtk3', type: 'feature', value: 'auto', yield: true,
+option('gtk3', type: 'feature', yield: true,
        description : 'Build Gtk3 wrappers')
 
-option('html', type: 'feature', value: 'auto', yield: true,
+option('html', type: 'feature', yield: true,
        description: 'Build paginated HTML documentation')
 
-option('qt5', type: 'feature', value: 'auto', yield: true,
+option('qt5', type: 'feature', yield: true,
        description : 'Build Qt5 wrappers')
 
-option('qt6', type: 'feature', value: 'auto', yield: true,
+option('qt6', type: 'feature', yield: true,
        description : 'Build Qt6 wrappers')
 
-option('singlehtml', type: 'feature', value: 'auto', yield: true,
+option('singlehtml', type: 'feature', yield: true,
        description: 'Build single-page HTML documentation')
 
-option('tests', type: 'feature', value: 'auto', yield: true,
+option('tests', type: 'feature', yield: true,
        description: 'Build tests')
 
 option('title', type: 'string', value: 'Suil',
        description: 'Project title')
 
-option('x11', type: 'feature', value: 'auto', yield: true,
+option('x11', type: 'feature', yield: true,
        description : 'Build X11 wrappers')
