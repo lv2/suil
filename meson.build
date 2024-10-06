@@ -146,7 +146,7 @@ endif
 include_dirs = include_directories('include')
 c_headers = files('include/suil/suil.h')
 
-sources = files(
+core_sources = files(
   'src/host.c',
   'src/instance.c',
 )
@@ -160,7 +160,7 @@ endif
 # Build shared and/or static library
 libsuil = library(
   versioned_name,
-  sources,
+  core_sources,
   c_args: c_suppressions + extra_c_args + platform_defines + ['-DSUIL_INTERNAL'],
   darwin_versions: [major_version + '.0.0', meson.project_version()],
   dependencies: [dl_dep, lv2_dep],
@@ -333,6 +333,17 @@ endif
 ########
 
 if get_option('lint')
+  all_sources = c_headers + core_sources
+  all_sources += files(
+    'src/cocoa_in_gtk2.mm',
+    'src/cocoa_in_qt5.mm',
+    'src/win_in_gtk2.cpp',
+    'src/x11.c',
+    'src/x11_in_gtk2.c',
+    'src/x11_in_gtk3.c',
+    'src/x11_in_qt.cpp',
+    'src/x11_in_qt.cpp',
+  )
 
   if not meson.is_subproject()
     # Check release metadata
@@ -346,6 +357,13 @@ if get_option('lint')
   reuse = find_program('reuse', required: false)
   if reuse.found()
     test('REUSE', reuse, args: ['--root', suil_src_root, 'lint'], suite: 'data')
+  endif
+
+  # Check code formatting
+  clang_format = find_program('clang-format', required: false)
+  if clang_format.found()
+    clang_format_args = ['--Werror', '--dry-run'] + all_sources
+    test('format', clang_format, args: clang_format_args, suite: 'code')
   endif
 endif
 
