@@ -328,13 +328,14 @@ if qt6_dep.found()
   )
 endif
 
-#########
-# Tests #
-#########
+########
+# Lint #
+########
 
-if get_option('warning_level') == 'everything'
-  # Check release metadata
+if get_option('lint')
+
   if not meson.is_subproject()
+    # Check release metadata
     autoship = find_program('autoship', required: false)
     if autoship.found()
       test('autoship', autoship, args: ['test', suil_src_root], suite: 'data')
