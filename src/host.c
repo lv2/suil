@@ -13,8 +13,7 @@
 int    suil_argc = 0;
 char** suil_argv = NULL;
 
-SUIL_API
-SuilHost*
+SUIL_API SuilHost*
 suil_host_new(SuilPortWriteFunc       write_func,
               SuilPortIndexFunc       index_func,
               SuilPortSubscribeFunc   subscribe_func,
@@ -32,15 +31,13 @@ suil_host_new(SuilPortWriteFunc       write_func,
   return host;
 }
 
-SUIL_API
-void
+SUIL_API void
 suil_host_set_touch_func(SuilHost* host, SuilTouchFunc touch_func)
 {
   host->touch_func = touch_func;
 }
 
-SUIL_API
-void
+SUIL_API void
 suil_host_free(SuilHost* host)
 {
   if (host) {
@@ -72,8 +69,7 @@ suil_load_init_module(const char* module_name)
 }
 #endif
 
-SUIL_API
-void
+SUIL_API void
 suil_init(int* argc, char*** argv, SuilArg key, ...)
 {
   (void)key;

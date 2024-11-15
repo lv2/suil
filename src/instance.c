@@ -22,8 +22,7 @@
 #define WIN_UI_URI LV2_UI_PREFIX "WindowsUI"
 #define COCOA_UI_URI LV2_UI__CocoaUI
 
-SUIL_API
-unsigned
+SUIL_API unsigned
 suil_ui_supported(const char* host_type_uri, const char* ui_type_uri)
 {
   enum {
@@ -127,8 +126,7 @@ open_wrapper(SuilHost*      host,
   return wrapper;
 }
 
-SUIL_API
-SuilInstance*
+SUIL_API SuilInstance*
 suil_instance_new(SuilHost*                 host,
                   SuilController            controller,
                   const char*               container_type_uri,
@@ -269,8 +267,7 @@ suil_instance_new(SuilHost*                 host,
   return instance;
 }
 
-SUIL_API
-void
+SUIL_API void
 suil_instance_free(SuilInstance* instance)
 {
   if (instance) {
@@ -304,22 +301,19 @@ suil_instance_free(SuilInstance* instance)
   }
 }
 
-SUIL_API
-SuilHandle
+SUIL_API SuilHandle
 suil_instance_get_handle(SuilInstance* instance)
 {
   return instance->handle;
 }
 
-SUIL_API
-LV2UI_Widget
+SUIL_API LV2UI_Widget
 suil_instance_get_widget(SuilInstance* instance)
 {
   return instance->host_widget;
 }
 
-SUIL_API
-void
+SUIL_API void
 suil_instance_port_event(SuilInstance* instance,
                          uint32_t      port_index,
                          uint32_t      buffer_size,
@@ -332,8 +326,7 @@ suil_instance_port_event(SuilInstance* instance,
   }
 }
 
-SUIL_API
-const void*
+SUIL_API const void*
 suil_instance_extension_data(SuilInstance* instance, const char* uri)
 {
   if (instance->descriptor->extension_data) {

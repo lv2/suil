@@ -1,0 +1,33 @@
+# Copyright 2020-2024 David Robillard <d@drobilla.net>
+# SPDX-License-Identifier: 0BSD OR ISC
+
+---
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignEscapedNewlines: Left
+AttributeMacros:
+  - SUIL_API
+BasedOnStyle: Mozilla
+BraceWrapping:
+  AfterClass: true
+  AfterEnum: false
+  AfterExternBlock: false
+  AfterFunction: true
+  AfterNamespace: false
+  AfterStruct: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+BreakBeforeBraces: Custom
+Cpp11BracedListStyle: true
+FixNamespaceComments: true
+IndentCaseLabels: false
+IndentPPDirectives: AfterHash
+KeepEmptyLinesAtTheStartOfBlocks: false
+SpacesInContainerLiterals: false
+StatementMacros:
+  - SUIL_DISABLE_GTK_WARNINGS
+  - SUIL_DISABLE_QT_WARNINGS
+  - SUIL_ERRORF
+  - SUIL_RESTORE_WARNINGS
+  - _Pragma
+...

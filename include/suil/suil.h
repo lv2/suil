@@ -105,8 +105,7 @@ typedef enum { SUIL_ARG_NONE } SuilArg;
    and corresponding value pairs for passing any necessary platform-specific
    information.  It must be terminated with SUIL_ARG_NONE.
 */
-SUIL_API
-void
+SUIL_API void
 suil_init(int* argc, char*** argv, SuilArg key, ...);
 
 /**
@@ -121,8 +120,7 @@ suil_init(int* argc, char*** argv, SuilArg key, ...);
    where 1 is the highest quality (direct native embedding with no wrapping)
    and increasing values are of a progressively lower quality and/or stability.
 */
-SUIL_API
-unsigned
+SUIL_API unsigned
 suil_ui_supported(const char* host_type_uri, const char* ui_type_uri);
 
 /**
@@ -148,8 +146,7 @@ typedef struct SuilHostImpl SuilHost;
    @param subscribe_func Function to subscribe to port updates.
    @param unsubscribe_func Function to unsubscribe from port updates.
 */
-SUIL_API
-SuilHost*
+SUIL_API SuilHost*
 suil_host_new(SuilPortWriteFunc       write_func,
               SuilPortIndexFunc       index_func,
               SuilPortSubscribeFunc   subscribe_func,
@@ -160,15 +157,13 @@ suil_host_new(SuilPortWriteFunc       write_func,
 
    Note this function will only be called if the UI supports it.
 */
-SUIL_API
-void
+SUIL_API void
 suil_host_set_touch_func(SuilHost* host, SuilTouchFunc touch_func);
 
 /**
    Free `host`.
 */
-SUIL_API
-void
+SUIL_API void
 suil_host_free(SuilHost* host);
 
 /**
@@ -213,8 +208,7 @@ typedef void* SuilWidget;
    @param features NULL-terminated array of supported features, or NULL.
    @return A new UI instance, or NULL if instantiation failed.
 */
-SUIL_API
-SuilInstance*
+SUIL_API SuilInstance*
 suil_instance_new(SuilHost*                 host,
                   SuilController            controller,
                   const char*               container_type_uri,
@@ -231,8 +225,7 @@ suil_instance_new(SuilHost*                 host,
    The caller must ensure all references to the UI have been dropped before
    calling this function (e.g. it has been removed from its parent).
 */
-SUIL_API
-void
+SUIL_API void
 suil_instance_free(SuilInstance* instance);
 
 /**
@@ -244,8 +237,7 @@ suil_instance_free(SuilInstance* instance);
 
    The returned handle is shared and must not be deleted.
 */
-SUIL_API
-SuilHandle
+SUIL_API SuilHandle
 suil_instance_get_handle(SuilInstance* instance);
 
 /**
@@ -256,8 +248,7 @@ suil_instance_get_handle(SuilInstance* instance);
    wrapper widget created by Suil, and not necessarily the widget directly
    implemented by the UI.
 */
-SUIL_API
-SuilWidget
+SUIL_API SuilWidget
 suil_instance_get_widget(SuilInstance* instance);
 
 /**
@@ -277,8 +268,7 @@ suil_instance_get_widget(SuilInstance* instance);
    @param format Format of `buffer` (mapped URI, or 0 for float).
    @param buffer Change data, e.g. the new port value.
 */
-SUIL_API
-void
+SUIL_API void
 suil_instance_port_event(SuilInstance* instance,
                          uint32_t      port_index,
                          uint32_t      buffer_size,
@@ -286,8 +276,7 @@ suil_instance_port_event(SuilInstance* instance,
                          const void*   buffer);
 
 /// Return a data structure defined by some LV2 extension URI
-SUIL_API
-const void*
+SUIL_API const void*
 suil_instance_extension_data(SuilInstance* instance, const char* uri);
 
 /**
