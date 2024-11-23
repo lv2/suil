@@ -4,11 +4,11 @@
 #include "suil_internal.h"
 #include "warnings.h"
 
-#include "lv2/core/lv2.h"
-#include "lv2/options/options.h"
-#include "lv2/ui/ui.h"
-#include "lv2/urid/urid.h"
-#include "suil/suil.h"
+#include <lv2/core/lv2.h>
+#include <lv2/options/options.h>
+#include <lv2/ui/ui.h>
+#include <lv2/urid/urid.h>
+#include <suil/suil.h>
 
 #include <X11/X.h>
 #include <X11/Xatom.h>

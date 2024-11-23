@@ -4,7 +4,7 @@
 
 #include "suil_internal.h"
 
-#include "suil/suil.h"
+#include <suil/suil.h>
 
 #include <X11/Xlib.h>
 

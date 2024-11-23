@@ -6,7 +6,7 @@
 #ifndef SUIL_SUIL_H
 #define SUIL_SUIL_H
 
-#include "lv2/core/lv2.h"
+#include <lv2/core/lv2.h>
 
 #include <stdbool.h>
 #include <stdint.h>

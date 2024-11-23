@@ -6,7 +6,7 @@
 #include "suil_config.h"
 #include "suil_internal.h"
 
-#include "suil/suil.h"
+#include <suil/suil.h>
 
 #include <stdlib.h>
 

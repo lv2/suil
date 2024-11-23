@@ -5,9 +5,9 @@
 #include "suil_internal.h"
 #include "warnings.h"
 
-#include "lv2/core/lv2.h"
-#include "lv2/ui/ui.h"
-#include "suil/suil.h"
+#include <lv2/core/lv2.h>
+#include <lv2/ui/ui.h>
+#include <suil/suil.h>
 
 SUIL_DISABLE_QT_WARNINGS
 #include <QResizeEvent>

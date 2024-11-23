@@ -4,8 +4,8 @@
 #include "suil_internal.h"
 #include "warnings.h"
 
-#include "lv2/options/options.h"
-#include "lv2/urid/urid.h"
+#include <lv2/options/options.h>
+#include <lv2/urid/urid.h>
 
 SUIL_DISABLE_GTK_WARNINGS
 #include <gdk/gdkwin32.h>
