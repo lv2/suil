@@ -3,6 +3,7 @@
 
 #include "suil_internal.h"
 #include "warnings.h"
+#include "x11_util.h"
 
 #include <lv2/core/lv2.h>
 #include <lv2/options/options.h>
@@ -24,7 +25,6 @@ SUIL_DISABLE_GTK_WARNINGS
 #include <gtk/gtk.h>
 SUIL_RESTORE_WARNINGS
 
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,62 +53,6 @@ suil_x11_wrapper_get_type(void); // Accessor for SUIL_TYPE_X11_WRAPPER
   (G_TYPE_CHECK_INSTANCE_CAST((obj), SUIL_TYPE_X11_WRAPPER, SuilX11Wrapper))
 
 G_DEFINE_TYPE(SuilX11Wrapper, suil_x11_wrapper, GTK_TYPE_SOCKET)
-
-/**
-   Check if 'swallowed' subwindow is known to the X server.
-
-   Gdk/GTK can mark the window as realized, mapped and visible even though
-   there is no window-ID on the X server for it yet.  Then,
-   suil_x11_on_size_allocate() will cause a "BadWinow" X error.
-*/
-static bool
-x_window_is_valid(SuilX11Wrapper* socket)
-{
-  GdkWindow* window     = gtk_widget_get_window(GTK_WIDGET(socket->plug));
-  Window     root       = 0;
-  Window     parent     = 0;
-  Window*    children   = NULL;
-  unsigned   childcount = 0;
-
-  XQueryTree(GDK_WINDOW_XDISPLAY(window),
-             GDK_WINDOW_XID(window),
-             &root,
-             &parent,
-             &children,
-             &childcount);
-
-  for (unsigned i = 0; i < childcount; ++i) {
-    if (children[i] == (Window)socket->instance->ui_widget) {
-      XFree(children);
-      return true;
-    }
-  }
-
-  if (children) {
-    XFree(children);
-  }
-
-  return false;
-}
-
-static Window
-get_parent_window(Display* display, Window child)
-{
-  Window   root     = 0;
-  Window   parent   = 0;
-  Window*  children = NULL;
-  unsigned count    = 0;
-
-  if (child) {
-    if (XQueryTree(display, child, &root, &parent, &children, &count)) {
-      if (children) {
-        XFree(children);
-      }
-    }
-  }
-
-  return (parent == root) ? 0 : parent;
-}
 
 static gboolean
 on_plug_removed(GtkSocket* sock, gpointer data)
@@ -173,7 +117,7 @@ suil_x11_wrapper_realize(GtkWidget* w)
                     (unsigned char*)&plugin,
                     1);
 
-    xwindow = get_parent_window(GDK_WINDOW_XDISPLAY(gwindow), xwindow);
+    xwindow = suil_x11_get_parent(GDK_WINDOW_XDISPLAY(gwindow), xwindow);
   }
 }
 
@@ -257,7 +201,9 @@ static void
 forward_size_request(SuilX11Wrapper* socket, GtkAllocation* allocation)
 {
   GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(socket->plug));
-  if (x_window_is_valid(socket)) {
+  if (suil_x11_is_valid_child(GDK_WINDOW_XDISPLAY(window),
+                              GDK_WINDOW_XID(window),
+                              (Window)socket->instance->ui_widget)) {
     // Calculate allocation size constrained to X11 limits for widget
     int width  = allocation->width;
     int height = allocation->height;
@@ -448,7 +394,7 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
   Window      xwindow  = (Window)instance->ui_widget;
 
   gdk_display_sync(display);
-  if (x_window_is_valid(wrap)) {
+  if (suil_x11_is_valid_child(xdisplay, GDK_WINDOW_XID(window), xwindow)) {
     XWindowAttributes attrs;
     XGetWindowAttributes(xdisplay, xwindow, &attrs);
 

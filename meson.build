@@ -367,7 +367,7 @@ gtk_cpp_args = cpp.get_supported_arguments(gtk_args)
 if gtk2_dep.found() and gtk2_x11_dep.found() and x11_dep.found()
   shared_module(
     'suil_x11_in_gtk2',
-    files('src/x11_in_gtk2.c'),
+    files('src/x11_in_gtk2.c', 'src/x11_util.c'),
     c_args: c_suppressions + gtk_c_args + platform_defines,
     dependencies: [gtk2_dep, gtk2_x11_dep, lv2_dep, x11_dep],
     gnu_symbol_visibility: 'hidden',
@@ -381,7 +381,7 @@ endif
 if gtk3_dep.found() and gtk3_x11_dep.found() and x11_dep.found()
   shared_module(
     'suil_x11_in_gtk3',
-    files('src/x11_in_gtk3.c'),
+    files('src/x11_in_gtk3.c', 'src/x11_util.c'),
     c_args: c_suppressions + gtk_c_args + platform_defines,
     dependencies: [gtk3_dep, gtk3_x11_dep, lv2_dep, x11_dep],
     gnu_symbol_visibility: 'hidden',
