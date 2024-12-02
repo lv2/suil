@@ -110,12 +110,15 @@ suil_x11_wrapper_realize(GtkWidget* w)
   gtk_widget_set_can_focus(GTK_WIDGET(wrap->plug), TRUE);
   gtk_widget_grab_focus(GTK_WIDGET(wrap->plug));
 
+  // Request configure events for child windows
+  GdkWindow* gwindow  = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
+  Display*   xdisplay = GDK_WINDOW_XDISPLAY(gwindow);
+  Window     xwindow  = GDK_WINDOW_XID(gwindow);
+  XSelectInput(xdisplay, xwindow, SubstructureRedirectMask);
+
   // Setup drag/drop proxy from parent/grandparent window
-  GdkWindow* gwindow         = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
-  Display*   xdisplay        = GDK_WINDOW_XDISPLAY(gwindow);
-  Window     xwindow         = GDK_WINDOW_XID(gwindow);
-  Atom       xdnd_proxy_atom = gdk_x11_get_xatom_by_name("XdndProxy");
-  Window     ui_window       = (Window)wrap->instance->ui_widget;
+  Atom   xdnd_proxy_atom = gdk_x11_get_xatom_by_name("XdndProxy");
+  Window ui_window       = (Window)wrap->instance->ui_widget;
 
   while (xwindow) {
     XChangeProperty(xdisplay,
@@ -406,6 +409,20 @@ suil_x11_wrapper_idle(void* data)
   SuilX11Wrapper* const wrap = SUIL_X11_WRAPPER(data);
 
   wrap->idle_iface->idle(wrap->instance->handle);
+
+  GdkWindow* const gwindow = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
+  const Window     window  = GDK_WINDOW_XID(gwindow);
+  Display* const   display = GDK_WINDOW_XDISPLAY(gwindow);
+  XEvent           event   = {0};
+  while (XCheckWindowEvent(display, window, SubstructureRedirectMask, &event)) {
+    if (event.type == MapRequest) {
+      XMapWindow(display, event.xmaprequest.window);
+    } else if (event.type == ConfigureRequest) {
+      wrap->size_hints.flags = 0;
+      wrap->size_hints_dirty = TRUE;
+      wrapper_resize(wrap, event.xconfigure.width, event.xconfigure.height);
+    }
+  }
 
   return TRUE; // Continue calling
 }
