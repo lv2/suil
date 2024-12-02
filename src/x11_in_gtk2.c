@@ -103,21 +103,22 @@ suil_x11_wrapper_realize(GtkWidget* w)
 
   // Setup drag/drop proxy from parent/grandparent window
   GdkWindow* gwindow         = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
+  Display*   xdisplay        = GDK_WINDOW_XDISPLAY(gwindow);
   Window     xwindow         = GDK_WINDOW_XID(gwindow);
   Atom       xdnd_proxy_atom = gdk_x11_get_xatom_by_name("XdndProxy");
-  Window     plugin          = (Window)wrap->instance->ui_widget;
+  Window     ui_window       = (Window)wrap->instance->ui_widget;
 
   while (xwindow) {
-    XChangeProperty(GDK_WINDOW_XDISPLAY(gwindow),
+    XChangeProperty(xdisplay,
                     xwindow,
                     xdnd_proxy_atom,
                     XA_WINDOW,
                     32,
                     PropModeReplace,
-                    (unsigned char*)&plugin,
+                    (unsigned char*)&ui_window,
                     1);
 
-    xwindow = suil_x11_get_parent(GDK_WINDOW_XDISPLAY(gwindow), xwindow);
+    xwindow = suil_x11_get_parent(xdisplay, xwindow);
   }
 }
 
@@ -136,11 +137,11 @@ suil_x11_wrapper_show(GtkWidget* w)
 static gboolean
 forward_key_event(SuilX11Wrapper* socket, GdkEvent* gdk_event)
 {
-  GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(socket->plug));
-  GdkScreen* screen = gdk_visual_get_screen(gdk_window_get_visual(window));
+  GdkWindow* gwindow = gtk_widget_get_window(GTK_WIDGET(socket->plug));
+  GdkScreen* screen  = gdk_visual_get_screen(gdk_window_get_visual(gwindow));
 
   Window target_window = 0;
-  if (gdk_event->any.window == window) {
+  if (gdk_event->any.window == gwindow) {
     // Event sent up to the plug window, forward it up to the parent
     GtkWidget* widget = GTK_WIDGET(socket->instance->host_widget);
     GdkWindow* parent = gtk_widget_get_parent_window(widget);
@@ -164,13 +165,13 @@ forward_key_event(SuilX11Wrapper* socket, GdkEvent* gdk_event)
   xev.state     = gdk_event->key.state;
   xev.keycode   = gdk_event->key.hardware_keycode;
 
-  XSendEvent(GDK_WINDOW_XDISPLAY(window),
+  XSendEvent(GDK_WINDOW_XDISPLAY(gwindow),
              target_window,
              False,
              NoEventMask,
              (XEvent*)&xev);
 
-  return (gdk_event->any.window != window);
+  return (gdk_event->any.window != gwindow);
 }
 
 static gboolean
@@ -185,10 +186,10 @@ idle_size_request(gpointer user_data)
 static void
 query_wm_hints(SuilX11Wrapper* wrap)
 {
-  GdkWindow* window   = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
+  GdkWindow* gwindow  = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
   long       supplied = 0;
 
-  XGetWMNormalHints(GDK_WINDOW_XDISPLAY(window),
+  XGetWMNormalHints(GDK_WINDOW_XDISPLAY(gwindow),
                     (Window)wrap->instance->ui_widget,
                     &wrap->size_hints,
                     &supplied);
@@ -200,10 +201,10 @@ query_wm_hints(SuilX11Wrapper* wrap)
 static void
 forward_size_request(SuilX11Wrapper* socket, GtkAllocation* allocation)
 {
-  GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(socket->plug));
-  if (suil_x11_is_valid_child(GDK_WINDOW_XDISPLAY(window),
-                              GDK_WINDOW_XID(window),
-                              (Window)socket->instance->ui_widget)) {
+  GdkWindow* gwindow   = gtk_widget_get_window(GTK_WIDGET(socket->plug));
+  Display*   xdisplay  = GDK_WINDOW_XDISPLAY(gwindow);
+  Window     ui_window = (Window)socket->instance->ui_widget;
+  if (suil_x11_is_valid_child(xdisplay, GDK_WINDOW_XID(gwindow), ui_window)) {
     // Calculate allocation size constrained to X11 limits for widget
     int width  = allocation->width;
     int height = allocation->height;
@@ -223,10 +224,7 @@ forward_size_request(SuilX11Wrapper* socket, GtkAllocation* allocation)
     }
 
     // Resize widget window
-    XResizeWindow(GDK_WINDOW_XDISPLAY(window),
-                  (Window)socket->instance->ui_widget,
-                  (unsigned)width,
-                  (unsigned)height);
+    XResizeWindow(xdisplay, ui_window, (unsigned)width, (unsigned)height);
 
     // Get actual widget geometry
     Window       root    = 0;
@@ -235,21 +233,13 @@ forward_size_request(SuilX11Wrapper* socket, GtkAllocation* allocation)
     unsigned int ww      = 0;
     unsigned int wh      = 0;
     unsigned int ignored = 0;
-    XGetGeometry(GDK_WINDOW_XDISPLAY(window),
-                 (Window)socket->instance->ui_widget,
-                 &root,
-                 &wx,
-                 &wy,
-                 &ww,
-                 &wh,
-                 &ignored,
-                 &ignored);
+    XGetGeometry(
+      xdisplay, ui_window, &root, &wx, &wy, &ww, &wh, &ignored, &ignored);
 
     // Center widget in allocation
     wx = (allocation->width - (int)ww) / 2;
     wy = (allocation->height - (int)wh) / 2;
-    XMoveWindow(
-      GDK_WINDOW_XDISPLAY(window), (Window)socket->instance->ui_widget, wx, wy);
+    XMoveWindow(xdisplay, ui_window, wx, wy);
   } else {
     /* Child has not been realized, so unable to resize now.
        Queue an idle resize. */
@@ -388,18 +378,16 @@ wrapper_wrap(SuilWrapper* wrapper, SuilInstance* instance)
   wrap->wrapper         = wrapper;
   wrap->instance        = instance;
 
-  GdkWindow*  window   = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
-  GdkDisplay* display  = gdk_window_get_display(window);
-  Display*    xdisplay = GDK_WINDOW_XDISPLAY(window);
-  Window      xwindow  = (Window)instance->ui_widget;
+  GdkWindow* gwindow   = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
+  Display*   xdisplay  = GDK_WINDOW_XDISPLAY(gwindow);
+  Window     ui_window = (Window)instance->ui_widget;
 
-  gdk_display_sync(display);
-  if (suil_x11_is_valid_child(xdisplay, GDK_WINDOW_XID(window), xwindow)) {
+  gdk_display_sync(gdk_window_get_display(gwindow));
+  if (suil_x11_is_valid_child(xdisplay, GDK_WINDOW_XID(gwindow), ui_window)) {
     XWindowAttributes attrs;
-    XGetWindowAttributes(xdisplay, xwindow, &attrs);
+    XGetWindowAttributes(xdisplay, ui_window, &attrs);
 
     query_wm_hints(wrap);
-
     if (!(wrap->size_hints.flags & PBaseSize)) {
       // Fall back to using initial size as base size
       wrap->size_hints.flags |= PBaseSize;
