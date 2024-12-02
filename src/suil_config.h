@@ -84,14 +84,4 @@
 #  endif
 #endif
 
-// Gtk2 library to load when embedding in Qt
-#ifndef SUIL_GTK2_LIB_NAME
-#  define SUIL_GTK2_LIB_NAME "libgtk-x11-2.0.so.0"
-#endif
-
-// Gtk3 library to load when embedding in Qt
-#ifndef SUIL_GTK3_LIB_NAME
-#  define SUIL_GTK3_LIB_NAME "libgtk-x11-3.0.so.0"
-#endif
-
 #endif // SUIL_CONFIG_H
