@@ -12,6 +12,7 @@
 #include <suil/suil.h>
 
 #include <X11/X.h>
+#include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
@@ -110,6 +111,26 @@ suil_x11_wrapper_realize(GtkWidget* w)
   gtk_widget_set_sensitive(GTK_WIDGET(wrap->plug), TRUE);
   gtk_widget_set_can_focus(GTK_WIDGET(wrap->plug), TRUE);
   gtk_widget_grab_focus(GTK_WIDGET(wrap->plug));
+
+  // Setup drag/drop proxy from parent/grandparent window
+  GdkWindow* gwindow         = gtk_widget_get_window(GTK_WIDGET(wrap->plug));
+  Display*   xdisplay        = GDK_WINDOW_XDISPLAY(gwindow);
+  Window     xwindow         = GDK_WINDOW_XID(gwindow);
+  Atom       xdnd_proxy_atom = gdk_x11_get_xatom_by_name("XdndProxy");
+  Window     ui_window       = (Window)wrap->instance->ui_widget;
+
+  while (xwindow) {
+    XChangeProperty(xdisplay,
+                    xwindow,
+                    xdnd_proxy_atom,
+                    XA_WINDOW,
+                    32,
+                    PropModeReplace,
+                    (unsigned char*)&ui_window,
+                    1);
+
+    xwindow = suil_x11_get_parent(xdisplay, xwindow);
+  }
 }
 
 static void
