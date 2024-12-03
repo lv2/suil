@@ -73,6 +73,7 @@ if cc.get_id() in ['clang', 'emscripten']
 elif cc.get_id() == 'gcc'
   if warning_level == 'everything'
     c_suppressions += [
+      '-Wno-inline',
       '-Wno-padded',
       '-Wno-suggest-attribute=const',
       '-Wno-suggest-attribute=pure',
@@ -131,6 +132,7 @@ if is_variable('cpp')
       cpp_suppressions += [
         '-Wno-arith-conversion',
         '-Wno-cast-qual',
+        '-Wno-inline',
         '-Wno-padded',
         '-Wno-suggest-attribute=const',
         '-Wno-suggest-attribute=pure',
