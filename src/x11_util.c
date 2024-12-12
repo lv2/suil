@@ -19,17 +19,14 @@ suil_x11_is_valid_child(Display* const display,
   unsigned n_children  = 0U;
 
   XQueryTree(display, parent, &root, &grandparent, &children, &n_children);
-
-  for (unsigned i = 0U; i < n_children; ++i) {
-    if (children[i] == child) {
-      if (children) {
-        XFree(children);
-      }
-      return true;
-    }
-  }
-
   if (children) {
+    for (unsigned i = 0U; i < n_children; ++i) {
+      if (children[i] == child) {
+        XFree(children);
+        return true;
+      }
+    }
+
     XFree(children);
   }
 
