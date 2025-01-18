@@ -1,16 +1,14 @@
-<!-- Copyright 2011-2019 David Robillard <d@drobilla.net> -->
+<!-- Copyright 2011-2025 David Robillard <d@drobilla.net> -->
 <!-- SPDX-License-Identifier: ISC -->
 
 Suil
 ====
 
-Suil is a library for loading and wrapping LV2 plugin UIs.
-For more information, see <http://drobilla.net/software/suil>.
+Suil is a library for loading and wrapping LV2 plugin UIs.  It provides
+wrappers that allow Gtk and Qt hosts to load, and potentially embed, plugin
+GUIs that use the "native" windowing API (Coca, WIN32, or X11).
 
-With Suil, a host written in one supported toolkit can embed a plugin UI
-written in a different supported toolkit.  Suil insulates hosts from toolkit
-libraries used by plugin UIs.  For example, a Gtk host can embed a Qt UI
-without linking against Qt at compile time.
+For more information, see <http://drobilla.net/software/suil>.
 
  -- David Robillard <d@drobilla.net>
 
