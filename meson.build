@@ -12,7 +12,7 @@ project(
   ],
   license: 'ISC',
   meson_version: '>= 0.56.0',
-  version: '0.10.21',
+  version: '0.10.22',
 )
 
 suil_src_root = meson.current_source_dir()
@@ -203,7 +203,7 @@ endif
 
 dl_dep = cc.find_library('dl', required: false)
 
-lv2_dep = dependency('lv2', fallback: 'lv2', version: '>= 1.18.3')
+lv2_dep = dependency('lv2', fallback: 'lv2', version: '>= 1.18.4')
 
 x11_dep = dependency(
   'x11',

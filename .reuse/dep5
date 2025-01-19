@@ -4,7 +4,7 @@ Upstream-Contact: David Robillard <d@drobilla.net>
 Source: https://gitlab.com/drobilla/suil
 
 Files: AUTHORS NEWS suil.ttl
-Copyright: 2011-2022 David Robillard <d@drobilla.net>
+Copyright: 2011-2025 David Robillard <d@drobilla.net>
 Comment: Contributed to the Commons as a representation of simple facts
 License: 0BSD OR ISC
 

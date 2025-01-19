@@ -1,10 +1,10 @@
-suil (0.10.21) unstable; urgency=medium
+suil (0.10.22) stable; urgency=medium
 
   * Add support for X11 in Qt6
   * Fix library current_version on MacOS
   * Monitor size hints and window resizes for X11 in Gtk3
 
- -- David Robillard <d@drobilla.net>  Mon, 02 Dec 2024 03:38:40 +0000
+ -- David Robillard <d@drobilla.net>  Sun, 19 Jan 2025 13:58:40 +0000
 
 suil (0.10.20) stable; urgency=medium
 
