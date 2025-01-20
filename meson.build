@@ -1,4 +1,4 @@
-# Copyright 2021-2022 David Robillard <d@drobilla.net>
+# Copyright 2021-2025 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 project(
@@ -12,7 +12,7 @@ project(
   ],
   license: 'ISC',
   meson_version: '>= 0.56.0',
-  version: '0.10.22',
+  version: '0.10.23',
 )
 
 suil_src_root = meson.current_source_dir()
@@ -203,7 +203,12 @@ endif
 
 dl_dep = cc.find_library('dl', required: false)
 
-lv2_dep = dependency('lv2', fallback: 'lv2', version: '>= 1.18.4')
+lv2_dep = dependency(
+  'lv2',
+  fallback: 'lv2',
+  include_type: 'system',
+  version: '>= 1.18.4',
+)
 
 x11_dep = dependency(
   'x11',
@@ -464,6 +469,14 @@ if qt6_dep.found()
     install: true,
     install_dir: suil_module_dir,
   )
+endif
+
+#########
+# Tests #
+#########
+
+if not get_option('tests').disabled()
+  subdir('test/headers')
 endif
 
 ########
