@@ -205,7 +205,6 @@ dl_dep = cc.find_library('dl', required: false)
 
 lv2_dep = dependency(
   'lv2',
-  fallback: 'lv2',
   include_type: 'system',
   version: '>= 1.18.4',
 )
@@ -317,7 +316,7 @@ libsuil = library(
 # Declare dependency for internal meson dependants
 suil_dep = declare_dependency(
   compile_args: extra_c_args,
-  dependencies: [dl_dep],
+  dependencies: [lv2_dep, dl_dep],
   include_directories: include_dirs,
   link_with: libsuil,
 )
