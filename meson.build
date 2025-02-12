@@ -321,7 +321,7 @@ suil_dep = declare_dependency(
   link_with: libsuil,
 )
 
-# Generage pkg-config file for external dependants
+# Generate pkg-config file for external dependants
 pkg.generate(
   libsuil,
   description: 'Library for loading and wrapping LV2 plugin UIs',
