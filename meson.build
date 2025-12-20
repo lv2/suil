@@ -14,7 +14,7 @@ project(
   ],
   license: 'ISC',
   meson_version: '>= 0.56.0',
-  version: '0.10.24',
+  version: '0.10.25',
 )
 
 suil_src_root = meson.current_source_dir()

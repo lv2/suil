@@ -1,4 +1,4 @@
-# Copyright 2020-2024 David Robillard <d@drobilla.net>
+# Copyright 2020-2025 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 Checks: >
@@ -14,6 +14,7 @@ Checks: >
   -bugprone-suspicious-string-compare,
   -cert-err33-c,
   -clang-analyzer-core.CallAndMessage,
+  -clang-analyzer-security.ArrayBound,
   -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
   -concurrency-mt-unsafe,
   -cppcoreguidelines-avoid-non-const-global-variables,
@@ -27,6 +28,7 @@ Checks: >
   -google-runtime-int,
   -hicpp-signed-bitwise,
   -llvm-header-guard,
+  -llvm-prefer-static-over-anonymous-namespace,
   -llvmlibc-*,
   -misc-include-cleaner,
   -modernize-use-nodiscard,
