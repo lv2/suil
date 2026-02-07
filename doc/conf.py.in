@@ -1,10 +1,10 @@
-# Copyright 2020-2025 David Robillard <d@drobilla.net>
+# Copyright 2020-2026 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: ISC
 
 # Project information
 
 project = "@SUIL_TITLE@"
-copyright = "2025, David Robillard"
+copyright = "2026, David Robillard"
 author = "David Robillard"
 release = "@SUIL_VERSION@"
 version = "@SUIL_VERSION@"
@@ -16,6 +16,13 @@ exclude_patterns = ["xml"]
 language = "en"
 nitpicky = True
 pygments_style = "friendly"
+
+try:
+    import sphinx_lv2_theme
+
+    have_lv2_theme = True
+except ModuleNotFoundError:
+    have_lv2_theme = False
 
 # Ignore everything opaque or external for nitpicky mode
 nitpicky = True
@@ -30,42 +37,46 @@ nitpick_ignore = list(map(lambda x: ("c:identifier", x), _opaque))
 
 # HTML output
 
-html_theme = "sphinx_lv2_theme"
-html_copy_source = False
-html_short_title = "Suil"
+if have_lv2_theme:
+    html_theme = "sphinx_lv2_theme"
+    html_copy_source = False
+    html_short_title = "Suil"
 
-if tags.has("singlehtml"):
-    html_sidebars = {
-        "**": [
-            "globaltoc.html",
-        ]
-    }
+    if tags.has("singlehtml"):
+        html_sidebars = {
+            "**": [
+                "globaltoc.html",
+            ]
+        }
 
-    html_theme_options = {
-        "body_max_width": "48em",
-        "body_min_width": "48em",
-        "description": desc,
-        "globaltoc_collapse": False,
-        "globaltoc_maxdepth": 3,
-        "logo_name": True,
-        "nosidebar": False,
-        "page_width": "80em",
-        "show_footer_version": True,
-        "show_logo_version": False,
-        "sidebar_width": "18em",
-    }
+        html_theme_options = {
+            "body_max_width": "48em",
+            "body_min_width": "48em",
+            "description": desc,
+            "globaltoc_collapse": False,
+            "globaltoc_maxdepth": 3,
+            "logo_name": True,
+            "nosidebar": False,
+            "page_width": "80em",
+            "show_footer_version": True,
+            "show_logo_version": False,
+            "sidebar_width": "18em",
+        }
+
+    else:
+        html_theme_options = {
+            "body_max_width": "60em",
+            "body_min_width": "40em",
+            "description": desc,
+            "globaltoc_collapse": True,
+            "globaltoc_maxdepth": 1,
+            "logo_name": True,
+            "nosidebar": True,
+            "page_width": "60em",
+            "show_footer_version": True,
+            "show_logo_version": False,
+            "sidebar_width": "14em",
+        }
 
 else:
-    html_theme_options = {
-        "body_max_width": "60em",
-        "body_min_width": "40em",
-        "description": desc,
-        "globaltoc_collapse": True,
-        "globaltoc_maxdepth": 1,
-        "logo_name": True,
-        "nosidebar": True,
-        "page_width": "60em",
-        "show_footer_version": True,
-        "show_logo_version": False,
-        "sidebar_width": "14em",
-    }
+    html_theme = "alabaster"
