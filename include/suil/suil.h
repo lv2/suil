@@ -31,6 +31,18 @@
 #  endif
 #endif
 
+#if defined(__clang__) && __clang_major__ >= 7
+#  define SUIL_NONNULL _Nonnull
+#  define SUIL_NULLABLE _Nullable
+#  define SUIL_ALLOCATED _Null_unspecified
+#  define SUIL_UNSPECIFIED _Null_unspecified
+#else
+#  define SUIL_NONNULL
+#  define SUIL_NULLABLE
+#  define SUIL_ALLOCATED
+#  define SUIL_UNSPECIFIED
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -53,34 +65,34 @@ extern "C" {
    a pointer to some controller object the host uses to communicate with
    plugins.
 */
-typedef void* SuilController;
+typedef void* SUIL_UNSPECIFIED SuilController;
 
 /// Function to write/send a value to a port
 typedef void (*SuilPortWriteFunc)( //
-  SuilController controller,
-  uint32_t       port_index,
-  uint32_t       buffer_size,
-  uint32_t       protocol,
-  void const*    buffer);
+  SuilController               controller,
+  uint32_t                     port_index,
+  uint32_t                     buffer_size,
+  uint32_t                     protocol,
+  void const* SUIL_UNSPECIFIED buffer);
 
 /// Function to return the index for a port by symbol
 typedef uint32_t (*SuilPortIndexFunc)( //
-  SuilController controller,
-  const char*    port_symbol);
+  SuilController           controller,
+  const char* SUIL_NONNULL port_symbol);
 
 /// Function to subscribe to notifications for a port
 typedef uint32_t (*SuilPortSubscribeFunc)( //
-  SuilController            controller,
-  uint32_t                  port_index,
-  uint32_t                  protocol,
-  const LV2_Feature* const* features);
+  SuilController                                           controller,
+  uint32_t                                                 port_index,
+  uint32_t                                                 protocol,
+  const LV2_Feature* SUIL_NULLABLE const* SUIL_UNSPECIFIED features);
 
 /// Function to unsubscribe from notifications for a port
 typedef uint32_t (*SuilPortUnsubscribeFunc)( //
-  SuilController            controller,
-  uint32_t                  port_index,
-  uint32_t                  protocol,
-  const LV2_Feature* const* features);
+  SuilController                                           controller,
+  uint32_t                                                 port_index,
+  uint32_t                                                 protocol,
+  const LV2_Feature* SUIL_NULLABLE const* SUIL_UNSPECIFIED features);
 
 /// Function called when a control is grabbed or released
 typedef void (*SuilTouchFunc)( //
@@ -106,7 +118,10 @@ typedef enum { SUIL_ARG_NONE } SuilArg;
    information.  It must be terminated with SUIL_ARG_NONE.
 */
 SUIL_API void
-suil_init(int* argc, char*** argv, SuilArg key, ...);
+suil_init(int* SUIL_NONNULL                                argc,
+          char* SUIL_NONNULL * SUIL_NONNULL * SUIL_NONNULL argv,
+          SuilArg                                          key,
+          ...);
 
 /**
    Check if suil can wrap a UI type.
@@ -121,7 +136,8 @@ suil_init(int* argc, char*** argv, SuilArg key, ...);
    and increasing values are of a progressively lower quality and/or stability.
 */
 SUIL_API unsigned
-suil_ui_supported(const char* host_type_uri, const char* ui_type_uri);
+suil_ui_supported(const char* SUIL_NONNULL host_type_uri,
+                  const char* SUIL_NONNULL ui_type_uri);
 
 /**
    @}
@@ -146,11 +162,11 @@ typedef struct SuilHostImpl SuilHost;
    @param subscribe_func Function to subscribe to port updates.
    @param unsubscribe_func Function to unsubscribe from port updates.
 */
-SUIL_API SuilHost*
-suil_host_new(SuilPortWriteFunc       write_func,
-              SuilPortIndexFunc       index_func,
-              SuilPortSubscribeFunc   subscribe_func,
-              SuilPortUnsubscribeFunc unsubscribe_func);
+SUIL_API SuilHost* SUIL_ALLOCATED
+suil_host_new(SuilPortWriteFunc SUIL_NONNULL        write_func,
+              SuilPortIndexFunc SUIL_NULLABLE       index_func,
+              SuilPortSubscribeFunc SUIL_NULLABLE   subscribe_func,
+              SuilPortUnsubscribeFunc SUIL_NULLABLE unsubscribe_func);
 
 /**
    Set a touch function for a host descriptor.
@@ -158,13 +174,14 @@ suil_host_new(SuilPortWriteFunc       write_func,
    Note this function will only be called if the UI supports it.
 */
 SUIL_API void
-suil_host_set_touch_func(SuilHost* host, SuilTouchFunc touch_func);
+suil_host_set_touch_func(SuilHost* SUIL_NONNULL      host,
+                         SuilTouchFunc SUIL_NULLABLE touch_func);
 
 /**
    Free `host`.
 */
 SUIL_API void
-suil_host_free(SuilHost* host);
+suil_host_free(SuilHost* SUIL_NULLABLE host);
 
 /**
    @}
@@ -179,10 +196,10 @@ suil_host_free(SuilHost* host);
 typedef struct SuilInstanceImpl SuilInstance;
 
 /// Opaque pointer to a UI handle
-typedef void* SuilHandle;
+typedef void* SUIL_UNSPECIFIED SuilHandle;
 
 /// Opaque pointer to a UI widget
-typedef void* SuilWidget;
+typedef void* SUIL_UNSPECIFIED SuilWidget;
 
 /**
    Instantiate a UI for an LV2 plugin.
@@ -208,16 +225,17 @@ typedef void* SuilWidget;
    @param features NULL-terminated array of supported features, or NULL.
    @return A new UI instance, or NULL if instantiation failed.
 */
-SUIL_API SuilInstance*
-suil_instance_new(SuilHost*                 host,
+SUIL_API SuilInstance* SUIL_ALLOCATED
+suil_instance_new(SuilHost* SUIL_NONNULL    host,
                   SuilController            controller,
-                  const char*               container_type_uri,
-                  const char*               plugin_uri,
-                  const char*               ui_uri,
-                  const char*               ui_type_uri,
-                  const char*               ui_bundle_path,
-                  const char*               ui_binary_path,
-                  const LV2_Feature* const* features);
+                  const char* SUIL_NULLABLE container_type_uri,
+                  const char* SUIL_NONNULL  plugin_uri,
+                  const char* SUIL_NONNULL  ui_uri,
+                  const char* SUIL_NONNULL  ui_type_uri,
+                  const char* SUIL_NONNULL  ui_bundle_path,
+                  const char* SUIL_NONNULL  ui_binary_path,
+                  const LV2_Feature* SUIL_NULLABLE const* SUIL_NULLABLE
+                    features);
 
 /**
    Free a plugin UI instance.
@@ -226,7 +244,7 @@ suil_instance_new(SuilHost*                 host,
    calling this function (e.g. it has been removed from its parent).
 */
 SUIL_API void
-suil_instance_free(SuilInstance* instance);
+suil_instance_free(SuilInstance* SUIL_NULLABLE instance);
 
 /**
    Get the handle for a UI instance.
@@ -238,7 +256,7 @@ suil_instance_free(SuilInstance* instance);
    The returned handle is shared and must not be deleted.
 */
 SUIL_API SuilHandle
-suil_instance_get_handle(SuilInstance* instance);
+suil_instance_get_handle(SuilInstance* SUIL_NONNULL instance);
 
 /**
    Get the widget for a UI instance.
@@ -249,7 +267,7 @@ suil_instance_get_handle(SuilInstance* instance);
    implemented by the UI.
 */
 SUIL_API SuilWidget
-suil_instance_get_widget(SuilInstance* instance);
+suil_instance_get_widget(SuilInstance* SUIL_NONNULL instance);
 
 /**
    Notify the UI about a change in a plugin port.
@@ -269,15 +287,16 @@ suil_instance_get_widget(SuilInstance* instance);
    @param buffer Change data, e.g. the new port value.
 */
 SUIL_API void
-suil_instance_port_event(SuilInstance* instance,
-                         uint32_t      port_index,
-                         uint32_t      buffer_size,
-                         uint32_t      format,
-                         const void*   buffer);
+suil_instance_port_event(SuilInstance* SUIL_NONNULL   instance,
+                         uint32_t                     port_index,
+                         uint32_t                     buffer_size,
+                         uint32_t                     format,
+                         const void* SUIL_UNSPECIFIED buffer);
 
 /// Return a data structure defined by some LV2 extension URI
-SUIL_API const void*
-suil_instance_extension_data(SuilInstance* instance, const char* uri);
+SUIL_API const void* SUIL_UNSPECIFIED
+suil_instance_extension_data(SuilInstance* SUIL_NONNULL instance,
+                             const char* SUIL_NONNULL   uri);
 
 /**
    @}

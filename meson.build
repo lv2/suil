@@ -72,6 +72,10 @@ if cc.get_id() in ['clang', 'emscripten']
     ]
   endif
 
+  if warning_level in ['everything', '3']
+    c_suppressions += ['-Wno-nullability-extension']
+  endif
+
 elif cc.get_id() == 'gcc'
   if warning_level == 'everything'
     c_suppressions += [
@@ -129,6 +133,11 @@ if is_variable('cpp')
         '-Wno-zero-as-null-pointer-constant',
       ]
     endif
+
+    if warning_level in ['everything', '3']
+      cpp_suppressions += ['-Wno-nullability-extension']
+    endif
+
   elif cpp.get_id() == 'gcc'
     if warning_level == 'everything'
       cpp_suppressions += [

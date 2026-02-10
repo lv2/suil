@@ -1,9 +1,10 @@
 suil (0.10.25) unstable; urgency=medium
 
+  * Add clang nullability annotations
   * Address new warnings in clang and clang-tidy 21
   * Fix documentation build without sphinx_lv2_theme
 
- -- David Robillard <d@drobilla.net>  Sat, 07 Feb 2026 22:54:20 +0000
+ -- David Robillard <d@drobilla.net>  Tue, 10 Feb 2026 19:20:15 +0000
 
 suil (0.10.24) stable; urgency=medium
 
