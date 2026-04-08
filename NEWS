@@ -1,3 +1,9 @@
+suil (0.10.27) unstable; urgency=medium
+
+  * Make Gtk wrapper type accessors static
+
+ -- David Robillard <d@drobilla.net>  Wed, 08 Apr 2026 00:20:12 +0000
+
 suil (0.10.26) stable; urgency=medium
 
   * Add clang nullability annotations

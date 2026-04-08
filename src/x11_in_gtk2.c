@@ -45,7 +45,7 @@ typedef struct {
   GtkSocketClass parent_class;
 } SuilX11WrapperClass;
 
-GType
+static GType
 suil_x11_wrapper_get_type(void); // Accessor for SUIL_TYPE_X11_WRAPPER
 
 #define SUIL_TYPE_X11_WRAPPER (suil_x11_wrapper_get_type())

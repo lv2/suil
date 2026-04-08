@@ -63,7 +63,7 @@ struct _SuilCocoaWrapperClass {
   GtkWidgetClass parent_class;
 };
 
-GType
+static GType
 suil_cocoa_wrapper_get_type(void); // Accessor for SUIL_TYPE_COCOA_WRAPPER
 
 G_DEFINE_TYPE(SuilCocoaWrapper, suil_cocoa_wrapper, GTK_TYPE_WIDGET)

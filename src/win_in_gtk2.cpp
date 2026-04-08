@@ -44,7 +44,7 @@ struct _SuilWinWrapperClass {
 using SuilWinWrapper      = _SuilWinWrapper;
 using SuilWinWrapperClass = _SuilWinWrapperClass;
 
-GType
+static GType
 suil_win_wrapper_get_type(void); // Accessor for SUIL_TYPE_WIN_WRAPPER
 
 G_DEFINE_TYPE(SuilWinWrapper, suil_win_wrapper, GTK_TYPE_DRAWING_AREA)
